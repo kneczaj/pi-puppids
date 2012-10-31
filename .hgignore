@@ -1,0 +1,14 @@
+/demo/logs
+/demo/project/project
+/demo/project/target
+/demo/target
+/demo/tmp
+/demo/.history
+/demo/dist
+/demo/.idea
+/demo/*.iml
+/demo/out
+/demo/.idea_modules
+/demo/.classpath
+/demo/.project
+/demo/RUNNING_PID
