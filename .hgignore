@@ -1,7 +1,7 @@
 /demo/logs
 /demo/project/project
 /demo/project/target
-/demo/target
+/demo/target/
 /demo/tmp
 /demo/.history
 /demo/dist
@@ -11,4 +11,7 @@
 /demo/.idea_modules
 /demo/.classpath
 /demo/.project
+/demo/.target
+/demo/.metadata
+/demo/.settings
 /demo/RUNNING_PID
