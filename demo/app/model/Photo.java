@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import com.google.code.morphia.annotations.Indexed;
 
 @Entity
 public class Photo {
@@ -11,16 +12,28 @@ public class Photo {
 	@Id 
 	private ObjectId id;
 	
+	@Indexed
 	private String identifier;
 	
+	private byte[] thumbnail;
+	
+	@Indexed
 	private String filename;
+	
+	public ObjectId getId() {
+		return id;
+	}
 	
 	public void setId(ObjectId id) {
 		this.id = id;
 	}
 	
-	public ObjectId getId() {
-		return id;
+	public void setThumbnail(byte[] thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+	
+	public byte[] getThumbnail() {
+		return thumbnail;
 	}
 
 	public String getIdentifier() {
@@ -37,6 +50,11 @@ public class Photo {
 	
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+	
+	@Override
+	public String toString() {
+		return "Photo[identifier: " + identifier + ", filename=" + filename + "]";
 	}
 	
 }
