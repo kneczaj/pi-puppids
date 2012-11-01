@@ -1,1 +1,25 @@
-WebApp Lab Demo
+@main("WebApp Lab Demo") {
+    
+    <script>
+		$(function() {
+			$( "#sortable" ).sortable();
+			$( "#sortable" ).disableSelection();
+		});
+	</script>
+	<style>
+		#sortable { list-style-type: none; margin: 0; padding: 0; width: 900px; }
+		#sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 150px; height: 150px; font-size: 4em; text-align: center; }
+	</style>
+    
+    <ul id="sortable">
+    	@**
+    	* photos could be displayed somehow like this
+    	*
+		@for(photo <- photos) {
+			<li><img src="photo.filename" /></li>
+		}
+		**@
+		
+		
+	</ul>
+}
