@@ -1,16 +1,28 @@
 package controllers;
 
-import play.*;
-import play.mvc.*;
+import java.net.UnknownHostException;
 
-import views.html.*;
+import play.mvc.Controller;
+import play.mvc.Result;
+import views.html.index;
 
 public class Application extends Controller {
 
 	/**
 	 * Index-Page: show an overview over all photos in the gallery
+	 * @throws UnknownHostException 
 	 */
 	public static Result index() {
+		
+//		Mongo mongo = new Mongo();
+//		Morphia morphia = new Morphia();
+//		Datastore ds = morphia.createDatastore(mongo, "demo");
+//		Photo p = new Photo();
+//		//p.setId(ObjectId.get());
+//		p.setIdentifier("test");
+//		p.setFilename("bla");
+//		ds.save(p);
+		
 		/**
 		 * TODO: query all photos from MongoDB and assemble HTML-Page
 		 */
