@@ -1,3 +1,5 @@
+@(photos: List[Photo])
+
 @main("WebApp Lab Demo") {
     
     <script>
@@ -16,13 +18,9 @@
 		
 	<div id="gallery">
 		<ul id="sortable">
-			@**
-			* photos could be displayed somehow like this
-			*
 			@for(photo <- photos) {
-				<li><a href="@routes.Application.getPhoto(photo.id)"><img src="@routes.Application.getThumbnail(photo.id)" /></a></li>
+				<li><a href="@routes.Application.getPhoto(photo.getIdentifier())"><img src="@routes.Application.getThumbnail(photo.getIdentifier())" /></a></li>
 			}
-			**@
 		</ul>
 	</div>
 }
