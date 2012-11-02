@@ -18,3 +18,4 @@ syntax: glob
 **/.target
 **/.metadata
 **/.settings
+**/*.swp
