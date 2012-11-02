@@ -7,19 +7,22 @@
 		});
 	</script>
 	<style>
-		#sortable { list-style-type: none; margin: 0; padding: 0; width: 900px; }
+		#sortable { list-style-type: none; margin: auto; padding: 0; width: 900px; }
 		#sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 150px; height: 150px; font-size: 4em; text-align: center; }
+		#header {margin: auto; text-align: center;}
+		#gallery { margin: auto; }
 	</style>
-    
-    <ul id="sortable">
-    	@**
-    	* photos could be displayed somehow like this
-    	*
-		@for(photo <- photos) {
-			<li><img src="photo.filename" /></li>
-		}
-		**@
+	<h1 id="header">Uber-Fancy Gallery</h1>
 		
-		
-	</ul>
+	<div id="gallery">
+		<ul id="sortable">
+			@**
+			* photos could be displayed somehow like this
+			*
+			@for(photo <- photos) {
+				<li><a href="@routes.Application.getPhoto(photo.id)"><img src="@routes.Application.getThumbnail(photo.id)" /></a></li>
+			}
+			**@
+		</ul>
+	</div>
 }
