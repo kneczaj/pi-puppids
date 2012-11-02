@@ -12,11 +12,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import model.Photo;
+import models.Photo;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -52,12 +53,8 @@ public class Application extends Controller {
 	 * @throws UnknownHostException
 	 */
 	public static Result index() throws UnknownHostException {
-		for (Photo photo : getDatastore().find(Photo.class)) {
-			// ...
-			Logger.info(photo.toString());
-		}
-
-		return ok(index.render());
+		List<Photo> photos = getDatastore().find(Photo.class).asList();
+		return ok(index.render(photos));
 	}
 
 	/**
