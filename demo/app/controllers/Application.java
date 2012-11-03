@@ -71,7 +71,7 @@ public class Application extends Controller {
 			FileInputStream fis = new FileInputStream(new File(p.getFilename()));
 			BufferedInputStream bis = new BufferedInputStream(fis);
 
-			return ok(bis);
+			return ok(bis).as("image/jpeg");
 		} catch (FileNotFoundException e) {
 			Logger.warn("could not find photo");
 			return notFound();
@@ -88,7 +88,7 @@ public class Application extends Controller {
 		}
 
 		InputStream fis = new ByteArrayInputStream(p.getThumbnail());
-		return ok(fis);
+		return ok(fis).as("image/jpeg");
 	}
 	
 	public static Result loadTestData() {
