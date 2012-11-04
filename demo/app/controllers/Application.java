@@ -13,7 +13,9 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -27,10 +29,20 @@ import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Morphia;
 import com.mongodb.Mongo;
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.actor.UntypedActor;
+import akka.actor.UntypedActorFactory;
+import akka.routing.RoundRobinRouter;
+
 public class Application extends Controller {
 
 	private static Datastore ds = null;
 	private static final String mongoDbName = "demo";
+	
+	public static final List<String> samplePhotos =
+	        Arrays.asList("photos/schlern.jpg", "photos/dubrovnik.jpg", "photos/miss_brazil.jpg");
 
 	private static Datastore getDatastore() {
 		if (ds == null) {
@@ -91,10 +103,83 @@ public class Application extends Controller {
 		return ok(fis).as("image/jpeg");
 	}
 	
+	
+	/**
+	 * Starts loading sample photos
+	 */
 	public static Result loadTestData() {
-		try {
+		
+		ActorSystem system = ActorSystem.create("ImageLoader");
+
+		// create master actor with 2 processing actores 
+		ActorRef master = system.actorOf(new Props(new UntypedActorFactory() {
+			public UntypedActor create() {
+				return new Master(2);
+			}
+		}), "master");
+
+		// start loading
+		master.tell(new StartLoading(samplePhotos));
+
+		return ok("loading test data started");
+	}
+	
+	/**
+	 *  Message class, sent to master to start loading
+	 * @author Kamil
+	 *
+	 */
+	static class StartLoading {
+		private final List<String> photosList;
+		
+		public StartLoading(List<String> photosList) {
+			this.photosList = photosList;
+		}
+		
+		public List<String> getPhotosList() {
+			return photosList;
+		}
+	}
+	
+	/**
+	 * Message sent after a finished task
+	 * @author Kamil
+	 *
+	 */
+	static class Finished {
+	}
+	
+	/**
+	 * Message with new task to process
+	 * @author Kamil
+	 *
+	 */
+	static class Task {
+		private final String photoPath;
+
+		public Task(String photoPath) {
+			this.photoPath = photoPath;
+		}
+
+		public String getPhotoPath() {
+			return photoPath;
+		}
+	}
+
+	/**
+	 * Worker class - actor which loads photos to the db
+	 * @author Kamil
+	 *
+	 */
+	public static class Worker extends UntypedActor {
+
+		/**
+		 * creates Photo object from given path
+		 *
+		 */
+		public static Photo loadPhoto(String path) throws IOException {
 			Photo p = new Photo();
-			String fullFilename = Paths.get("photos/schlern.jpg")
+			String fullFilename = Paths.get(path)
 					.toAbsolutePath().toString();
 			File f = new File(fullFilename);
 
@@ -115,11 +200,90 @@ public class Application extends Controller {
 			p.setFilename(fullFilename);
 			p.setIdentifier("photo-" + UUID.randomUUID());
 			p.setThumbnail(os.toByteArray());
-			getDatastore().save(p);
+			return p;
+		}
 
-			return ok("loaded test data");
-		} catch (IOException e) {
-			return internalServerError("could not load test data");
+
+		/**
+		 * handles messages
+		 * @author Kamil
+		 *
+		 */
+		public void onReceive(Object message) throws IOException {
+			if (message instanceof Task) {
+				Task task = (Task) message;
+				String photoPath = task.getPhotoPath();
+				Logger.info("Loading photo " + photoPath + " started");
+				
+				// here an exception may occur
+				Photo photo = loadPhoto(photoPath);
+				getDatastore().save(photo);
+				//
+				this.getSender().tell(new Finished(), this.getSelf());
+				Logger.info("Loading photo " + photoPath + " finished successfully");
+			} else {
+				unhandled(message);
+			}
+		}
+	}
+	
+	/**
+	 * Main actor - supervisor
+	 * @author Kamil
+	 *
+	 */
+	public static class Master extends UntypedActor {
+		private int photosNum = 0;
+		private int processedNum = 0;
+
+		private final ActorRef router;
+
+		public Master(final int nrOfWorkers) {
+
+			router = this.getContext().actorOf(new Props(Worker.class).withRouter(new RoundRobinRouter(nrOfWorkers)),
+					"router");
+		}
+
+		public void onReceive(Object message) {
+			if (message instanceof StartLoading) {
+				startLoading(message);
+			} else if (message instanceof Finished) {
+				processedNum += 1;
+				Logger.info("New result received by master, already processed: " + processedNum + "/" + photosNum);
+				if (processedNum == photosNum) {
+					finish();
+				}
+			} else {
+				unhandled(message);
+			}
+		}
+		
+		/**
+		 * adds photos
+		 * @author Kamil
+		 *
+		 */
+		private void startLoading(Object message) {
+			Logger.info("StartLoading message recieved by master");
+			
+			List<String> photos = ((StartLoading) message).getPhotosList();
+			this.photosNum += photos.size();
+			
+			for (Iterator<String> photosIter = photos.iterator(); photosIter.hasNext(); ) {
+				router.tell(new Task(photosIter.next()), getSelf());
+			}
+		}
+		
+		/**
+		 * finishes, stops the system
+		 * @author Kamil
+		 *
+		 */
+		private void finish() {
+			// Stops this actor and all its supervised children
+			getContext().stop(getSelf());
+			getContext().system().shutdown();
+			Logger.info("Loading finished");
 		}
 	}
 
