@@ -165,6 +165,14 @@ public class Application extends Controller {
 			return photoPath;
 		}
 	}
+	
+	static class Failed extends Task {
+		
+		public Failed(String photoPath) {
+			super(photoPath);
+		}
+	}
+	
 
 	/**
 	 * Worker class - actor which loads photos to the db
@@ -215,12 +223,14 @@ public class Application extends Controller {
 				String photoPath = task.getPhotoPath();
 				Logger.info("Loading photo " + photoPath + " started");
 				
-				// here an exception may occur
-				Photo photo = loadPhoto(photoPath);
-				getDatastore().save(photo);
-				//
-				this.getSender().tell(new Finished(), this.getSelf());
-				Logger.info("Loading photo " + photoPath + " finished successfully");
+				try {
+					Photo photo = loadPhoto(photoPath);
+					getDatastore().save(photo);
+					getSender().tell(new Finished(), getSelf());
+					Logger.info("Loading photo " + photoPath + " finished successfully");
+				} catch(IOException e) {
+					getSender().tell(new Failed(photoPath), getSelf());
+				}
 			} else {
 				unhandled(message);
 			}
@@ -247,9 +257,13 @@ public class Application extends Controller {
 		public void onReceive(Object message) {
 			if (message instanceof StartLoading) {
 				startLoading(message);
-			} else if (message instanceof Finished) {
+			} else if (message instanceof Finished || message instanceof Failed) {
 				processedNum += 1;
-				Logger.info("New result received by master, already processed: " + processedNum + "/" + photosNum);
+				if (message instanceof Finished) {
+					Logger.info("New result received by master, already processed: " + processedNum + "/" + photosNum);
+				} else {
+					Logger.info(((Failed)message).getPhotoPath() + " failed, already processed: " + processedNum + "/" + photosNum);
+				}
 				if (processedNum == photosNum) {
 					finish();
 				}
