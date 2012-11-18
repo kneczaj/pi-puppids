@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
 import java.util.UUID;
 import java.util.Iterator;
 
@@ -24,6 +24,7 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
+import views.html.loading;
 
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Morphia;
@@ -40,9 +41,6 @@ public class Application extends Controller {
 
 	private static Datastore ds = null;
 	private static final String mongoDbName = "demo";
-	
-	public static final List<String> samplePhotos =
-	        Arrays.asList("photos/schlern.jpg", "photos/dubrovnik.jpg", "photos/miss_brazil.jpg");
 
 	private static Datastore getDatastore() {
 		if (ds == null) {
@@ -109,10 +107,22 @@ public class Application extends Controller {
 	 */
 	public static Result loadTestData() {
 		
+		//load a list of available photos
+		List<String> samplePhotos = new ArrayList<String>();
+		
+		for (File file : new File("photos/").listFiles()) {
+			samplePhotos.add(file.toString());
+		}
+		
 		ActorSystem system = ActorSystem.create("ImageLoader");
 
 		// create master actor with 2 processing actores 
 		ActorRef master = system.actorOf(new Props(new UntypedActorFactory() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public UntypedActor create() {
 				return new Master(2);
 			}
@@ -121,7 +131,7 @@ public class Application extends Controller {
 		// start loading
 		master.tell(new StartLoading(samplePhotos));
 
-		return ok("loading test data started");
+		return ok(loading.render("loading test data"));
 	}
 	
 	/**
@@ -192,7 +202,18 @@ public class Application extends Controller {
 			File f = new File(fullFilename);
 
 			BufferedImage img = ImageIO.read(f);
-			BufferedImage thumb = new BufferedImage(100, 200,
+			int thumbWidth = 200;
+			int thumbHeight = 200;
+			
+			if (img.getWidth() > img.getHeight()) {
+				thumbWidth = 200;
+				thumbHeight = (int)((200d/img.getWidth())*img.getHeight());
+			} else {
+				thumbHeight = 200;
+				thumbWidth = (int)((200d/img.getHeight())*img.getWidth());
+			}			
+			
+			BufferedImage thumb = new BufferedImage(thumbWidth, thumbHeight,
 					BufferedImage.TYPE_INT_RGB);
 
 			// BufferedImage has a Graphics2D
