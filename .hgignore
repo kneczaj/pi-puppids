@@ -12,6 +12,19 @@ demo/out
 demo/.idea_modules
 demo/RUNNING_PID
 
+wars/logs
+wars/project/project
+wars/project/target
+wars/target/
+wars/tmp
+wars/.history
+wars/dist
+wars/.idea
+wars/*.iml
+wars/out
+wars/.idea_modules
+wars/RUNNING_PID
+
 syntax: glob
 **/.classpath
 **/.project
