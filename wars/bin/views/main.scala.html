@@ -11,17 +11,10 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.8.3.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/arwars/geolocation.js")" type="text/javascript"></script>
     </head>
     <body>
     	<div class="container-fluid">
         	@content
         </div>
-        
-        <script type = "text/javascript">
-		    $(document).ready(function() {
-		        setLocationWatcher();
-		    });
-		</script>
     </body>
 </html>
