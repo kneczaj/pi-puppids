@@ -6,18 +6,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import models.Player;
 import models.PlayerLocation;
 
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
 
+import daos.PlayerDAO;
+import daos.PlayerLocationDAO;
+
+
 import play.mvc.BodyParser;
 import play.mvc.BodyParser.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
-import dao.PlayerDAO;
-import dao.PlayerLocationDAO;
 
 public class Location extends Controller {
 

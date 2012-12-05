@@ -36,6 +36,8 @@ function errorCallback(error) {
 	}
 }
 
+var currentLocationMarker;
+
 function positionChanged(location) {
 	var lat = location.coords.latitude;
 	var lng = location.coords.longitude;
@@ -45,6 +47,12 @@ function positionChanged(location) {
 	$("#locations").append(
 			"Time: " + time + " Lat: " + lat + " Long: " + lng + " Accuracy: "
 					+ accuracy + " meters<br />");
+	
+	currentLocationMarker = new google.maps.Marker({
+	    position: new google.maps.LatLng(lat, lng),
+	    draggable: false
+	});
+	currentLocationMarker.setMap(map);
 
 	var serializedData = {
 		playerId : playerId,
