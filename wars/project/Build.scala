@@ -10,7 +10,9 @@ object ApplicationBuild extends Build {
     val appDependencies = Seq(
     		"leodagdag" % "play2-morphia-plugin_2.9.1"  % "0.0.6",
     		"org.mongodb" % "mongo-java-driver" % "2.9.3", 
-            "com.google.guava" % "guava" % "13.0.1"
+            "com.google.guava" % "guava" % "13.0.1", 
+            "com.google.inject" % "guice" % "3.0", 
+            "com.typesafe" % "play-plugins-guice" % "2.0.3"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(   

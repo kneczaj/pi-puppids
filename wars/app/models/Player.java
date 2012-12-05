@@ -1,11 +1,9 @@
 package models;
 
 import java.util.Date;
-
-import javax.persistence.Embedded;
-
 import org.bson.types.ObjectId;
 
+import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 
@@ -124,6 +122,24 @@ public class Player {
 		return id;
 	}
 	
-	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Player[");
+		sb.append("id: ");
+		sb.append(id);
+		sb.append("username: ");
+		sb.append(username);
+		sb.append(", homeTown: ");
+		sb.append(homeTown);
+		sb.append(", minStrength: ");
+		sb.append(minStrength);
+		sb.append(", maxStrength: ");
+		sb.append(maxStrength);
+		sb.append(", score: ");
+		sb.append(score);
+		sb.append("]");
+		return sb.toString();
+	}
 	
 }

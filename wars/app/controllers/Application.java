@@ -4,18 +4,9 @@ import models.Player;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
-
-import com.google.code.morphia.logging.MorphiaLoggerFactory;
-import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
-
 import daos.PlayerDAO;
 
-
 public class Application extends Controller {
-	
-	static {
-		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
-	}
 
 	private static PlayerDAO playerDAO = new PlayerDAO();
 	
