@@ -8,7 +8,8 @@ import views.html.index;
 import com.google.code.morphia.logging.MorphiaLoggerFactory;
 import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
 
-import dao.PlayerDAO;
+import daos.PlayerDAO;
+
 
 public class Application extends Controller {
 	

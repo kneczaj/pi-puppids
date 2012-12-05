@@ -5,15 +5,22 @@
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&sensor=false">
     </script>
+    <script src="@routes.Assets.at("javascripts/arwars/geolocation.js")" type="text/javascript"></script>
+    
     <script type="text/javascript">
+    	var playerId = "@player.getId().toString()";
+    	var map;
+    
 	    $(document).ready(function () {
 	        var mapOptions = {
 	          center: new google.maps.LatLng(48.133, 11.566),
 	          zoom: 11,
 	          mapTypeId: google.maps.MapTypeId.ROADMAP
 	        };
-	        var map = new google.maps.Map($('#map_canvas')[0],
+	        map = new google.maps.Map($('#map_canvas')[0],
 	            mapOptions);
+	            
+	        setLocationWatcher();
 	        
 		    $(window).resize(function () {
 		        var h = $(window).height(),
@@ -22,10 +29,6 @@
 		    }).resize();
 	    });
     </script>
-   
-    <script type="text/javascript">
-		var playerId = "@player.getId().toString()";
-	</script>
     
     <div class="row-fluid">
       <div class="span3">
