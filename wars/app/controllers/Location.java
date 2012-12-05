@@ -6,28 +6,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import models.Player;
 import models.PlayerLocation;
 
 import org.bson.types.ObjectId;
-import org.codehaus.jackson.JsonNode;
 
-import daos.PlayerDAO;
-import daos.PlayerLocationDAO;
-
-
-import play.mvc.BodyParser;
-import play.mvc.BodyParser.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+import daos.PlayerDAO;
+import daos.PlayerLocationDAO;
 
 public class Location extends Controller {
 
 	private static PlayerLocationDAO locationDAO = new PlayerLocationDAO();
 	private static PlayerDAO playerDAO = new PlayerDAO();
 	
-//	@BodyParser.Of(Json.class)
 	public static Result updateLocation(String playerId, String lat, String lng, String uncertainty, String speed, String timestamp) {
 		Player p = playerDAO.get(new ObjectId(playerId));
 		if (p == null) {
