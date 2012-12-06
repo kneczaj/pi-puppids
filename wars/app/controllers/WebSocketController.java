@@ -26,8 +26,7 @@ public class WebSocketController extends Controller {
 					Logger.info("WebSocket connection established");
 					ClientPushActor.register(samplePlayer.getId().toString(), in, out);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.warn("Could not establish WebSocket connection");
 				}
 			}
 		};

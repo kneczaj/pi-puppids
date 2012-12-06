@@ -25,7 +25,7 @@
 	        
 	        var receiveEvent = function(event) {
 	        	console.log("received a message over websockets");
-                console.log(JSON.parse(event));
+                console.log(event);
             }
             socket.onmessage = receiveEvent
 	            
