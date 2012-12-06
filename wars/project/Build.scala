@@ -12,7 +12,8 @@ object ApplicationBuild extends Build {
     		"org.mongodb" % "mongo-java-driver" % "2.9.3", 
             "com.google.guava" % "guava" % "13.0.1", 
             "com.google.inject" % "guice" % "3.0", 
-            "com.typesafe" % "play-plugins-guice" % "2.0.3"
+            "com.typesafe" % "play-plugins-guice" % "2.0.3", 
+            "com.google.code.gson" % "gson" % "2.2.2"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(   

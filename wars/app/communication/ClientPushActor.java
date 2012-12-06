@@ -2,6 +2,8 @@ package communication;
 
 import java.util.concurrent.ConcurrentMap;
 
+import models.PlayerLocation;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
@@ -15,25 +17,41 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 import com.google.common.collect.Maps;
-import communication.messages.LocationChangedMessage;
+import communication.messages.PlayerLocationChangedMessage;
 import communication.messages.RegistrationMessage;
 import communication.messages.UnregistrationMessage;
 
 /**
+ * Akka Actor that is mainly responsible for the WebSocket push communication to
+ * clients / players.
  * 
  * @author markus
  */
 public class ClientPushActor extends UntypedActor {
 
+	/**
+	 * Create a static actor instance
+	 */
 	static ActorRef actor = Akka.system().actorOf(
 			new Props(ClientPushActor.class));
 
 	/**
-	 * The registered clients.
+	 * Map that holds the registrations. Maps player IDs to a WebSocket channel.
 	 */
-	ConcurrentMap<String, WebSocket.Out<JsonNode>> registrered = Maps
+	private ConcurrentMap<String, WebSocket.Out<JsonNode>> registrered = Maps
 			.newConcurrentMap();
 
+	/**
+	 * Static method to register a players' WebSocket channels
+	 * 
+	 * @param id
+	 *            playerId
+	 * @param in
+	 *            receiving channel of the WebSocket
+	 * @param out
+	 *            send channel of the WebSocket
+	 * @throws Exception
+	 */
 	public static void register(final String id,
 			final WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out)
 			throws Exception {
@@ -49,11 +67,14 @@ public class ClientPushActor extends UntypedActor {
 		});
 	}
 
-	public static void locationChanged(String id, Long timestamp, Double longitude,
-			Double latitude, Integer accuracy, Integer speed) {
-
-		actor.tell(new LocationChangedMessage(id, timestamp, longitude,
-				latitude, accuracy, speed));
+	/**
+	 * Used by the LocationTrackingService to tell the Actor to fan out the
+	 * change of the location of a player to all others.
+	 * 
+	 * @param playerLocation
+	 */
+	public static void playerLocationChanged(PlayerLocation playerLocation) {
+		actor.tell(new PlayerLocationChangedMessage(playerLocation));
 	}
 
 	@Override
@@ -65,19 +86,21 @@ public class ClientPushActor extends UntypedActor {
 			registrered.putIfAbsent(registration.getId(),
 					registration.getChannel());
 
-		} else if (message instanceof LocationChangedMessage) {
+		} else if (message instanceof PlayerLocationChangedMessage) {
 			Logger.info("pushing out player location change");
-			LocationChangedMessage msg = (LocationChangedMessage) message;
+			PlayerLocationChangedMessage msg = (PlayerLocationChangedMessage) message;
+			PlayerLocation location = msg.getPlayerLocation();
 
 			// push location change to all other players over websocket
 			for (WebSocket.Out<JsonNode> channel : registrered.values()) {
 				ObjectNode event = Json.newObject();
-				event.put("id", msg.getId());
-				event.put("timestamp", msg.getTimestamp());
-				event.put("longitude", msg.getLongitude());
-				event.put("latitude", msg.getLatitude());
-				event.put("speed", msg.getSpeed());
-				event.put("accuracy", msg.getAccuracy());
+
+				event.put("id", location.getPlayer().getId().toString());
+				event.put("timestamp", location.getTimestamp().getTime());
+				event.put("longitude", location.getLongitude().toString());
+				event.put("latitude", location.getLatitude().toString());
+				event.put("speed", location.getSpeed());
+				event.put("accuracy", location.getUncertainty());
 
 				channel.write(event);
 			}
@@ -90,7 +113,6 @@ public class ClientPushActor extends UntypedActor {
 		} else {
 			unhandled(message);
 		}
-
 	}
 
 }
