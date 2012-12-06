@@ -20,6 +20,15 @@
 	        map = new google.maps.Map($('#map_canvas')[0],
 	            mapOptions);
 	            
+	        var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
+	        var socket = new WS("@routes.WebSocketController.connect().webSocketURL(request)");
+	        
+	        var receiveEvent = function(event) {
+	        	console.log("received a message over websockets");
+                console.log(JSON.parse(event));
+            }
+            socket.onmessage = receiveEvent
+	            
 	        setLocationWatcher();
 	        
 		    $(window).resize(function () {
