@@ -11,7 +11,7 @@ import services.api.error.LocationTrackingServiceException;
  * 
  * @author markus
  */
-public interface LocationTrackingService {
+public interface LocationTrackingService extends Service {
 
 	/**
 	 * Updates the location of a player

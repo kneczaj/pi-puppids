@@ -2,11 +2,13 @@ package services.impl;
 
 import java.util.Map;
 
+import services.api.MapInfoService;
+import services.api.error.MapInfoServiceException;
+
+
 import models.Location;
 import models.Place;
 import models.Player;
-import services.api.MapInfoService;
-import services.api.error.MapInfoServiceException;
 
 /**
  * Implementation of the MapInfoService.
@@ -14,18 +16,16 @@ import services.api.error.MapInfoServiceException;
  * @author markus
  */
 public class MapInfoServiceImpl implements MapInfoService {
-	
-	//private PlayerDAO playerDAO = new PlayerDAO();
 
 	@Override
-	public Map<Player, Location> findPlayersNearby()
+	public Map<Player, Location> findPlayersNearby(Location location)
 			throws MapInfoServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Map<Place, Location> findPlacesNearby()
+	public Map<Place, Location> findPlacesNearby(Location location)
 			throws MapInfoServiceException {
 		// TODO Auto-generated method stub
 		return null;

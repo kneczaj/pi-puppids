@@ -15,6 +15,7 @@ import services.api.error.LocationTrackingServiceException;
 
 import com.google.inject.Inject;
 
+
 import daos.PlayerDAO;
 
 /**
@@ -26,7 +27,9 @@ public class LocationController extends Controller {
 	
 	@Inject
 	private static LocationTrackingService locationTracking; 
-	private static PlayerDAO playerDAO = new PlayerDAO();
+	
+	@Inject
+	private static PlayerDAO playerDAO;
 
 	public static Result updateLocation(String playerId, String lat,
 			String lng, String uncertainty, String speed, String timestamp) {
