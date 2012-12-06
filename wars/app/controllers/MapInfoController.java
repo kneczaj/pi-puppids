@@ -14,6 +14,7 @@ import services.api.error.MapInfoServiceException;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 
+
 /**
  * Controller for the MapInfoService
  * 
@@ -24,9 +25,10 @@ public class MapInfoController extends Controller {
 	@Inject
 	private static MapInfoService mapInfoService;
 	
-	public static Result playersNearby() {
+	public static Result playersNearby(Double longitude, Double latitude) {
 		try {
-			Map<Player, Location> playerLocations = mapInfoService.findPlayersNearby();
+			Location l = new Location(longitude, latitude);
+			Map<Player, Location> playerLocations = mapInfoService.findPlayersNearby(l);
 			
 			Gson gson = new Gson();
 			return ok(gson.toJson(playerLocations));
@@ -37,9 +39,10 @@ public class MapInfoController extends Controller {
 		}
 	}
 	
-	public static Result placesNearby() {
+	public static Result placesNearby(Double longitude, Double latitude) {
 		try {
-			Map<Place, Location> placeLocations = mapInfoService.findPlacesNearby();
+			Location l = new Location(longitude, latitude);
+			Map<Place, Location> placeLocations = mapInfoService.findPlacesNearby(l);
 			
 			Gson gson = new Gson();
 			return ok(gson.toJson(placeLocations));

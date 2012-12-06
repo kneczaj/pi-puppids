@@ -1,5 +1,5 @@
 package services.api;
 
-public interface ProfileService {
+public interface ProfileService extends Service {
 
 }

@@ -2,12 +2,14 @@ package services.impl;
 
 import java.util.Date;
 
-import models.Location;
-import models.Player;
-import models.PlayerLocation;
 import services.api.LocationTrackingService;
 import services.api.error.LocationTrackingServiceException;
 
+import models.Location;
+import models.Player;
+import models.PlayerLocation;
+
+import com.google.inject.Inject;
 import communication.ClientPushActor;
 
 import daos.PlayerLocationDAO;
@@ -19,7 +21,8 @@ import daos.PlayerLocationDAO;
  */
 public class LocationTrackingServiceImpl implements LocationTrackingService {
 
-	private static PlayerLocationDAO locationDAO = new PlayerLocationDAO();
+	@Inject
+	private static PlayerLocationDAO locationDAO;
 
 	@Override
 	public void updatePlayerLocation(Player player, Location location,

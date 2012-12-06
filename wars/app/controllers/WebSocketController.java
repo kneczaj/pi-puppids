@@ -4,16 +4,19 @@ import models.Player;
 
 import org.codehaus.jackson.JsonNode;
 
-import communication.ClientPushActor;
-import daos.PlayerDAO;
-
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.WebSocket;
 
+import com.google.inject.Inject;
+import communication.ClientPushActor;
+
+import daos.PlayerDAO;
+
 public class WebSocketController extends Controller {
 	
-	private static PlayerDAO playerDAO = new PlayerDAO();
+	@Inject
+	private static PlayerDAO playerDAO;
 
 	public static WebSocket<JsonNode> connect() {
 		final Player samplePlayer = playerDAO.findOne("username", "sepp");
