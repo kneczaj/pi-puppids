@@ -22,7 +22,7 @@ object ApplicationBuild extends Build {
     		resolvers += "LeoDagDag repository" at "http://leodagdag.github.com/repository/",
             resolvers += "Morphia repository" at "http://morphia.googlecode.com/svn/mavenrepo/", 
     		resolvers += "MongoDb Java Driver Repository" at "http://repo1.maven.org/maven2/org/mongodb/mongo-java-driver/",
-            resolvers += "SecureSocial Repository" at "http://securesocial.ws/repository/releases/", 
+            resolvers += Resolver.url("SecureSocial Repository", url("http://securesocial.ws/repository/releases/"))(Resolver.ivyStylePatterns), 
             checksums := Nil
     )
 
