@@ -34,14 +34,7 @@ a:hover {
 }
 
 /* line 39, ../sass/darkstrap.scss */
-.breadcrumb, .well, .accordion-group, .accordion-inner, input[type="text"], 
-input[type="password"], input[type="datetime"], 
-input[type="datetime-local"], input[type="date"], 
-input[type="month"], input[type="time"], 
-input[type="week"], input[type="number"], 
-input[type="email"], input[type="url"], 
-input[type="search"], input[type="tel"], 
-input[type="color"], .uneditable-input {
+.breadcrumb, .well, .accordion-group, .accordion-inner {
   border: 0;
 }
 
@@ -209,10 +202,30 @@ label {
 input,
 input[type="file"],
 select,
-textarea {
+textarea, input[type="text"], 
+input[type="password"], input[type="datetime"], 
+input[type="datetime-local"], input[type="date"], 
+input[type="month"], input[type="time"], 
+input[type="week"], input[type="number"], 
+input[type="email"], input[type="url"], 
+input[type="search"], input[type="tel"], 
+input[type="color"], .uneditable-input {
   color: white;
   border-color: #111111;
 }
+
+textarea:focus, input[type="text"]:focus, 
+input[type="password"]:focus, input[type="datetime"]:focus, 
+input[type="datetime-local"]:focus, input[type="date"]:focus, 
+input[type="month"]:focus, input[type="time"]:focus, 
+input[type="week"]:focus, input[type="number"]:focus, 
+input[type="email"]:focus, input[type="url"]:focus, 
+input[type="search"]:focus, input[type="tel"]:focus, 
+input[type="color"]:focus, .uneditable-input:focus {
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px #faa732;
+	border-color: #faa732;
+}
+
 
 /* line 160, ../sass/darkstrap.scss */
 .search-query {
