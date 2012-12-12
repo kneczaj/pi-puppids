@@ -14,8 +14,6 @@ import securesocial.core.java.Token;
 import securesocial.core.java.UserId;
 
 import com.google.code.morphia.Morphia;
-import com.google.code.morphia.logging.MorphiaLoggerFactory;
-import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
 import com.mongodb.Mongo;
 
 import daos.AccessTokenDAO;
@@ -34,8 +32,7 @@ public class UserServicePlugin extends BaseUserService {
 
 	public UserServicePlugin(Application application) {
 		super(application);
-		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
-		Logger.info("Loading plugin");
+		Logger.info("Loading UserServicePlugin");
 		
 		try {
 			Mongo mongo = new Mongo();
@@ -44,8 +41,7 @@ public class UserServicePlugin extends BaseUserService {
 			playerDAO = new PlayerDAO(mongo, morphia);
 			accessTokenDAO = new AccessTokenDAO(mongo, morphia);
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.error("Could not instantiate DAOs necessary for the authentication");
 		}
 	}
 
