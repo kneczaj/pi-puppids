@@ -5,6 +5,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import views.html.index;
+import views.html.profile;
 
 import com.google.inject.Inject;
 
@@ -27,6 +28,13 @@ public class Application extends Controller {
 		
 		samplePlayer = playerDAO.findOne("username", "sepp");
 		return ok(index.render(samplePlayer));
+	}
+	
+	@SecureSocial.SecuredAction
+	public static Result profile() {
+		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
+		Player player = playerDAO.findOne("email", user.getEmail());
+		return ok(profile.render(player));
 	}
 
 }
