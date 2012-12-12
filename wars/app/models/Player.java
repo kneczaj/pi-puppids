@@ -12,18 +12,19 @@ import securesocial.core.java.UserId;
 import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import com.google.common.base.Objects;
 
 @Entity("players")
 public class Player {
 
 	@Id
-	private ObjectId id; 
+	private ObjectId id;
 	private String username;
 	private String passwordHash;
 	private String firstname;
 	private String name;
 	private String email;
-	
+
 	@Embedded
 	private Photo avatar;
 	private String homeTown;
@@ -33,7 +34,7 @@ public class Player {
 	private Integer score;
 	private String authenticationProvider;
 	private String secureSocialIdentifier;
-	
+
 	public ObjectId getId() {
 		return id;
 	}
@@ -159,28 +160,17 @@ public class Player {
 		userId.setId(secureSocialIdentifier);
 		userId.setProvider(authenticationProvider);
 		su.setId(userId);
-		
+
 		return su;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Player[");
-		sb.append("id: ");
-		sb.append(id);
-		sb.append("username: ");
-		sb.append(username);
-		sb.append(", homeTown: ");
-		sb.append(homeTown);
-		sb.append(", minStrength: ");
-		sb.append(minStrength);
-		sb.append(", maxStrength: ");
-		sb.append(maxStrength);
-		sb.append(", score: ");
-		sb.append(score);
-		sb.append("]");
-		return sb.toString();
+		return Objects.toStringHelper(this.getClass())
+				.add("id", id)
+				.add("email", email)
+				.add("username", username)
+				.add("homeTown", homeTown)
+				.add("score", score).toString();
 	}
-	
 }

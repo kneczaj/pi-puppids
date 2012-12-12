@@ -114,9 +114,11 @@ public class AccessToken {
 
 	@Override
 	public String toString() {
-		return Objects.toStringHelper(this.getClass()).add("player", player)
+		return Objects.toStringHelper(this.getClass())
+				.add("player", player)
 				.add("creationTime", creationTime)
-				.add("expirationTime", expirationTime).add("signUp", signUp)
+				.add("expirationTime", expirationTime)
+				.add("signUp", signUp)
 				.add("email", email)
 				.add("uuid", uuid).toString();
 	}
