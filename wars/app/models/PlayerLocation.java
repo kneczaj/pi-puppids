@@ -7,26 +7,27 @@ import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
+import com.google.common.base.Objects;
 
 @Entity("player_locations")
 public class PlayerLocation {
 
 	@Id
-	private ObjectId id; 
+	private ObjectId id;
 	private Double latitude;
 	private Double longitude;
 	private Date timestamp;
-	
+
 	/**
 	 * The uncertainty of the location measurement in meters.
 	 */
 	private Integer uncertainty;
-	
+
 	/**
 	 * The traveling speed in meters per second.
 	 */
 	private Integer speed;
-	
+
 	@Reference
 	private Player player;
 
@@ -77,7 +78,7 @@ public class PlayerLocation {
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
-	
+
 	public void setId(ObjectId id) {
 		this.id = id;
 	}
@@ -85,5 +86,12 @@ public class PlayerLocation {
 	public ObjectId getId() {
 		return id;
 	}
-	
+
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this.getClass())
+				.add("latitude", latitude).add("longitude", longitude)
+				.add("player", player.toString()).toString();
+	}
+
 }

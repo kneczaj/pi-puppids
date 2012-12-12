@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index()
-GET		/updateLocation				controllers.LocationController.updateLocation(playerId, lat, lng, uncertainty, speed, timestamp)
+GET		/updateLocation				controllers.LocationController.updateLocation(lat, lng, uncertainty, speed, timestamp)
 GET     /websocket/connect          controllers.WebSocketController.connect()
 
 # Player profile

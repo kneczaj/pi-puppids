@@ -14,16 +14,18 @@ import securesocial.core.java.Token;
 import securesocial.core.java.UserId;
 
 import com.google.code.morphia.Morphia;
+import com.google.code.morphia.logging.MorphiaLoggerFactory;
+import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
 import com.mongodb.Mongo;
 
 import daos.AccessTokenDAO;
 import daos.PlayerDAO;
 
 /**
- * A Sample In Memory user service in Java
+ * Implementation of a UserServicePlugin needed for SecureSocial
+ * Stores things directly with the playerDAO.
  * 
- * Note: This is NOT suitable for a production environment and is provided only
- * as a guide. A real implementation would persist things in a database
+ * @author markus
  */
 public class UserServicePlugin extends BaseUserService {
 
@@ -32,6 +34,9 @@ public class UserServicePlugin extends BaseUserService {
 
 	public UserServicePlugin(Application application) {
 		super(application);
+		MorphiaLoggerFactory.reset();
+		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
+
 		Logger.info("Loading UserServicePlugin");
 		
 		try {
@@ -55,7 +60,11 @@ public class UserServicePlugin extends BaseUserService {
 		p.setName(user.getLastName());
 		p.setPasswordHash(user.getPasswordInfo().getPassword());
 		p.setSecureSocialIdentifier(user.getId().getId());
-		playerDAO.save(p);
+		
+		Player load = playerDAO.findOne("email", user.getEmail());
+		if (load == null) {
+			playerDAO.save(p);
+		}
 	}
 
 	@Override
@@ -90,7 +99,6 @@ public class UserServicePlugin extends BaseUserService {
 		PasswordInfo pwInfo = new PasswordInfo();
 		pwInfo.setPassword(p.getPasswordHash());
 		s.setPasswordInfo(pwInfo);
-		Logger.debug("end of find");
 
 		return s;
 	}
