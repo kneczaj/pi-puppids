@@ -2,12 +2,11 @@ package services.impl;
 
 import java.util.Date;
 
-import services.api.LocationTrackingService;
-import services.api.error.LocationTrackingServiceException;
-
 import models.Location;
 import models.Player;
 import models.PlayerLocation;
+import services.api.LocationTrackingService;
+import services.api.error.LocationTrackingServiceException;
 
 import com.google.inject.Inject;
 import communication.ClientPushActor;
