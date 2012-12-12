@@ -29,14 +29,14 @@
 		setLocationWatcher();
 	
 		$(window).resize(function() {
-			var h = $(window).height(), offsetTop = 110;
+			var h = $(window).height(), offsetTop = 90;
 			$('#map_canvas').css('height', (h - offsetTop));
 		}).resize();
 	});
 </script>
 
 <div class="row-fluid">
-	<div class="span3">
+	<div class="span4">
 		<div class="well sidebar-nav">
 
 			<div class="accordion" id="accordion2">
@@ -124,7 +124,7 @@
 		<!--/sidebar-nav -->
 	</div>
 	<!--/span-->
-	<div class="span9">
+	<div class="span8">
 		<div id="map_canvas"></div>
 	</div>
 	<!--/span-->
