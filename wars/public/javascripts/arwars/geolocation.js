@@ -55,7 +55,6 @@ function positionChanged(location) {
 	currentLocationMarker.setMap(map);
 
 	var serializedData = {
-		playerId : playerId,
 		lat : lat,
 		lng : lng,
 		uncertainty : accuracy,
