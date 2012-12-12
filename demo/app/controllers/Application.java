@@ -13,9 +13,9 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -25,17 +25,16 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
 import views.html.loading;
-
-import com.google.code.morphia.Datastore;
-import com.google.code.morphia.Morphia;
-import com.mongodb.Mongo;
-
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.actor.UntypedActorFactory;
 import akka.routing.RoundRobinRouter;
+
+import com.google.code.morphia.Datastore;
+import com.google.code.morphia.Morphia;
+import com.mongodb.Mongo;
 
 public class Application extends Controller {
 
@@ -66,7 +65,7 @@ public class Application extends Controller {
 		List<Photo> photos = getDatastore().find(Photo.class).asList();
 		return ok(index.render(photos));
 	}
-
+	
 	/**
 	 * Returns the raw image for a given photo id (so this URL can be used in
 	 * the img-tag)
