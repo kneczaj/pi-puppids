@@ -18,6 +18,7 @@ public class Place {
 	private Double lng;
 	private PlaceType type;
 	private Integer amount;
+	private ResourceType resource;
 	private List<Player> conqueredBy = Lists.newArrayList();
 	
 	public ObjectId getId() {
@@ -60,6 +61,14 @@ public class Place {
 		this.amount = amount;
 	}
 	
+	public ResourceType getResource() {
+		return resource;
+	}
+
+	public void setResource(ResourceType resource) {
+		this.resource = resource;
+	}
+
 	public List<Player> getConqueredBy() {
 		return conqueredBy;
 	}

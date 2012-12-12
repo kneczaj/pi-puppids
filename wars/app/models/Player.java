@@ -1,6 +1,7 @@
 package models;
 
 import java.util.Date;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 
@@ -33,6 +34,7 @@ public class Player {
 	private Integer score;
 	private String authenticationProvider;
 	private String secureSocialIdentifier;
+	private List<ResourceDepot> resourceDepots;
 	
 	public ObjectId getId() {
 		return id;
@@ -144,6 +146,14 @@ public class Player {
 
 	public void setSecureSocialIdentifier(String secureSocialIdentifier) {
 		this.secureSocialIdentifier = secureSocialIdentifier;
+	}
+
+	public List<ResourceDepot> getResourceDepots() {
+		return resourceDepots;
+	}
+
+	public void setResourceDepots(List<ResourceDepot> resourceDepots) {
+		this.resourceDepots = resourceDepots;
 	}
 
 	public SocialUser toSocialUser() {
