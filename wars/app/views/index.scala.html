@@ -29,7 +29,17 @@
 		setLocationWatcher();
 	
 		$(window).resize(function() {
-			var h = $(window).height(), offsetTop = 90;
+			if ($(this).width() < 768) {
+				$('#map_canvas').appendTo('#map_container_mobile');
+				var offsetTop = 180;
+				$('#map').addClass('in');
+				$('#units').removeClass('in');
+			} else {
+				$('#map_canvas').appendTo('#map_container_desktop');
+				var offsetTop = 130;
+				$('#units').addClass('in');
+			}
+			var h = $(window).height();
 			$('#map_canvas').css('height', (h - offsetTop));
 		}).resize();
 	});
@@ -45,7 +55,7 @@
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#map"> Map </a>
 					</div>
 					<div id="map" class="accordion-body collapse">
-						<div class="accordion-inner">
+						<div id="map_container_mobile" class="accordion-inner">
 							<div id="map_canvas"></div>
 						</div>
 					</div>
@@ -127,8 +137,7 @@
 		<!--/sidebar-nav -->
 	</div>
 	<!--/span-->
-	<div class="span8 hidden-phone">
-		<div id="map_canvas"></div>
+	<div id="map_container_desktop" class="span8 hidden-phone">
 	</div>
 	<!--/span-->
 </div>
