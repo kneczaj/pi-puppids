@@ -25,9 +25,12 @@ public class MapInfoController extends Controller {
 	@Inject
 	private static MapInfoService mapInfoService;
 	
-	public static Result playersNearby(Double longitude, Double latitude) {
+	public static Result playersNearby(String latitude, String longitude) {
+		Double lng = Double.valueOf(longitude);
+		Double lat = Double.valueOf(latitude);
+		
 		try {
-			Location l = new Location(longitude, latitude);
+			Location l = new Location(lng, lat);
 			Map<Player, Location> playerLocations = mapInfoService.findPlayersNearby(l);
 			
 			Gson gson = new Gson();
@@ -39,9 +42,12 @@ public class MapInfoController extends Controller {
 		}
 	}
 	
-	public static Result placesNearby(Double longitude, Double latitude) {
+	public static Result placesNearby(String latitude, String longitude) {
+		Double lng = Double.valueOf(longitude);
+		Double lat = Double.valueOf(latitude);
+		
 		try {
-			Location l = new Location(longitude, latitude);
+			Location l = new Location(lng, lat);
 			Map<Place, Location> placeLocations = mapInfoService.findPlacesNearby(l);
 			
 			Gson gson = new Gson();
