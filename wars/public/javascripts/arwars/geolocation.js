@@ -38,6 +38,23 @@ function errorCallback(error) {
 
 var currentLocationMarker;
 
+var loadPlayersNearby = function(lat, lng) {
+	var d = {lat: lat, lng: lng};
+	
+	$.ajax({
+		url : "/mapinfo/playersNearby",
+		type : "get",
+		data : d,
+		success : function(response, textStatus, jqXHR) {
+			console.log(response);
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			console.log("The following error occured: " + textStatus,
+					errorThrown);
+		}
+	});
+}
+
 function positionChanged(location) {
 	var lat = location.coords.latitude;
 	var lng = location.coords.longitude;
@@ -48,11 +65,7 @@ function positionChanged(location) {
 			"Time: " + time + " Lat: " + lat + " Long: " + lng + " Accuracy: "
 					+ accuracy + " meters<br />");
 	
-	currentLocationMarker = new google.maps.Marker({
-	    position: new google.maps.LatLng(lat, lng),
-	    draggable: false
-	});
-	currentLocationMarker.setMap(map);
+	setPlayerMarker(playerId, lat, lng);
 
 	var serializedData = {
 		lat : lat,
@@ -74,4 +87,6 @@ function positionChanged(location) {
 					errorThrown);
 		}
 	});
+	
+	loadPlayersNearby(lat, lng);
 }
