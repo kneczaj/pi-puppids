@@ -4,7 +4,7 @@ import java.util.Map;
 
 import models.Location;
 import models.Place;
-import models.Player;
+import models.PlayerLocation;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -31,7 +31,7 @@ public class MapInfoController extends Controller {
 		
 		try {
 			Location l = new Location(lng, lat);
-			Map<Player, Location> playerLocations = mapInfoService.findPlayersNearby(l);
+			Map<String, PlayerLocation> playerLocations = mapInfoService.findPlayersNearby(l);
 			
 			Gson gson = new Gson();
 			return ok(gson.toJson(playerLocations));

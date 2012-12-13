@@ -101,7 +101,8 @@ public class ClientPushActor extends UntypedActor {
 				event.put("latitude", location.getLatitude().toString());
 				event.put("speed", location.getSpeed());
 				event.put("accuracy", location.getUncertainty());
-
+				Logger.info(event.toString());
+				
 				channel.write(event);
 			}
 		} else if (message instanceof UnregistrationMessage) {

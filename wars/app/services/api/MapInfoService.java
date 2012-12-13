@@ -2,12 +2,10 @@ package services.api;
 
 import java.util.Map;
 
-import services.api.error.MapInfoServiceException;
-
-
 import models.Location;
 import models.Place;
-import models.Player;
+import models.PlayerLocation;
+import services.api.error.MapInfoServiceException;
 
 /**
  * MapInfoService: - find players nearby - find places nearby
@@ -22,7 +20,7 @@ public interface MapInfoService extends Service {
 	 * @param location
 	 * @throws MapInfoServiceException
 	 */
-	public Map<Player, Location> findPlayersNearby(Location location)
+	public Map<String, PlayerLocation> findPlayersNearby(Location location)
 			throws MapInfoServiceException;
 
 	/**
