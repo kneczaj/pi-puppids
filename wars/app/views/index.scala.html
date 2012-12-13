@@ -2,11 +2,13 @@
 @main("ARWars") {
 
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&sensor=false"></script>
-<script src="@routes.Assets.at("javascripts/arwars/geolocation.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/arwars/geolocation.js")" type="text/javascript" />
 
 <script type="text/javascript">
 	var playerId = "@player.getId().toString()";
 	var map;
+	
+	var playerLocationMap = {}
 
 	$(document).ready(function() {
 		var mapOptions = {
@@ -18,11 +20,17 @@
 				mapOptions);
 	
 		var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
-		var socket = new WS("@routes.WebSocketController.connect().webSocketURL(request)");
+		var socket = new WS("@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)");
 	
 		var receiveEvent = function(event) {
-			console.log("received a message over websockets");
-			console.log(event);
+			var lat = event.data.latitude;
+			var lng = event.data.longitude;
+			
+			var locationMarker = new google.maps.Marker({
+			    position: new google.maps.LatLng(lat, lng),
+			    draggable: false
+			});
+			locationMarker.setMap(map);
 		}
 		socket.onmessage = receiveEvent
 	
