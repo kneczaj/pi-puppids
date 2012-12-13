@@ -45,8 +45,11 @@ var loadPlayersNearby = function(lat, lng) {
 		url : "/mapinfo/playersNearby",
 		type : "get",
 		data : d,
+		dataType : "json",
 		success : function(response, textStatus, jqXHR) {
-			console.log(response);
+			$.each(response, function(key, val) {
+				setPlayerMarker(key, val.latitude, val.longitude, val.uncertainty);
+			});
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 			console.log("The following error occured: " + textStatus,
@@ -61,11 +64,8 @@ function positionChanged(location) {
 	var accuracy = location.coords.accuracy;
 	var time = new Date(location.timestamp);
 	var speed = location.coords.speed;
-	$("#locations").append(
-			"Time: " + time + " Lat: " + lat + " Long: " + lng + " Accuracy: "
-					+ accuracy + " meters<br />");
 	
-	setPlayerMarker(playerId, lat, lng);
+	setPlayerMarker(playerId, lat, lng, accuracy);
 
 	var serializedData = {
 		lat : lat,

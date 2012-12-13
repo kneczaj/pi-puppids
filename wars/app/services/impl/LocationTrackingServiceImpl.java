@@ -31,7 +31,7 @@ public class LocationTrackingServiceImpl implements LocationTrackingService {
 		PlayerLocation pl = new PlayerLocation();
 		pl.setPlayer(player);
 		pl.setLatitude(location.getLatitude());
-		pl.setLongitude(location.getLatitude());
+		pl.setLongitude(location.getLongitude());
 		pl.setUncertainty(accuracy);
 		pl.setSpeed(speed);
 		pl.setTimestamp(timeStamp);
