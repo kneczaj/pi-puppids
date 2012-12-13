@@ -7,6 +7,7 @@ import org.bson.types.ObjectId;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @Entity("places")
@@ -76,26 +77,18 @@ public class Place {
 	public void setConqueredBy(List<Player> conqueredBy) {
 		this.conqueredBy = conqueredBy;
 	}
-
+	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Place[");
-		sb.append("id: ");
-		sb.append(id);
-		sb.append(", lat: ");
-		sb.append(lat);
-		sb.append(", lng: ");
-		sb.append(lng);
-		sb.append(", type: ");
-		sb.append(type);
-		sb.append(", amount: ");
-		sb.append(amount);
-		sb.append(", conqueredBy: ");
 		Joiner joiner = Joiner.on(", ").skipNulls();
-		sb.append(joiner.join(conqueredBy));
-		sb.append("]");
-		return sb.toString();
+		return Objects.toStringHelper(this.getClass())
+				.add("id", id)
+				.add("lat", lat)
+				.add("lng", lng)
+				.add("type", type)
+				.add("amount", amount)
+				.add("conqueredBy", joiner.join(conqueredBy))
+				.toString();
 	}
 	
 }

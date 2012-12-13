@@ -2,6 +2,7 @@ package controllers;
 
 import models.Player;
 
+import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonNode;
 
 import play.Logger;
@@ -18,8 +19,8 @@ public class WebSocketController extends Controller {
 	@Inject
 	private static PlayerDAO playerDAO;
 
-	public static WebSocket<JsonNode> connect() {
-		final Player samplePlayer = playerDAO.findOne("username", "sepp");
+	public static WebSocket<JsonNode> connect(String playerId) {
+		final Player player = playerDAO.get(new ObjectId(playerId));
 		
 		WebSocket<JsonNode> webSocket = new WebSocket<JsonNode>() {
 			// Called when the Websocket Handshake is done.
@@ -27,9 +28,9 @@ public class WebSocketController extends Controller {
 					WebSocket.Out<JsonNode> out) {
 				try {
 					Logger.info("WebSocket connection established");
-					ClientPushActor.register(samplePlayer.getId().toString(), in, out);
+					ClientPushActor.register(player.getId().toString(), in, out);
 				} catch (Exception e) {
-					Logger.warn("Could not establish WebSocket connection");
+					Logger.warn("Could not establish WebSocket connection", e);
 				}
 			}
 		};

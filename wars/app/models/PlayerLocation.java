@@ -90,7 +90,8 @@ public class PlayerLocation {
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this.getClass())
-				.add("latitude", latitude).add("longitude", longitude)
+				.add("latitude", latitude)
+				.add("longitude", longitude)
 				.add("player", player.toString()).toString();
 	}
 

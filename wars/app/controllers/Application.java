@@ -28,7 +28,6 @@ public class Application extends Controller {
 		Player player = playerDAO.findOne("email", user.getEmail());
 		PlayerLocation playerLocation = playerLocationDAO.findLatestLocation(player);
 		
-		
 		return ok(index.render(player, playerLocation));
 	}
 	
