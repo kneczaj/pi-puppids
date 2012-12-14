@@ -13,6 +13,7 @@ import securesocial.core.java.UserId;
 import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
 
 @Entity("players")
@@ -36,6 +37,9 @@ public class Player {
 	private String authenticationProvider;
 	private String secureSocialIdentifier;
 	private List<ResourceDepot> resourceDepots;
+	
+	@Reference
+	private Team team;
 
 	public ObjectId getId() {
 		return id;
@@ -156,6 +160,14 @@ public class Player {
 	public void setResourceDepots(List<ResourceDepot> resourceDepots) {
 		this.resourceDepots = resourceDepots;
 	}
+	
+	public Team getTeam() {
+		return team;
+	}
+
+	public void setTeam(Team team) {
+		this.team = team;
+	}
 
 	public SocialUser toSocialUser() {
 		SocialUser su = new SocialUser();
@@ -181,6 +193,7 @@ public class Player {
 				.add("email", email)
 				.add("username", username)
 				.add("homeTown", homeTown)
-				.add("score", score).toString();
+				.add("score", score)
+				.add("team", team).toString();
 	}
 }

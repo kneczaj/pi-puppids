@@ -12,11 +12,12 @@ import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.mongodb.Mongo;
 
-
 import daos.AccessTokenDAO;
 import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
+import daos.TeamDAO;
+import daos.UnitDAO;
 
 /**
  * Configures Google Guice to inject the proper implementations for certain interfaces.
@@ -35,6 +36,8 @@ public class Dependencies implements Module {
 		binder.bind(Mongo.class);
 		
 		binder.bind(PlayerDAO.class).in(Singleton.class);
+		binder.bind(TeamDAO.class).in(Singleton.class);
+		binder.bind(UnitDAO.class).in(Singleton.class);
 		binder.bind(AccessTokenDAO.class).in(Singleton.class);
 		binder.bind(PlaceDAO.class).in(Singleton.class);
 		binder.bind(PlayerLocationDAO.class).in(Singleton.class);
