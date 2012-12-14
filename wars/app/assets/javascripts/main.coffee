@@ -7,8 +7,6 @@ class ArWars.CustomWebSocket
 
 	receiveEvent: (event) => 
 		data = JSON.parse(event.data)
-		console.log "received sth. over websockets"
-		console.log data
 		@playerPositionManager.push2Map data.id, data.latitude, data.longitude, data.accuracy
 
 	establishWebSocket: (url) ->
@@ -19,10 +17,11 @@ class ArWars.PlayerPositionManager
 	
 	@markers: []
 	@circles: []
+	@players: []
 	defaultLocationAPIOptions = 
 		enableHighAccuracy : true
 		timeout : 3000
-		maximumAge : 200
+		maximumAge : 500
 	@locationWatchHandle: null
 	@map: null
 	@mapNode: null
@@ -38,6 +37,7 @@ class ArWars.PlayerPositionManager
 		@map = new google.maps.Map @mapNode, mapOptions
 		@markers = []
 		@circles = []
+		@players = []
 		@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, defaultLocationAPIOptions
 
 	###
@@ -58,7 +58,9 @@ class ArWars.PlayerPositionManager
 			data : d
 			dataType : "json"
 			success : (response, textStatus, jqXHR) =>
-				@push2Map key, response.key.latitude, response.key.longitude, response.key.uncertainty for key in response
+				for key, value of response
+					@players[key] = value.player
+					@push2Map key, value.latitude, value.longitude, value.uncertainty
 			
 			error : (jqXHR, textStatus, errorThrown) ->
 				console.log textStatus
@@ -105,21 +107,26 @@ class ArWars.PlayerPositionManager
 	Pushes the location of a player to the Google Map
 	###
 	push2Map: (pId, latitude, longitude, uncertainty) ->
+		console.log "playerId: #{pId}, lat: #{latitude}, lng: #{longitude}, uncertainty: #{uncertainty}"
 		pos = new google.maps.LatLng latitude, longitude
 		markerOpts = 
 			position: pos
 			draggable: false
 			icon: '/assets/images/player.png'
 
+		if @markers[pId]
+			@markers[pId].setMap null
+
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map
 		@markers[pId] = marker
-		
-		console.log @infoPanel
+
 		google.maps.event.addListener marker, 'click', () =>
+			player = @players[pId].email
+			$("h4", @infoPanel).text "Player #{player}"
+
 			if @selectedPlayer
 				props = right: '-320px'
-				console.log @infoPanel
 				@infoPanel.animate props
 				@selectedPlayer = null
 			else
@@ -136,9 +143,11 @@ class ArWars.PlayerPositionManager
 			fillOpacity: 0.1
 			radius: u
 			strokeColor: "RoyalBlue"
-			strokeOpacity: 0.3 
-			strokeWidth: 0
-		
+			strokeWidth: 0.1
+
+		if @circles[pId]
+			@circles[pId].setMap null
+
 		circle = new google.maps.Circle circleOpts
 		circle.setMap @map
 		@circles[pId] = circle

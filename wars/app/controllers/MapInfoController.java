@@ -34,7 +34,8 @@ public class MapInfoController extends Controller {
 			Map<String, PlayerLocation> playerLocations = mapInfoService.findPlayersNearby(l);
 			
 			Gson gson = new Gson();
-			return ok(gson.toJson(playerLocations));
+			String jsonString = gson.toJson(playerLocations);
+			return ok(jsonString);
 		} catch (MapInfoServiceException e) {
 			Logger.warn("Could not find nearby players", e);
 			
