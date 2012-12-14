@@ -6,13 +6,13 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import securesocial.core.java.SocialUser;
-import views.html.index;
-import views.html.profile;
 
 import com.google.inject.Inject;
 
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
+import views.html.index;
+import views.html.profile;
 
 public class Application extends Controller {
 

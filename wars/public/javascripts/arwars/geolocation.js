@@ -24,16 +24,14 @@ function setLocationWatcher(options) {
 }
 
 function errorCallback(error) {
-	if (error.code == 1) { // permission was denied by user
-		console.log("User denied geolocation");
-	} else if (error.code == 2) { // position unavailable
-		console.log("position unavailable");
-	} else if (error.code == 3) { // timeout in calculating / finding the
-									// position
-		console.log("timeout while calculating position");
-	} else {
-		console.log("unknown error");
-	}
+	if error.code == 1 // permission was denied by user
+		console.log "User denied geolocation"
+	else if error.code == 2 // position unavailable
+		console.log "position unavailable"
+	else if error.code == 3 // timeout in calculating / finding the position
+		console.log "timeout while calculating position"
+	else
+		console.log "unknown error"
 }
 
 var currentLocationMarker;
@@ -48,7 +46,7 @@ var loadPlayersNearby = function(lat, lng) {
 		dataType : "json",
 		success : function(response, textStatus, jqXHR) {
 			$.each(response, function(key, val) {
-				setPlayerMarker(key, val.latitude, val.longitude, val.uncertainty);
+				playerPositionManager.push(key, val.latitude, val.longitude, val.uncertainty);
 			});
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
@@ -65,7 +63,7 @@ function positionChanged(location) {
 	var time = new Date(location.timestamp);
 	var speed = location.coords.speed;
 	
-	setPlayerMarker(playerId, lat, lng, accuracy);
+	playerPositionManager.push(playerId, lat, lng, accuracy);
 
 	var serializedData = {
 		lat : lat,

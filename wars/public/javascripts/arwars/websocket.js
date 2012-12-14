@@ -9,7 +9,7 @@ function receiveEvent(event) {
 	console.log("received sth. over websockets");
 	console.log(data);
 
-	setPlayerMarker(playerId, lat, lng, data.accuracy);
+	playerPositionManager.push(playerId, lat, lng, data.accuracy);
 }
 
 function establishWebSocket(url) {
