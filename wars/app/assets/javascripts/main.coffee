@@ -26,12 +26,15 @@ class ArWars.PlayerPositionManager
 	@locationWatchHandle: null
 	@map: null
 	@mapNode: null
+	@selectedPlayer: null
+	@infoPanel: null
+
 	mapOptions = 
 		center : new google.maps.LatLng 48.133, 11.566
 		zoom : 11
 		mapTypeId : google.maps.MapTypeId.ROADMAP
 
-	constructor: (@mapNode) ->
+	constructor: (@mapNode, @infoPanel) ->
 		@map = new google.maps.Map @mapNode, mapOptions
 		@markers = []
 		@circles = []
@@ -106,11 +109,24 @@ class ArWars.PlayerPositionManager
 		markerOpts = 
 			position: pos
 			draggable: false
+			icon: '/assets/images/player.png'
 
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map
 		@markers[pId] = marker
 		
+		console.log @infoPanel
+		google.maps.event.addListener marker, 'click', () =>
+			if @selectedPlayer
+				props = right: '-320px'
+				console.log @infoPanel
+				@infoPanel.animate props
+				@selectedPlayer = null
+			else
+				props = right: '0px'
+				@infoPanel.animate props
+				@selectedPlayer = marker
+
 		u = if uncertainty then uncertainty else 1000
 
 		circleOpts = 
@@ -121,13 +137,13 @@ class ArWars.PlayerPositionManager
 			radius: u
 			strokeColor: "RoyalBlue"
 			strokeOpacity: 0.3 
-			strokeWidth: 1
+			strokeWidth: 0
 		
 		circle = new google.maps.Circle circleOpts
 		circle.setMap @map
 		@circles[pId] = circle
 
 $(document).ready ->
-	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0]
+	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails')
 	webSocket = new window.ArWars.CustomWebSocket playerPositionManager
 	webSocket.establishWebSocket window.ArWars.webSocketURL
