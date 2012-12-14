@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
 
 @Entity("units")
@@ -15,6 +16,9 @@ public class Unit {
 	private Integer minStrength;
 	private Integer maxStrength;
 	private Double chanceOfFailure;
+	
+	@Reference 
+	private Player player;
 
 	public ObjectId getId() {
 		return id;
@@ -55,6 +59,14 @@ public class Unit {
 	public void setChanceOfFailure(Double chanceOfFailure) {
 		this.chanceOfFailure = chanceOfFailure;
 	}
+	
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
 
 	@Override
 	public String toString() {
@@ -62,6 +74,7 @@ public class Unit {
 				.add("id", id)
 				.add("name", name)
 				.add("chanceOfFailure", chanceOfFailure)
+				.add("player", player)
 				.toString();
 	}
 
