@@ -42,7 +42,7 @@ public class LocationController extends Controller {
 		
 		Location location = new Location(new Double(lng), new Double(lat));
 		Integer sp = (speed == null || speed.equals("")) ? null : new Integer(speed);
-		Integer accuracy = (uncertainty == null || uncertainty.equals("")) ? null : new Integer(uncertainty);
+		Integer accuracy = (uncertainty == null || uncertainty.equals("")) ? null : (new Double(uncertainty)).intValue();
 		Date timeStamp = new Date(new Long(timestamp));
 		
 		try {
