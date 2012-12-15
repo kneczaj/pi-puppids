@@ -20,4 +20,8 @@ public class PlaceDAO extends AbstractDAO<Place, ObjectId> {
 		super(mongo, morphia);
 	}
 	
+	public PlaceDAO(Mongo mongo, Morphia morphia) {
+		super(mongo, morphia);
+	}
+	
 }
