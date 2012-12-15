@@ -37,7 +37,7 @@ public class MapInfoController extends Controller {
 			Date youngerThan = calendar.getTime();
 
 			Map<String, PlayerLocation> playerLocations = mapInfoService
-					.findPlayersNearby(location, youngerThan);
+					.findPlayersNearby(location, null, youngerThan);
 
 			Gson gson = new Gson();
 			String jsonString = gson.toJson(playerLocations);
