@@ -26,7 +26,7 @@ body {
 }
 
 a {
-    color: #faa732;
+    color: #faa732; /* rgba(250, 167, 50, 1.0); */
 }
 
 a:hover {
