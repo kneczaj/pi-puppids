@@ -15,11 +15,13 @@ import com.google.inject.Singleton;
 import com.mongodb.Mongo;
 
 import daos.AccessTokenDAO;
+import daos.CityDAO;
 import daos.FactionDAO;
 import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
 import daos.TeamDAO;
+import daos.TeamInviteDAO;
 import daos.UnitDAO;
 
 /**
@@ -41,7 +43,9 @@ public class Dependencies implements Module {
 		
 		binder.bind(PlayerDAO.class).in(Singleton.class);
 		binder.bind(TeamDAO.class).in(Singleton.class);
+		binder.bind(TeamInviteDAO.class).in(Singleton.class);
 		binder.bind(FactionDAO.class).in(Singleton.class);
+		binder.bind(CityDAO.class).in(Singleton.class);
 		binder.bind(UnitDAO.class).in(Singleton.class);
 		binder.bind(AccessTokenDAO.class).in(Singleton.class);
 		binder.bind(PlaceDAO.class).in(Singleton.class);

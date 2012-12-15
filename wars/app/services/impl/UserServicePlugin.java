@@ -1,9 +1,13 @@
 package services.impl;
 
 import java.net.UnknownHostException;
+import java.util.Date;
 
 import models.AccessToken;
+import models.City;
+import models.Faction;
 import models.Player;
+import models.Team;
 import play.Application;
 import play.Logger;
 import securesocial.core.java.AuthenticationMethod;
@@ -12,14 +16,19 @@ import securesocial.core.java.PasswordInfo;
 import securesocial.core.java.SocialUser;
 import securesocial.core.java.Token;
 import securesocial.core.java.UserId;
+import services.api.TeamService;
 
 import com.google.code.morphia.Morphia;
 import com.google.code.morphia.logging.MorphiaLoggerFactory;
 import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
+import com.google.inject.Inject;
 import com.mongodb.Mongo;
 
 import daos.AccessTokenDAO;
+import daos.CityDAO;
+import daos.FactionDAO;
 import daos.PlayerDAO;
+import daos.TeamDAO;
 
 /**
  * Implementation of a UserServicePlugin needed for SecureSocial
@@ -31,6 +40,12 @@ public class UserServicePlugin extends BaseUserService {
 
 	private PlayerDAO playerDAO;
 	private AccessTokenDAO accessTokenDAO;
+	private TeamDAO teamDAO;
+	private FactionDAO factionDAO;
+	private CityDAO cityDAO;
+	
+	@Inject
+	private TeamService teamService;
 
 	public UserServicePlugin(Application application) {
 		super(application);
@@ -45,9 +60,53 @@ public class UserServicePlugin extends BaseUserService {
 			
 			playerDAO = new PlayerDAO(mongo, morphia);
 			accessTokenDAO = new AccessTokenDAO(mongo, morphia);
+			factionDAO = new FactionDAO(mongo, morphia);
+			cityDAO = new CityDAO(mongo, morphia);
+			teamDAO = new TeamDAO(mongo, morphia);
 		} catch (UnknownHostException e) {
 			Logger.error("Could not instantiate DAOs necessary for the authentication");
 		}
+	}
+	
+	private Faction getRedFaction() {
+		Faction load = factionDAO.findOne("name", "red");
+		if (load != null) {
+			return load;
+		}
+		
+		Faction faction = new Faction();
+		faction.setName("red");
+		faction.setScore(0);
+		factionDAO.save(faction);
+		
+		return faction;
+	}
+	
+	private City getMunich() {
+		City load = cityDAO.findOne("name", "Munich");
+		if (load != null) {
+			return load;
+		}
+		
+		City munich = new City();
+		munich.setCountry("de");
+		munich.setName("Munich");
+		munich.setLatitude(48.133333);
+		munich.setLongitude(11.566667);
+		cityDAO.save(munich);
+		
+		return munich;
+	}
+	
+	private Team createPseudoTeamForPlayer() {
+		Team t = new Team();
+		t.setCity(getMunich());
+		t.setCreatedAt(new Date());
+		t.setFaction(getRedFaction());
+		t.setName("pseudo");
+		teamDAO.save(t);
+		
+		return t;
 	}
 
 	@Override
@@ -63,6 +122,9 @@ public class UserServicePlugin extends BaseUserService {
 		
 		Player load = playerDAO.findOne("email", user.getEmail());
 		if (load == null) {
+			Team pseudoTeam = createPseudoTeamForPlayer();
+			p.setTeam(pseudoTeam);
+			
 			playerDAO.save(p);
 		}
 	}
