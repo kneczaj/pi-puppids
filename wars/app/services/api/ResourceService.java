@@ -2,6 +2,8 @@ package services.api;
 
 import java.util.Map;
 
+import daos.PlayerDAO;
+
 import services.api.error.ResourceServiceException;
 
 
@@ -47,5 +49,4 @@ public interface ResourceService extends Service {
 	 */
 	public Map<ResourceType, Integer> getResourcesOfTeam(Team team)
 			throws ResourceServiceException;
-
 }

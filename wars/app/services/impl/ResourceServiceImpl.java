@@ -1,17 +1,22 @@
 package services.impl;
 
+import java.util.List;
 import java.util.Map;
-
-import com.google.inject.Inject;
-
-import daos.PlayerDAO;
 
 import models.Place;
 import models.Player;
+import models.ResourceDepot;
 import models.ResourceType;
 import models.Team;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
+
+import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+
+import daos.PlaceDAO;
+import daos.PlayerDAO;
+import daos.ResourceDepotDAO;
 
 /**
  * Implementation of the ResourceService
@@ -23,6 +28,12 @@ public class ResourceServiceImpl implements ResourceService {
 
 	@Inject
 	private PlayerDAO playerDAO;
+
+	@Inject
+	private PlaceDAO placeDAO;
+	
+	@Inject
+	private ResourceDepotDAO resourceDepotDAO;
 	
 	/**
 	 * Get a listing of the sources which generate resources for a given player.
@@ -35,10 +46,10 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public Map<Place, ResourceType> getResourceSourcesOfPlayer(Player player)
 			throws ResourceServiceException {
-		Player load = playerDAO.findOne("email", player.getEmail());
+		Player load = playerDAO.findOne("id", player.getId());
 		
 		if (load == null)
-			throw new ResourceServiceException("Player " + player.getEmail() + " not found!");
+			throw new ResourceServiceException("Player " + player.getId() + " not found!");
 		
 		//TODO Load places from the db
 		
@@ -55,8 +66,21 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public Map<ResourceType, Integer> getResourcesOfPlayer(Player player)
 			throws ResourceServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Map<ResourceType, Integer> map = Maps.newHashMap();
+		
+		Player load = playerDAO.findOne("id", player.getId());
+		
+		if (load == null)
+			throw new ResourceServiceException("Player " + player.getId() + " not found!");
+		
+		List<ResourceDepot> depotList = load.getResourceDepots();
+		
+		for (ResourceDepot depot : depotList) {
+			map.put(depot.getResourceType(), depot.getAmount());
+		}
+		
+		return map;
 	}
 
 	/**

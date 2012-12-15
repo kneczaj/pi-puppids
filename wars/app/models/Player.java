@@ -36,7 +36,12 @@ public class Player {
 	private Integer score;
 	private String authenticationProvider;
 	private String secureSocialIdentifier;
+	
+	@Reference
 	private List<ResourceDepot> resourceDepots;
+	
+	@Reference
+	private List<Place> conquered;
 	
 	@Reference
 	private Team team;
