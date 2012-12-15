@@ -3,8 +3,10 @@ package module;
 
 import services.api.LocationTrackingService;
 import services.api.MapInfoService;
+import services.api.TeamService;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
+import services.impl.TeamServiceImpl;
 
 import com.google.code.morphia.Morphia;
 import com.google.inject.Binder;
@@ -13,6 +15,7 @@ import com.google.inject.Singleton;
 import com.mongodb.Mongo;
 
 import daos.AccessTokenDAO;
+import daos.FactionDAO;
 import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
@@ -31,12 +34,14 @@ public class Dependencies implements Module {
 		// bind service interfaces to concrete implementations
 		binder.bind(MapInfoService.class).to(MapInfoServiceImpl.class).in(Singleton.class);
 		binder.bind(LocationTrackingService.class).to(LocationTrackingServiceImpl.class).in(Singleton.class);
+		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
 	
 		binder.bind(Morphia.class);
 		binder.bind(Mongo.class);
 		
 		binder.bind(PlayerDAO.class).in(Singleton.class);
 		binder.bind(TeamDAO.class).in(Singleton.class);
+		binder.bind(FactionDAO.class).in(Singleton.class);
 		binder.bind(UnitDAO.class).in(Singleton.class);
 		binder.bind(AccessTokenDAO.class).in(Singleton.class);
 		binder.bind(PlaceDAO.class).in(Singleton.class);

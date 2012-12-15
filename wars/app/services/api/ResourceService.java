@@ -2,15 +2,11 @@ package services.api;
 
 import java.util.Map;
 
-import daos.PlayerDAO;
-
-import services.api.error.ResourceServiceException;
-
-
 import models.Place;
 import models.Player;
 import models.ResourceType;
 import models.Team;
+import services.api.error.ResourceServiceException;
 
 /**
  * ResourceService
