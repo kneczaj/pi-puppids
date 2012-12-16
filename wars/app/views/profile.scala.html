@@ -5,8 +5,8 @@
 	var playerId = "@player.getId().toString()";
 </script>
 
-<div class="row-fluid">
-	<div class="span12">
+<div class="row">
+	<div class="span7">
 		<h2>Edit profile</h2>
 		<form class="form-horizontal">
 			<div class="control-group">
@@ -45,6 +45,19 @@
 					<input type="text" id="inputBirthday" value="@player.getDateOfBirth()">
 				</div>
 			</div>
+		</form>
+	</div><!--/span-->
+		<div class="span5">
+			@if(player.getAvatar() != null) {
+				<img class="media-object" src="@player.getAvatar()">
+			} else {
+				<img class="media-object" src="@routes.Assets.at("images/profile_default.png")">
+			}
+		</div>
+</div><!--/row-->
+<div class="row">
+	<div class="span12">
+		<form class="form-horizontal">
 			<div class="control-group">
 				<div class="controls">
 					<button type="submit" class="btn">Save</button>
