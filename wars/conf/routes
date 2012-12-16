@@ -14,6 +14,10 @@ GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResour
 # Player profile
 GET     /profile                    				controllers.Application.profile()
 
+# Invite a new member
+GET		/invite						controllers.TeamController.inviteForm()
+GET		/checkEmail/:email			controllers.TeamController.canInvite(email)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               				controllers.Assets.at(path="/public", file)
 

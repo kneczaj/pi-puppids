@@ -36,6 +36,11 @@
 	margin-top: 0;
 }
 
+
+#team {
+	text-align: center;
+}
+
 #map_canvas {
   border-radius: 3px 3px 3px 3px;
 }
