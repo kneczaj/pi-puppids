@@ -35,3 +35,7 @@
 #playerDetails p {
 	margin-top: 0;
 }
+
+#map_canvas {
+  border-radius: 3px 3px 3px 3px;
+}
