@@ -46,8 +46,7 @@ public class ResourceController extends Controller {
 			Map<Place, ResourceType> resourcePlaces = resourceService.getResourceSourcesOfPlayer(p);
 			
 			Gson gson = new Gson();
-			String jsonString = gson.toJson(resourcePlaces);
-			return ok(jsonString);
+			return ok(gson.toJson(resourcePlaces.keySet()));
 		} catch (ResourceServiceException e) {
 			Logger.warn("Could not find resource sources of player", e);
 
