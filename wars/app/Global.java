@@ -17,7 +17,7 @@ public class Global extends GlobalSettings {
 	public void beforeStart(Application app) {
 		MorphiaLoggerFactory.reset();
 		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
-		
+
 		Logger.info("withUserNameSupport=" + app.configuration().getBoolean("securesocial.userpass.withUserNameSupport").toString());
 	}
 	
