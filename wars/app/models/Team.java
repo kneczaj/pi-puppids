@@ -1,6 +1,7 @@
 package models;
 
 import java.util.Date;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 
@@ -9,6 +10,7 @@ import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 @Entity("teams")
 public class Team {
@@ -27,6 +29,9 @@ public class Team {
 
 	@Reference
 	private City city;
+	
+	@Reference
+	private List<Player> players = Lists.newLinkedList();
 
 	public ObjectId getId() {
 		return id;
@@ -82,6 +87,14 @@ public class Team {
 
 	public void setCity(City city) {
 		this.city = city;
+	}
+
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(List<Player> players) {
+		this.players = players;
 	}
 
 	public String toString() {
