@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.ResourceDepotDAO;
+import daos.TeamDAO;
 
 /**
  * Implementation of the ResourceService
@@ -35,6 +36,9 @@ public class ResourceServiceImpl implements ResourceService {
 	@Inject
 	private ResourceDepotDAO resourceDepotDAO;
 	
+	@Inject
+	private TeamDAO teamDAO;
+	
 	/**
 	 * Get a listing of the sources which generate resources for a given player.
 	 * 
@@ -51,9 +55,15 @@ public class ResourceServiceImpl implements ResourceService {
 		if (load == null)
 			throw new ResourceServiceException("Player " + player.getId() + " not found!");
 		
-		//TODO Load places from the db
+		List<Place> conquered = load.getConquered();
 		
-		return null;
+		Map<Place, ResourceType> map = Maps.newHashMap();
+		
+		for (Place place : conquered) {
+			map.put(place, place.getResource());
+		}
+		
+		return map;
 	}
 
 	/**
@@ -93,8 +103,27 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public Map<ResourceType, Integer> getResourcesOfTeam(Team team)
 			throws ResourceServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Team load = teamDAO.findOne("id", team.getId());
+		List<Player> players = load.getPlayers();
+		Map<ResourceType, Integer> teamResourceMap = Maps.newHashMap();
+		
+		//initialize the map for every resource with 0
+		for (ResourceType type : ResourceType.values()) {
+			teamResourceMap.put(type, 0);
+		}
+		
+		for (Player player : players) {
+			Map<ResourceType, Integer> playerResourceMap = this.getResourcesOfPlayer(player);
+			
+			for (ResourceType key : playerResourceMap.keySet()) {
+				Integer value = teamResourceMap.get(key);
+				value += playerResourceMap.get(key);
+				teamResourceMap.put(key, value);
+			}
+		}
+		
+		return teamResourceMap;
 	}
 
 }

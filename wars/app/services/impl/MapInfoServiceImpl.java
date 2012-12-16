@@ -1,5 +1,6 @@
 package services.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,15 +31,15 @@ public class MapInfoServiceImpl implements MapInfoService {
 	private PlayerLocationDAO playerLocationDAO;
 	
 	@Override
-	public Map<String, PlayerLocation> findPlayersNearby(Location location)
+	public Map<String, PlayerLocation> findPlayersNearby(Location location, Integer searchRadius, Date youngerThan)
 			throws MapInfoServiceException {
-		// TODO: filter players that are not nearby
+		// TODO: filter players that are not nearby, consider searchRadius
 		List<Player> players = playerDAO.find().asList();
 		Map<String, PlayerLocation> mapping = Maps.newHashMap();
 		
 		for (Player p : players) {
 			PlayerLocation pl = playerLocationDAO.findLatestLocation(p);
-			if (pl == null || pl.getPlayer() == null) {
+			if (pl == null || pl.getPlayer() == null || pl.getTimestamp().before(youngerThan)) {
 				continue;
 			}
 			mapping.put(pl.getPlayer().getId().toString(), pl);
