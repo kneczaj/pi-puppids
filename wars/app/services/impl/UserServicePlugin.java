@@ -146,9 +146,11 @@ public class UserServicePlugin extends BaseUserService {
 	public SocialUser doFind(UserId userId) {
 		Logger.debug("find user by username: " + userId.getId() + ", provider: " + userId.getProvider());
 		Player p = playerDAO.findOne("username", userId.getId());
+		
 		if (p == null) {
 			return null;
 		}
+		
 		SocialUser s = new SocialUser();
 		s.setAuthMethod(AuthenticationMethod.valueOf(p
 				.getAuthenticationProvider()));

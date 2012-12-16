@@ -79,12 +79,23 @@ class ArWars.PlayerPositionManager
 	onPositionChange: (location) =>
 		coords = location.coords
 		@push2Map window.ArWars.playerId, coords.latitude, coords.longitude, coords.accuracy
+
+		if not coords.latitude?
+			return
+
+		currentDate = new Date
+		currentTimestamp = currentDate.getTime()
+		timestamp = location.timestamp
+
+		if timestamp.toString().length > currentDate.getTime().toString().length
+			timestamp = Math.floor(timestamp / 1000)
+
 		serializedData = 
 			lat : coords.latitude
 			lng : coords.longitude
 			uncertainty : coords.accuracy
 			speed : coords.speed
-			timestamp : location.timestamp
+			timestamp : timestamp
 
 		$.ajax
 			url : "/updateLocation"
