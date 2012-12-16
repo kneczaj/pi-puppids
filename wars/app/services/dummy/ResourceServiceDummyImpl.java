@@ -1,6 +1,5 @@
 package services.dummy;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -109,26 +108,13 @@ public class ResourceServiceDummyImpl implements ResourceService {
 	public Map<ResourceType, Integer> getResourcesOfTeam(Team team)
 			throws ResourceServiceException {
 
-		Team load = teamDAO.findOne("id", team.getId());
-		List<Player> players = load.getPlayers();
-		Map<ResourceType, Integer> teamResourceMap = Maps.newHashMap();
+		Map<ResourceType, Integer> map = Maps.newHashMap();
+		Random rnd = new Random();
 
-		// initialize the map for every resource with 0
 		for (ResourceType type : ResourceType.values()) {
-			teamResourceMap.put(type, 0);
+			map.put(type, (rnd.nextInt(8192)+4096));
 		}
 
-		for (Player player : players) {
-			Map<ResourceType, Integer> playerResourceMap = this
-					.getResourcesOfPlayer(player);
-
-			for (ResourceType key : playerResourceMap.keySet()) {
-				Integer value = teamResourceMap.get(key);
-				value += playerResourceMap.get(key);
-				teamResourceMap.put(key, value);
-			}
-		}
-
-		return teamResourceMap;
+		return map;
 	}
 }
