@@ -44,18 +44,33 @@ public class ResourceServiceDummyImpl implements ResourceService {
 	@Override
 	public Map<Place, ResourceType> getResourceSourcesOfPlayer(Player player)
 			throws ResourceServiceException {
-		Player load = playerDAO.findOne("id", player.getId());
-
-		if (load == null)
-			throw new ResourceServiceException("Player " + player.getId()
-					+ " not found!");
-
-		List<Place> conquered = load.getConquered();
 
 		Map<Place, ResourceType> map = Maps.newHashMap();
 
-		for (Place place : conquered) {
-			map.put(place, place.getResource());
+		String[] placeNames = {"TU München", 
+							"Augustinerkeller", 
+							"Deutsche Bank", 
+							"Hornbach", 
+							"Garching-Forschungszentrum",
+							"Flughafen Franz Josef Strauß",
+							"Alte Pinakothek"};
+		ResourceType[] resourceTypes = {ResourceType.Knowledge, 
+										ResourceType.Food, 
+										ResourceType.Credits, 
+										ResourceType.Material, 
+										ResourceType.Transportation,
+										ResourceType.Special,
+										ResourceType.Cultural};
+		
+		Integer[] amounts = {100, 200, 300, 400, 500, 600, 700};
+		
+		for (int i=0; i<7; i++) {
+			Place place = new Place();
+			place.setName(placeNames[i]);
+			place.setResource(resourceTypes[i]);
+			place.setAmount(amounts[i]);
+			
+			map.put(place, resourceTypes[i]);
 		}
 
 		return map;
@@ -79,7 +94,7 @@ public class ResourceServiceDummyImpl implements ResourceService {
 		for (ResourceType type : ResourceType.values()) {
 			map.put(type, rnd.nextInt(1024));
 		}
-		
+
 		return map;
 	}
 
