@@ -15,6 +15,7 @@ import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 @Entity("players")
 public class Player {
@@ -41,8 +42,8 @@ public class Player {
 	private List<ResourceDepot> resourceDepots;
 	
 	@Reference
-	private List<Place> conquered;
-	
+	private List<Place> conquered = Lists.newLinkedList();
+
 	@Reference
 	private Team team;
 
@@ -172,6 +173,15 @@ public class Player {
 
 	public void setTeam(Team team) {
 		this.team = team;
+	}
+	
+	
+	public List<Place> getConquered() {
+		return conquered;
+	}
+
+	public void setConquered(List<Place> conquered) {
+		this.conquered = conquered;
 	}
 
 	public SocialUser toSocialUser() {
