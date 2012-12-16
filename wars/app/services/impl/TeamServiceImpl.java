@@ -1,12 +1,17 @@
 package services.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import models.Player;
 import models.Team;
+import models.City;
+import models.Faction;
+
 import services.api.TeamService;
 
 import com.google.inject.Inject;
+import com.google.code.morphia.query.*;
 
 import daos.PlayerDAO;
 import daos.TeamDAO;
@@ -25,15 +30,23 @@ public class TeamServiceImpl implements TeamService {
 	private PlayerDAO playerDAO;
 	
 	@Override
-	public Team createTeam(Team t) {
-		teamDAO.save(t);
+	public Team createTeam(Faction faction, City city, String name) {
+		Team t = new Team();
+		t.setCity(city);
+		t.setCreatedAt(new Date());
+		t.setFaction(faction);
+		t.setName(name);
+		
 		return teamDAO.get(t.getId());
 	}
 
 	@Override
 	public List<Player> getMembers(Team team) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Query<Player> membersQ = playerDAO.createQuery().field("team").equal(team);
+		List<Player> members = playerDAO.find(membersQ).asList();
+		
+		return members;
 	}
 
 	@Override

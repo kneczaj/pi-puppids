@@ -2,6 +2,8 @@ package services.api;
 
 import java.util.List;
 
+import models.City;
+import models.Faction;
 import models.Player;
 import models.Team;
 
@@ -18,7 +20,7 @@ public interface TeamService {
 	 * @param player
 	 * @return
 	 */
-	public Team createTeam(Team team);
+	public Team createTeam(Faction faction, City city, String name);
 
 	/**
 	 * List the members of a team
