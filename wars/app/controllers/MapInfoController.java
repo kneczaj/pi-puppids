@@ -33,7 +33,7 @@ public class MapInfoController extends Controller {
 		try {
 			Location location = new Location(lng, lat);
 			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.HOUR, -2);
+			calendar.add(Calendar.HOUR, -4);
 			Date youngerThan = calendar.getTime();
 
 			Map<String, PlayerLocation> playerLocations = mapInfoService
