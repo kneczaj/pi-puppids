@@ -15,6 +15,7 @@ public class Place {
 
 	@Id
 	private ObjectId id;
+	private String name;
 	private Double lat;
 	private Double lng;
 	private PlaceType type;
@@ -28,6 +29,14 @@ public class Place {
 	
 	public void setId(ObjectId id) {
 		this.id = id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public Double getLat() {

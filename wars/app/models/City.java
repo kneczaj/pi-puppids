@@ -2,6 +2,7 @@ package models;
 
 import org.bson.types.ObjectId;
 
+import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.common.base.Objects;
 
@@ -9,6 +10,7 @@ import com.google.common.base.Objects;
  * 
  * @author markus
  */
+@Entity("cities")
 public class City {
 
 	@Id
