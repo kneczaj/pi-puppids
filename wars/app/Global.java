@@ -1,5 +1,6 @@
 import play.Application;
 import play.GlobalSettings;
+import play.Logger;
 
 import com.google.code.morphia.logging.MorphiaLoggerFactory;
 import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
@@ -16,6 +17,8 @@ public class Global extends GlobalSettings {
 	public void beforeStart(Application app) {
 		MorphiaLoggerFactory.reset();
 		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
+		
+		Logger.info("withUserNameSupport=" + app.configuration().getBoolean("securesocial.userpass.withUserNameSupport").toString());
 	}
 	
 }

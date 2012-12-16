@@ -1,3 +1,8 @@
+# log helper
+log = (args...) ->
+    console.log.apply console, args if console.log?
+
+# Handels WebSocket communication
 class ArWars.CustomWebSocket
 	@wsInstance: null
 	@socket: null
@@ -13,36 +18,41 @@ class ArWars.CustomWebSocket
 		socket = new @wsInstance url 
 		socket.onmessage = @receiveEvent
 
+# keeps track of position of the players nearby
 class ArWars.PlayerPositionManager
-	
-	@markers: []
-	@circles: []
-	@players: []
-	defaultLocationAPIOptions = 
-		enableHighAccuracy : true
-		timeout : 3000
-		maximumAge : 500
-	@locationWatchHandle: null
-	@map: null
-	@mapNode: null
-	@selectedPlayer: null
-	@infoPanel: null
 
-	mapOptions = 
+	@mapOptions = 
 		center : new google.maps.LatLng 48.133, 11.566
 		zoom : 11
 		mapTypeId : google.maps.MapTypeId.ROADMAP
 
-	constructor: (@mapNode, @infoPanel) ->
-		@map = new google.maps.Map @mapNode, mapOptions
-		@markers = []
-		@circles = []
-		@players = []
-		@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, defaultLocationAPIOptions
+	@locationOptions = 
+		enableHighAccuracy : true
+		timeout : 3000
+		maximumAge : 500
 
-	###
-	Removes a player from the map (removes the circle and the marker)
-	###
+	@circleOpts =  
+		clickable: false
+		fillColor: "RoyalBlue"
+		fillOpacity: 0.2
+		strokeWidth: 0
+		strokeOpacity: 0
+	
+	markers: []
+	circles: []
+	players: []
+	
+	locationWatchHandle: null
+	map: null
+	mapNode: null
+	selectedPlayer: null
+	infoPanel: null
+
+	constructor: (@mapNode, @infoPanel) ->
+		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
+		@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
+
+	# Removes a player from the map (removes the circle and the marker)
 	removeFromMap: (pId) ->
 		@markers[pId] = null
 		@circles[pId] = null
@@ -63,11 +73,9 @@ class ArWars.PlayerPositionManager
 					@push2Map key, value.latitude, value.longitude, value.uncertainty
 			
 			error : (jqXHR, textStatus, errorThrown) ->
-				console.log textStatus
+				log textStatus
 
-	###
-	Called when LocationAPI detects a location change of the current player
-	###
+	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>
 		coords = location.coords
 		@push2Map window.ArWars.playerId, coords.latitude, coords.longitude, coords.accuracy
@@ -83,48 +91,55 @@ class ArWars.PlayerPositionManager
 			type : "get"
 			data : serializedData
 			success : (response, textStatus, jqXHR) ->
-				console.log "successfuly pushed new location to the server"
+				log "successfuly pushed new location to the server"
 			
 			error : (jqXHR, textStatus, errorThrown) -> 
-				console.log textStatus
+				log textStatus
 		
 		@loadPlayersNearby coords.latitude, coords.longitude
 
-	###
-	Called when the LocationAPI threw an error
-	###
+	# Called when the LocationAPI threw an error
 	onPositionError: (error) ->
 		if error.code == 1 # permission was denied by user
-			console.log "User denied geolocation"
+			log "User denied geolocation"
 		else if error.code == 2 # position unavailable
-			console.log "position unavailable"
+			log "position unavailable"
 		else if error.code == 3 # timeout in calculating / finding the position
-			console.log "timeout while calculating position"
+			log "timeout while calculating position"
 		else
-			console.log "unknown error"
+			log "unknown error"
 
-	###
-	Pushes the location of a player to the Google Map
-	###
+	# Pushes the location of a player to the Google Map
 	push2Map: (pId, latitude, longitude, uncertainty) ->
-		console.log "playerId: #{pId}, lat: #{latitude}, lng: #{longitude}, uncertainty: #{uncertainty}"
+		log "playerId: #{pId}, lat: #{latitude}, lng: #{longitude}, uncertainty: #{uncertainty}"
+
+		# Add Marker for the player
+		if @markers[pId]
+			@markers[pId].setMap null
+
 		pos = new google.maps.LatLng latitude, longitude
 		markerOpts = 
 			position: pos
 			draggable: false
 			icon: '/assets/images/player.png'
 
-		if @markers[pId]
-			@markers[pId].setMap null
-
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map
 		@markers[pId] = marker
 
+		# Register ClickHandler for this marker
 		google.maps.event.addListener marker, 'click', () =>
-			player = @players[pId].email
-			$("h4", @infoPanel).text "Player #{player}"
+			player = @players[pId]
+			if player is null then return
 
+			username = if player.username then player.username else ""
+			team = if player.team.name is "pseudo" then "loner" else player.team.name
+			faction = player.team.faction.name
+
+			$("h4", @infoPanel).text "Player #{username}"
+			$(".team", @infoPanel).text team
+			$(".faction", @infoPanel).text faction
+			
 			if @selectedPlayer
 				props = right: '-320px'
 				@infoPanel.animate props
@@ -133,22 +148,21 @@ class ArWars.PlayerPositionManager
 				props = right: '0px'
 				@infoPanel.animate props
 				@selectedPlayer = marker
-
-		u = if uncertainty then uncertainty else 1000
-
-		circleOpts = 
-			center: pos
-			clickable: false
-			fillColor: "RoyalBlue"
-			fillOpacity: 0.1
-			radius: u
-			strokeColor: "RoyalBlue"
-			strokeWidth: 0.1
-
+		
+		# Add circle around marker
 		if @circles[pId]
 			@circles[pId].setMap null
 
-		circle = new google.maps.Circle circleOpts
+		u = if uncertainty then uncertainty else 1000
+
+		currentOpts = {}
+		for key of ArWars.PlayerPositionManager.circleOpts
+    		currentOpts[key] = ArWars.PlayerPositionManager.circleOpts[key]
+
+    	currentOpts.radius = u
+    	currentOpts.center = pos
+
+		circle = new google.maps.Circle currentOpts
 		circle.setMap @map
 		@circles[pId] = circle
 

@@ -118,7 +118,7 @@ public class UserServicePlugin extends BaseUserService {
 		p.setFirstname(user.getFirstName());
 		p.setName(user.getLastName());
 		p.setPasswordHash(user.getPasswordInfo().getPassword());
-		p.setSecureSocialIdentifier(user.getId().getId());
+		p.setUsername(user.getId().getId());
 		
 		Player load = playerDAO.findOne("email", user.getEmail());
 		if (load == null) {
@@ -144,8 +144,11 @@ public class UserServicePlugin extends BaseUserService {
 
 	@Override
 	public SocialUser doFind(UserId userId) {
-		Logger.debug("find user by userId: " + userId.getId() + ", provider: " + userId.getProvider());
-		Player p = playerDAO.findOne("secureSocialIdentifier", userId.getId());
+		Logger.debug("find user by username: " + userId.getId() + ", provider: " + userId.getProvider());
+		Player p = playerDAO.findOne("username", userId.getId());
+		if (p == null) {
+			return null;
+		}
 		SocialUser s = new SocialUser();
 		s.setAuthMethod(AuthenticationMethod.valueOf(p
 				.getAuthenticationProvider()));
@@ -154,7 +157,7 @@ public class UserServicePlugin extends BaseUserService {
 		s.setLastName(p.getName());
 		
 		UserId uId = new UserId();
-		uId.setId(p.getSecureSocialIdentifier());
+		uId.setId(p.getUsername());
 		uId.setProvider(p.getAuthenticationProvider());
 		s.setId(uId);
 
@@ -171,13 +174,13 @@ public class UserServicePlugin extends BaseUserService {
 		AccessToken accessToken = accessTokenDAO.findOne("uuid", tokenId);
 		if (accessToken == null) {
 			Logger.error("could not find token");
+			return null;
 		}
 		else {
 			Logger.debug(accessToken.toString());
 			Logger.debug(accessToken.toToken().toString());
+			return accessToken.toToken();
 		}
-		
-		return accessToken.toToken();
 	}
 
 	@Override

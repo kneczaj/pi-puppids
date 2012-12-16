@@ -5,13 +5,16 @@
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&sensor=false"></script>
 
 <script type="text/javascript">
+	/*
+	 * Setting globals
+	 */
 	var playerId = "@player.getId().toString()";
 	window.ArWars = { 
 		playerId: playerId,
 		mapSelector: '#map_canvas',
 		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)"
 	};
-		
+	
 	$(document).ready(function() {
 		$(window).resize(function() {
 			if ($(this).width() < 768) {
@@ -51,7 +54,7 @@
 							<div id="map_canvas"></div>
 							<div id="playerDetails">
 								<h4>Player</h4>
-							    <p>Team: ... / Faction: ...</p>
+							    <p>Team: <span class="team"></span> / Faction: <span class="faction"></span></p>
 							</div>
 						</div>
 					</div>
