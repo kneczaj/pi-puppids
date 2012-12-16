@@ -37,6 +37,7 @@ public class ResourceController extends Controller {
 	@Inject
 	private static TeamDAO teamDAO;
 	
+	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourceSourcesOfPlayer() {
 		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
 		Player p = playerDAO.findOne("email", user.getEmail());
@@ -54,6 +55,7 @@ public class ResourceController extends Controller {
 		}
 	}
 	
+	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourcesOfPlayer() {
 		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
 		Player p = playerDAO.findOne("email", user.getEmail());
@@ -71,6 +73,7 @@ public class ResourceController extends Controller {
 		}
 	}
 	
+	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourcesOfTeam() {
 		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
 		Player p = playerDAO.findOne("email", user.getEmail());
