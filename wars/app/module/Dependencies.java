@@ -3,9 +3,11 @@ package module;
 
 import services.api.LocationTrackingService;
 import services.api.MapInfoService;
+import services.api.ResourceService;
 import services.api.TeamService;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
+import services.impl.ResourceServiceImpl;
 import services.impl.TeamServiceImpl;
 
 import com.google.code.morphia.Morphia;
@@ -20,6 +22,7 @@ import daos.FactionDAO;
 import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
+import daos.ResourceDepotDAO;
 import daos.TeamDAO;
 import daos.TeamInviteDAO;
 import daos.UnitDAO;
@@ -37,6 +40,7 @@ public class Dependencies implements Module {
 		binder.bind(MapInfoService.class).to(MapInfoServiceImpl.class).in(Singleton.class);
 		binder.bind(LocationTrackingService.class).to(LocationTrackingServiceImpl.class).in(Singleton.class);
 		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
+		binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);
 	
 		binder.bind(Morphia.class);
 		binder.bind(Mongo.class);
@@ -50,6 +54,7 @@ public class Dependencies implements Module {
 		binder.bind(AccessTokenDAO.class).in(Singleton.class);
 		binder.bind(PlaceDAO.class).in(Singleton.class);
 		binder.bind(PlayerLocationDAO.class).in(Singleton.class);
+		binder.bind(ResourceDepotDAO.class).in(Singleton.class);
 	}
 
 }
