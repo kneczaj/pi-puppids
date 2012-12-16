@@ -1,0 +1,41 @@
+.logo {
+	padding-right: 20px;
+	margin-top: -10px;
+}
+
+
+#map_container_desktop {
+	position: relative;
+    overflow: hidden;
+}
+
+#playerDetails {
+    /* Place the div off the bottom right of the map */
+    position: absolute;
+    width: 300px;
+    bottom: 0;
+    right: -320px;
+    padding-left: 10px;
+    padding-right: 10px;
+    /* Semi-transparent background */
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 80%;
+    /* Rounded top left corner */
+    border-top-left-radius: 15px;
+    -moz-border-radius-topleft: 15px;
+    -webkit-border-top-left-radius: 15px;
+}
+
+#playerDetails h4 {
+    font-family: sans-serif;
+    margin-bottom: 0;
+}
+
+#playerDetails p {
+	margin-top: 0;
+}
+
+#map_canvas {
+  border-radius: 3px 3px 3px 3px;
+}
