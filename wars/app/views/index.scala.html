@@ -41,7 +41,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li id="' + key + '">' + val + '</li>');
+				    items.push('<li id="' + val.resource + '">' + val.name + ' yields <b>' + val.amount + '</b> of ' + val.resource + '</li>');
 				  });
 	
 				  $('<ul/>', {
@@ -58,7 +58,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li id="' + key + '">' + val + '</li>');
+				    items.push('<li id="' + key + '">' + key + ': <b>' + val + '</b></li>');
 				  });
 	
 				  $('<ul/>', {
@@ -75,7 +75,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li id="' + key + '">' + val + '</li>');
+				    items.push('<li id="' + key + '">' + key + ': <b>' + val + '</b></li>');
 				  });
 	
 				  $('<ul/>', {
