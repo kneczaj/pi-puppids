@@ -1,7 +1,5 @@
 package services.api;
 
-import java.util.List;
-
 import models.City;
 import models.Faction;
 import models.Invitation;
@@ -22,14 +20,6 @@ public interface TeamService {
 	 * @return
 	 */
 	public Team createTeam(Faction faction, City city, String name);
-
-	/**
-	 * List the members of a team
-	 * 
-	 * @param team
-	 * @return
-	 */
-	public List<Player> getMembers(Team team);
 
 	/**
 	 * Invite a player to join an other team.

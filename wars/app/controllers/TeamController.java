@@ -1,24 +1,20 @@
 package controllers;
 
-import models.Player;
 import models.Invitation;
-
-import views.html.message;
-
+import models.Player;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import securesocial.core.java.SocialUser;
 import services.api.TeamService;
 import views.html.invite;
-//import services.api.ProfileService;
+import views.html.message;
 
-
-import com.google.code.morphia.query.Query;
 import com.google.inject.Inject;
 
-import daos.PlayerDAO;
 import daos.InvitationDAO;
+import daos.PlayerDAO;
+//import services.api.ProfileService;
 
 public class TeamController extends Controller {
 	
