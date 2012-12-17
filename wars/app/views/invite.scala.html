@@ -1,7 +1,7 @@
-@main("ARWars") {
+@(player: Player) 
+@scripts = {
 
 <script>
-
 function checkInvitationPossibility()
 {
 	var checkEmailRequest = new XMLHttpRequest();
@@ -34,8 +34,11 @@ function checkInvitationPossibility()
 	checkEmailRequest.open("GET","checkEmail/"+email, true);
 	checkEmailRequest.send();
 }
-
 </script>
+
+}
+
+@main(title = "Invite - " + player.getUsername() + "Invite - ARWars", scripts) {
 
 <div class="row-fluid">
 	<div class="span12">
@@ -51,7 +54,7 @@ function checkInvitationPossibility()
 			</div>
 			<div class="control-group">
 				<div class="controls">
-					<button type="button" onclick="checkInvitationPossibility()">Invite</button>
+					<button type="button" class="btn" onclick="checkInvitationPossibility()">Invite</button>
 				</div>
 			</div>
 		</form>

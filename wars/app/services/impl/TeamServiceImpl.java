@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import play.Logger;
+
 import models.Player;
 import models.Team;
 import models.City;
@@ -82,12 +84,16 @@ public class TeamServiceImpl implements TeamService {
 		String token = UUID.randomUUID().toString();
 		invitation.setToken(token);
 		
+		String link = "http://localhost:9000/acceptInvitation/" + token;
+		
+		Logger.info("to accept invitation go to " + link);
+		
 		MailerAPI mail = play.Play.application().plugin(MailerPlugin.class).email();
 		
 		mail.setSubject("ARWars - invitation to team " + invitation.getTeam().getName());
 		mail.addRecipient(invitation.getRecipient().getEmail());
-		mail.addFrom("Peter Hausel <noreply@email.com>");
-		mail.send( "Invitation" );
+		mail.addFrom("arwars.game@gmail.com");
+		mail.send( "Invitation " + link);
 		
 		invitation.setSent();
 		invitationDAO.save(invitation);
