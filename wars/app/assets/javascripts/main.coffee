@@ -25,6 +25,7 @@ class ArWars.PlayerPositionManager
 		center : new google.maps.LatLng 48.133, 11.566
 		zoom : 11
 		mapTypeId : google.maps.MapTypeId.ROADMAP
+		styles : [ { "stylers": [ { "invert_lightness": true }, { "saturation": -80 } ] },{ "featureType": "road", "elementType": "geometry", "stylers": [ { "color": "#646464" } ] },{ "featureType": "road", "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi", "elementType": "labels", "stylers": [ { "color": "#faa732" }, { "weight": 0.1 } ] } ]
 
 	@locationOptions = 
 		enableHighAccuracy : true
