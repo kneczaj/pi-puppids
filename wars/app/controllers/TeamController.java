@@ -3,18 +3,18 @@ package controllers;
 import models.Player;
 import models.Invitation;
 
-import views.html.invite;
 import views.html.message;
 
 import play.mvc.Controller;
 import play.mvc.Result;
-
-import services.api.TeamService;
-//import services.api.ProfileService;
-
 import securesocial.core.java.SecureSocial;
 import securesocial.core.java.SocialUser;
+import services.api.TeamService;
+import views.html.invite;
+//import services.api.ProfileService;
 
+
+import com.google.code.morphia.query.Query;
 import com.google.inject.Inject;
 
 import daos.PlayerDAO;
@@ -27,12 +27,15 @@ public class TeamController extends Controller {
 	
 //	@Inject
 //	private static ProfileService profileService;
+
 	
 	@Inject
 	private static PlayerDAO playerDAO;
 	
 	@Inject
 	private static InvitationDAO invitationDAO;
+	
+	// TODO: Wrap the methods of the teamService into controller actions
 	
 	@SecureSocial.SecuredAction
 	public static Result canInvite(String invitedEmail) {
@@ -53,9 +56,14 @@ public class TeamController extends Controller {
 		
 		return ok("ok");
 	}
+
 	
-	public static Result inviteForm() {
-		return ok(invite.render());
+	@SecureSocial.SecuredAction
+	public static Result inviteForm()
+	{
+		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
+		Player player = playerDAO.findOne("email", user.getEmail());
+		return ok(invite.render(player));
 	}
 	
 	public static Result acceptInvitation(String token) {
@@ -66,5 +74,6 @@ public class TeamController extends Controller {
 		teamService.acceptInvite(invitation);
 		return ok(message.render("You have successfully joined " + invitation.getTeam().getName() + " team"));
 	}
+
 
 }
