@@ -1,0 +1,24 @@
+@(message: String) 
+
+@main("ARWars") {
+
+<script>
+
+function toMainSite()
+{
+	window.location.href="/";
+}
+
+</script>
+
+<div class="row-fluid">
+	<div class="span12">
+		<h2>@message</h2>
+		<div class="control-group">
+			<div class="controls">
+				<button type="button" onclick="toMainSite()">Go back to the main site</button>
+			</div>
+		</div>
+	</div><!--/span-->
+</div><!--/row-->
+}
