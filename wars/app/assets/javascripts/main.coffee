@@ -137,6 +137,8 @@ class ArWars.PlayerPositionManager
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map
 		@markers[pId] = marker
+		
+		@map.panTo pos
 
 		# Register ClickHandler for this marker
 		google.maps.event.addListener marker, 'click', () =>
