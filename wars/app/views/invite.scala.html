@@ -1,0 +1,60 @@
+@main("ARWars") {
+
+<script>
+
+function checkInvitationPossibility()
+{
+	var checkEmailRequest = new XMLHttpRequest();
+
+	checkEmailRequest.onreadystatechange = function()
+  	{
+  		if (checkEmailRequest.readyState == 4 && checkEmailRequest.status == 200)
+		{
+			var response = checkEmailRequest.responseText;
+			if (response == "ok")
+			{
+				window.location.href="/";
+				return;
+			}
+			
+			var message = "";
+			if (response == "usersEmailGiven")
+			{
+				message = "You cannot invite yourself";
+			}
+			else if (response == "givenEmailDoesntExist")
+			{
+				message = "The given email address was not found";
+			}
+			document.getElementById("error-message").innerHTML = message;
+		}
+  	}
+  	
+  	var email = document.getElementById("inputEmail").value;
+	checkEmailRequest.open("GET","checkEmail/"+email, true);
+	checkEmailRequest.send();
+}
+
+</script>
+
+<div class="row-fluid">
+	<div class="span12">
+		<h2>Invite a new member</h2>
+		<form class="form-horizontal" id="invitedUserForm">
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">E-mail address</label>
+				<div class="controls">
+					<input type="text" id="inputEmail">
+				</div>
+			</div>
+			<div id="error-message" class="control-group">
+			</div>
+			<div class="control-group">
+				<div class="controls">
+					<button type="button" onclick="checkInvitationPossibility()">Invite</button>
+				</div>
+			</div>
+		</form>
+	</div><!--/span-->
+</div><!--/row-->
+}

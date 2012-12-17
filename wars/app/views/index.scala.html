@@ -1,0 +1,194 @@
+@(player: Player)(location: PlayerLocation)(teammates: List[Player]) 
+
+@scripts = {
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&sensor=false"></script>
+
+<script type="text/javascript">
+	/*
+	 * Setting globals
+	 */
+	var playerId = "@player.getId().toString()";
+	window.ArWars = { 
+		playerId: playerId,
+		mapSelector: '#map_canvas',
+		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)"
+	};
+	
+	$(document).ready(function() {
+		$(window).resize(function() {
+			if ($(this).width() < 768) {
+				$('#map_canvas').appendTo('#map_container_mobile');
+				$('#playerDetails').appendTo('#map_container_mobile');
+				var offsetTop = 180;
+				$('#map').addClass('in');
+				$('#units').removeClass('in');
+			} else {
+				$('#map_canvas').appendTo('#map_container_desktop');
+				$('#playerDetails').appendTo('#map_container_desktop');
+				var offsetTop = 130;
+				$('#units').addClass('in');
+			}
+			var h = $(window).height();
+			$('#map_canvas').css('height', (h - offsetTop));
+		}).resize();
+		
+		$.getJSON('/resource/getResourceSourcesOfPlayer', function(data) {
+			  var items = [];
+			  
+			  if ($.isEmptyObject(data)) {
+				  $('#resourceSources').append('<p>Currently there are no sources for resources available</p>')
+			  } else {
+
+				  $.each(data, function(key, val) {
+				    items.push('<li id="' + val.resource + '">' + val.name + ' yields <b>' + val.amount + '</b> of ' + val.resource + '</li>');
+				  });
+	
+				  $('<ul/>', {
+				    html: items.join('')
+				  }).appendTo('#resourceSources');
+			  }
+			});
+		
+		$.getJSON('/resource/getResourcesOfPlayer', function(data) {
+			  var items = [];
+			  
+			  if ($.isEmptyObject(data)) {
+				  $('#resourcesPlayer').append('<p>Currently there are no resources available</p>')
+			  } else {
+
+				  $.each(data, function(key, val) {
+				    items.push('<li id="' + key + '">' + key + ': <b>' + val + '</b></li>');
+				  });
+	
+				  $('<ul/>', {
+				    html: items.join('')
+				  }).appendTo('#resourcesPlayer');
+			  }
+			});
+		
+		$.getJSON('/resource/getResourcesOfTeam', function(data) {
+			  var items = [];
+			  
+			  if ($.isEmptyObject(data)) {
+				  $('#resourcesTeam').append('<p>Currently there are no resources available</p>')
+			  } else {
+
+				  $.each(data, function(key, val) {
+				    items.push('<li id="' + key + '">' + key + ': <b>' + val + '</b></li>');
+				  });
+	
+				  $('<ul/>', {
+				    html: items.join('')
+				  }).appendTo('#resourcesTeam');
+			  }
+			});
+	});
+</script>
+<script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
+
+}
+
+@main("ARWars", scripts) {
+
+<div class="row-fluid">
+	<div class="span4">
+		<div class="well well-small sidebar-nav">
+
+			<div class="accordion" id="accordion2">
+				<div class="accordion-group visible-phone">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#map"> Map </a>
+					</div>
+					<div id="map" class="accordion-body collapse">
+						<div id="map_container_mobile" class="accordion-inner">
+							<div id="map_canvas"></div>
+							<div id="playerDetails">
+								<h4>Player</h4>
+							    <p>Team: <span class="team"></span> / Faction: <span class="faction"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#units"> Units </a>
+					</div>
+					<div id="units" class="accordion-body collapse">
+						<div class="accordion-inner">Lorem ipsum dolor sit amet,
+							consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+							labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+							nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+							commodo consequat. Duis aute irure dolor in reprehenderit in
+							voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+							Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+							officia deserunt mollit anim id est laborum.
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#resources"> Resources </a>
+					</div>
+					<div id="resources" class="accordion-body collapse">
+						<div class="accordion-inner">
+							<div id="resourceSources">
+								<h6>Resource Sources:</h6>
+							</div>
+							<div id="resourcesPlayer">
+								<h6>Resources Player:</h6>
+							</div>
+							<div id="resourcesTeam">
+								<h6>Resources Team:</h6>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#team"> Team </a>
+					</div>
+					<div id="team" class="accordion-body collapse">
+						<div class="accordion-inner">
+							@for(member <- teammates) {
+								@member.getFirstname() @member.getName()<br>
+							}
+							<button type="button" onclick="location.href='invite'">Invite a new member</button>
+						</div> 
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#statistics"> Statistics </a>
+					</div>
+					<div id="statistics" class="accordion-body collapse">
+						<div class="accordion-inner">Lorem ipsum dolor sit amet,
+							consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+							labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+							nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+							commodo consequat. Duis aute irure dolor in reprehenderit in
+							voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+							Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+							officia deserunt mollit anim id est laborum.
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--<ul class="nav nav-tabs">
+				<li class="active"><a href="#">Units</a></li>
+				<li><a href="#">Resources</a></li>
+				<li><a href="#">Stats</a></li>
+				<li><a href="#">Team</a></li>
+			</ul-->
+			
+		</div>
+		<!--/sidebar-nav -->
+	</div>
+	<!--/span-->
+	<div id="map_container_desktop" class="span8 hidden-phone">
+	</div>
+	<!--/span-->
+</div>
+<!--/row-->
+}
