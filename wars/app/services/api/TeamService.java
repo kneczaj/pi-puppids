@@ -4,6 +4,7 @@ import java.util.List;
 
 import models.City;
 import models.Faction;
+import models.Invitation;
 import models.Player;
 import models.Team;
 
@@ -33,10 +34,10 @@ public interface TeamService {
 	/**
 	 * Invite a player to join an other team.
 	 * 
-	 * @param player
-	 * @param team
+	 * @param sender player who invites to their team
+	 * @param receiver player invited
 	 */
-	public void invite(Player player, Team team);
+	public Invitation invite(Player sender, Player receiver);
 	
 	/**
 	 * A Player may accept an invite to a team
@@ -45,7 +46,7 @@ public interface TeamService {
 	 * @param team the team he was invited to
 	 * @return the refreshed player entity
 	 */
-	public Player acceptInvite(Player player, Team team);
+	public Player acceptInvite(Invitation invitation);
 
 //	/**
 //	 * Invite strangers (people that are not already registered at ARWars) via
@@ -56,5 +57,7 @@ public interface TeamService {
 //	 * @param team
 //	 */
 //	public void iniviteStranger(String emailAdress, Team team);
+	
+	public void sendInvitation(Invitation invitation);
 
 }
