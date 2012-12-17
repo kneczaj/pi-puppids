@@ -1,23 +1,12 @@
 package controllers;
 
-import java.util.List;
-
-import org.bson.types.ObjectId;
-
 import models.Player;
-import models.Team;
-
-import views.html.invite;
-
-import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
-
 import securesocial.core.java.SecureSocial;
 import securesocial.core.java.SocialUser;
-
 import services.api.TeamService;
-import services.impl.UserServicePlugin;
+import views.html.invite;
 
 import com.google.code.morphia.query.Query;
 import com.google.inject.Inject;
@@ -49,9 +38,12 @@ public class TeamController extends Controller {
 		return ok("ok");
 	}
 	
+	@SecureSocial.SecuredAction
 	public static Result inviteForm()
 	{
-		return ok(invite.render());
+		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
+		Player player = playerDAO.findOne("email", user.getEmail());
+		return ok(invite.render(player));
 	}
 
 }
