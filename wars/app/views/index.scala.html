@@ -21,17 +21,17 @@
 				$('#map_canvas').appendTo('#map_container_mobile');
 				$('#playerDetails').appendTo('#map_container_mobile');
 				var offsetTop = 180;
-				$('#map').addClass('in');
-				$('#units').removeClass('in');
 			} else {
 				$('#map_canvas').appendTo('#map_container_desktop');
 				$('#playerDetails').appendTo('#map_container_desktop');
+				$('#map').removeClass('in');
 				var offsetTop = 130;
-				$('#units').addClass('in');
 			}
 			var h = $(window).height();
 			$('#map_canvas').css('height', (h - offsetTop));
 		}).resize();
+		
+		$('#accordion2 div:visible:first > .accordion-body').addClass('in');
 		
 		$.getJSON('/resource/getResourceSourcesOfPlayer', function(data) {
 			  var items = [];
