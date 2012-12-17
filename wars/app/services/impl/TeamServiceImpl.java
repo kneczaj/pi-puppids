@@ -1,27 +1,23 @@
 package services.impl;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
-import play.Logger;
-
-import models.Player;
-import models.Team;
 import models.City;
 import models.Faction;
 import models.Invitation;
-
+import models.Player;
+import models.Team;
+import play.Logger;
 import services.api.TeamService;
 
 import com.google.inject.Inject;
-import com.google.code.morphia.query.Query;
 import com.typesafe.plugin.MailerAPI;
 import com.typesafe.plugin.MailerPlugin;
 
+import daos.InvitationDAO;
 import daos.PlayerDAO;
 import daos.TeamDAO;
-import daos.InvitationDAO;
 
 /**
  * Implementation of a TeamService
@@ -41,22 +37,15 @@ public class TeamServiceImpl implements TeamService {
 	
 	@Override
 	public Team createTeam(Faction faction, City city, String name) {
-		Team t = new Team();
-		t.setCity(city);
-		t.setCreatedAt(new Date());
-		t.setFaction(faction);
-		t.setName(name);
+		Team team = new Team();
+		team.setCity(city);
+		team.setCreatedAt(new Date());
+		team.setFaction(faction);
+		team.setName(name);
 		
-		return teamDAO.get(t.getId());
-	}
-
-	@Override
-	public List<Player> getMembers(Team team) {
+		teamDAO.save(team);
 		
-		Query<Player> membersQ = playerDAO.createQuery().field("team").equal(team);
-		List<Player> members = playerDAO.find(membersQ).asList();
-		
-		return members;
+		return team;
 	}
 	
 	@Override

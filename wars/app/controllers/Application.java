@@ -42,7 +42,7 @@ public class Application extends Controller {
 		Player player = playerDAO.findOne("email", user.getEmail());
 		
 		Team team = player.getTeam();
-		List<Player> teammates = teamService.getMembers(team);
+		List<Player> teammates = team.getPlayers();
 		
 		PlayerLocation playerLocation = playerLocationDAO.findLatestLocation(player);
 		

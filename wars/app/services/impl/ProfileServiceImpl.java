@@ -1,14 +1,6 @@
 package services.impl;
 
-import models.Player;
-import daos.PlayerDAO;
-import securesocial.core.java.SecureSocial;
-import securesocial.core.java.SocialUser;
 import services.api.ProfileService;
-
-import com.google.inject.Inject;
-
-import play.mvc.Http;
 
 /**
  * Implementation of the ProfileService

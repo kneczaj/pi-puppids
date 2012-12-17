@@ -1,10 +1,5 @@
 package services.api;
 
-import play.mvc.Http;
-import securesocial.core.java.SecureSocial;
-import securesocial.core.java.SocialUser;
-
-import models.Player;
 
 
 /**
