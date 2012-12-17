@@ -2,13 +2,28 @@ package assets.constants;
 
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-
+import models.AmountType;
 import models.PlaceType;
 import models.ResourceType;
 
+import com.google.common.collect.Maps;
+
 public class Mappings {
+	
+	/**
+	 * Map of google maps place types to resource types
+	 */
 	public final static Map<PlaceType, ResourceType> PLACE_TO_RESOURCE_MAP = generatePlaceToResourceMap();
+	
+	/**
+	 * Map of resource amount categories to explicit amounts
+	 */
+	public final static Map<AmountType, Integer> AMOUNT_TYPE_TO_VALUE_MAP = generateAmountTypeToValueMap();
+	
+	/**
+	 * Map of PlaceTypes to an amount categorie
+	 */
+	public final static Map<PlaceType, AmountType> PLACE_TO_AMOUNT_MAP = generatePlaceToAmountMap();
 	
 	private static Map<PlaceType, ResourceType> generatePlaceToResourceMap() {
 		Map<PlaceType, ResourceType> map = Maps.newHashMap();
@@ -108,6 +123,123 @@ public class Mappings {
 		map.put(PlaceType.university, ResourceType.Knowledge);
 		map.put(PlaceType.veterinary_care, ResourceType.Special);
 		map.put(PlaceType.zoo, ResourceType.Special);
+		
+		return map;
+	}
+
+	/**
+	 * Change Mappings from AmountTypes to a numeric value here!
+	 */
+	private static Map<AmountType, Integer> generateAmountTypeToValueMap() {
+		Map<AmountType, Integer> map = Maps.newHashMap();
+		
+		map.put(AmountType.VERY_LOW, 10);
+		map.put(AmountType.LOW, 25);
+		map.put(AmountType.MIDDLE, 50);
+		map.put(AmountType.HIGH, 75);
+		map.put(AmountType.EXTREME, 100);
+		
+		return map;
+	}
+
+	private static Map<PlaceType, AmountType> generatePlaceToAmountMap() {
+		Map<PlaceType, AmountType> map = Maps.newHashMap();
+		
+		map.put(PlaceType.airport, AmountType.MIDDLE);
+		map.put(PlaceType.amusement_park, AmountType.MIDDLE);
+		map.put(PlaceType.aquarium, AmountType.MIDDLE);
+		map.put(PlaceType.art_gallery, AmountType.MIDDLE);
+		map.put(PlaceType.atm, AmountType.MIDDLE);
+		map.put(PlaceType.bakery, AmountType.MIDDLE);
+		map.put(PlaceType.bank, AmountType.MIDDLE);
+		map.put(PlaceType.bar, AmountType.MIDDLE);
+		map.put(PlaceType.beauty_salon, AmountType.MIDDLE);
+		map.put(PlaceType.bicycle_store, AmountType.MIDDLE);
+		map.put(PlaceType.book_store, AmountType.MIDDLE);
+		map.put(PlaceType.bowling_alley, AmountType.MIDDLE);
+		map.put(PlaceType.bus_station, AmountType.MIDDLE);
+		map.put(PlaceType.cafe, AmountType.MIDDLE);
+		map.put(PlaceType.campground, AmountType.MIDDLE);
+		map.put(PlaceType.car_dealer, AmountType.MIDDLE);
+		map.put(PlaceType.car_rental, AmountType.MIDDLE);
+		map.put(PlaceType.car_repair, AmountType.MIDDLE);
+		map.put(PlaceType.car_wash, AmountType.MIDDLE);
+		map.put(PlaceType.casino, AmountType.MIDDLE);
+		map.put(PlaceType.cemetery, AmountType.MIDDLE);
+		map.put(PlaceType.church, AmountType.MIDDLE);
+		map.put(PlaceType.city_hall, AmountType.MIDDLE);
+		map.put(PlaceType.clothing_store, AmountType.MIDDLE);
+		map.put(PlaceType.convenience_store, AmountType.MIDDLE);
+		map.put(PlaceType.courthouse, AmountType.MIDDLE);
+		map.put(PlaceType.dentist, AmountType.MIDDLE);
+		map.put(PlaceType.department_store, AmountType.MIDDLE);
+		map.put(PlaceType.doctor, AmountType.MIDDLE);
+		map.put(PlaceType.electrician, AmountType.MIDDLE);
+		map.put(PlaceType.electronics_store, AmountType.MIDDLE);
+		map.put(PlaceType.embassy, AmountType.MIDDLE);
+		map.put(PlaceType.establishment, AmountType.MIDDLE);
+		map.put(PlaceType.finance, AmountType.MIDDLE);
+		map.put(PlaceType.fire_station, AmountType.MIDDLE);
+		map.put(PlaceType.florist, AmountType.MIDDLE);
+		map.put(PlaceType.food, AmountType.MIDDLE);
+		map.put(PlaceType.funeral_home, AmountType.MIDDLE);
+		map.put(PlaceType.furniture_store, AmountType.MIDDLE);
+		map.put(PlaceType.gas_station, AmountType.MIDDLE);
+		map.put(PlaceType.general_contractor, AmountType.MIDDLE);
+		map.put(PlaceType.grocery_or_supermarket, AmountType.MIDDLE);
+		map.put(PlaceType.gym, AmountType.MIDDLE);
+		map.put(PlaceType.hair_care, AmountType.MIDDLE);
+		map.put(PlaceType.hardware_store, AmountType.MIDDLE);
+		map.put(PlaceType.health, AmountType.MIDDLE);
+		map.put(PlaceType.hindu_temple, AmountType.MIDDLE);
+		map.put(PlaceType.home_goods_store, AmountType.MIDDLE);
+		map.put(PlaceType.hospital, AmountType.MIDDLE);
+		map.put(PlaceType.insurance_agency, AmountType.MIDDLE);
+		map.put(PlaceType.jewelry_store, AmountType.MIDDLE);
+		map.put(PlaceType.laundry, AmountType.MIDDLE);
+		map.put(PlaceType.lawyer, AmountType.MIDDLE);
+		map.put(PlaceType.library, AmountType.MIDDLE);
+		map.put(PlaceType.liquor_store, AmountType.MIDDLE);
+		map.put(PlaceType.local_government_office, AmountType.MIDDLE);
+		map.put(PlaceType.locksmith, AmountType.MIDDLE);
+		map.put(PlaceType.lodging, AmountType.MIDDLE);
+		map.put(PlaceType.meal_delivery, AmountType.MIDDLE);
+		map.put(PlaceType.meal_takeaway, AmountType.MIDDLE);
+		map.put(PlaceType.mosque, AmountType.MIDDLE);
+		map.put(PlaceType.movie_rental, AmountType.MIDDLE);
+		map.put(PlaceType.movie_theater, AmountType.MIDDLE);
+		map.put(PlaceType.moving_company, AmountType.MIDDLE);
+		map.put(PlaceType.museum, AmountType.MIDDLE);
+		map.put(PlaceType.night_club, AmountType.MIDDLE);
+		map.put(PlaceType.painter, AmountType.MIDDLE);
+		map.put(PlaceType.park, AmountType.MIDDLE);
+		map.put(PlaceType.parking, AmountType.MIDDLE);
+		map.put(PlaceType.pet_store, AmountType.MIDDLE);
+		map.put(PlaceType.pharmacy, AmountType.MIDDLE);
+		map.put(PlaceType.physiotherapist, AmountType.MIDDLE);
+		map.put(PlaceType.place_of_worship, AmountType.MIDDLE);
+		map.put(PlaceType.plumber, AmountType.MIDDLE);
+		map.put(PlaceType.police, AmountType.MIDDLE);
+		map.put(PlaceType.post_office, AmountType.MIDDLE);
+		map.put(PlaceType.real_estate_agency, AmountType.MIDDLE);
+		map.put(PlaceType.restaurant, AmountType.MIDDLE);
+		map.put(PlaceType.roofing_contractor, AmountType.MIDDLE);
+		map.put(PlaceType.rv_park, AmountType.MIDDLE);
+		map.put(PlaceType.school, AmountType.MIDDLE);
+		map.put(PlaceType.shoe_store, AmountType.MIDDLE);
+		map.put(PlaceType.shopping_mall, AmountType.MIDDLE);
+		map.put(PlaceType.spa, AmountType.MIDDLE);
+		map.put(PlaceType.stadium, AmountType.MIDDLE);
+		map.put(PlaceType.storage, AmountType.MIDDLE);
+		map.put(PlaceType.store, AmountType.MIDDLE);
+		map.put(PlaceType.subway_station, AmountType.MIDDLE);
+		map.put(PlaceType.synagogue, AmountType.MIDDLE);
+		map.put(PlaceType.taxi_stand, AmountType.MIDDLE);
+		map.put(PlaceType.train_station, AmountType.MIDDLE);
+		map.put(PlaceType.travel_agency, AmountType.MIDDLE);
+		map.put(PlaceType.university, AmountType.MIDDLE);
+		map.put(PlaceType.veterinary_care, AmountType.MIDDLE);
+		map.put(PlaceType.zoo, AmountType.MIDDLE);
 		
 		return map;
 	}
