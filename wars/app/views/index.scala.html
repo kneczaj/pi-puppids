@@ -58,10 +58,11 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li id="' + key + '">' + key + ': <b>' + val + '</b></li>');
+				    items.push('<dt id="' + key + '">' + key + '</dt><dd>' + val + '</dd>');
 				  });
 	
-				  $('<ul/>', {
+				  $('<dl/>', {
+					'class': 'dl-horizontal',
 				    html: items.join('')
 				  }).appendTo('#resourcesPlayer');
 			  }
@@ -75,10 +76,11 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li id="' + key + '">' + key + ': <b>' + val + '</b></li>');
+				    items.push('<dt id="' + key + '">' + key + '</dt><dd>' + val + '</dd>');
 				  });
 	
-				  $('<ul/>', {
+				  $('<dl/>', {
+					'class': 'dl-horizontal',
 				    html: items.join('')
 				  }).appendTo('#resourcesTeam');
 			  }
@@ -98,7 +100,7 @@
 			<div class="accordion" id="accordion2">
 				<div class="accordion-group visible-phone">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#map"> Map </a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#map"><i class="icon-globe icon-white"></i> Map </a>
 					</div>
 					<div id="map" class="accordion-body collapse">
 						<div id="map_container_mobile" class="accordion-inner">
@@ -112,25 +114,25 @@
 				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#resources"> Resources </a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#resources"><i class="icon-folder-close icon-white"></i> Resources </a>
 					</div>
 					<div id="resources" class="accordion-body collapse">
 						<div class="accordion-inner">
 							<div id="resourceSources">
-								<h6>Resource Sources:</h6>
+								<h5>Resource Sources:</h5>
 							</div>
 							<div id="resourcesPlayer">
-								<h6>Resources Player:</h6>
+								<h5>Resources Player:</h5>
 							</div>
 							<div id="resourcesTeam">
-								<h6>Resources Team:</h6>
+								<h5>Resources Team:</h5>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#units"> Units </a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#units"><i class="icon-plane icon-white"></i> Units </a>
 					</div>
 					<div id="units" class="accordion-body collapse">
 						<div class="accordion-inner">Lorem ipsum dolor sit amet,
@@ -146,7 +148,7 @@
 				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#team"> Team </a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#team"><i class="icon-user icon-white"></i> Team </a>
 					</div>
 					<div id="team" class="accordion-body collapse">
 						<div class="accordion-inner">
@@ -159,7 +161,7 @@
 				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#statistics"> Statistics </a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#statistics"><i class="icon-tasks icon-white"></i> Statistics </a>
 					</div>
 					<div id="statistics" class="accordion-body collapse">
 						<div class="accordion-inner">Lorem ipsum dolor sit amet,
