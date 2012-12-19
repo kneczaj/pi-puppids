@@ -10,6 +10,7 @@ import models.PlayerLocation;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
+import securesocial.core.java.SecureSocial;
 import services.api.MapInfoService;
 import services.api.error.MapInfoServiceException;
 
@@ -26,6 +27,7 @@ public class MapInfoController extends Controller {
 	@Inject
 	private static MapInfoService mapInfoService;
 
+	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result playersNearby(String latitude, String longitude) {
 		Double lng = Double.valueOf(longitude);
 		Double lat = Double.valueOf(latitude);
@@ -49,6 +51,7 @@ public class MapInfoController extends Controller {
 		}
 	}
 
+	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result placesNearby(String latitude, String longitude) {
 		Double lng = Double.valueOf(longitude);
 		Double lat = Double.valueOf(latitude);

@@ -14,27 +14,36 @@ import communication.ClientPushActor;
 
 import daos.PlayerDAO;
 
+/**
+ * WebSocket Controller
+ * 
+ * TODO: disallow connection requests for unauthenticated users. This is hard,
+ * because @SecureSocial annotation doesn't work
+ * 
+ * @author markus
+ */
 public class WebSocketController extends Controller {
-	
+
 	@Inject
 	private static PlayerDAO playerDAO;
 
 	public static WebSocket<JsonNode> connect(String playerId) {
 		final Player player = playerDAO.get(new ObjectId(playerId));
-		
+
 		WebSocket<JsonNode> webSocket = new WebSocket<JsonNode>() {
 			// Called when the Websocket Handshake is done.
 			public void onReady(WebSocket.In<JsonNode> in,
 					WebSocket.Out<JsonNode> out) {
 				try {
 					Logger.info("WebSocket connection established");
-					ClientPushActor.register(player.getId().toString(), in, out);
+					ClientPushActor
+							.register(player.getId().toString(), in, out);
 				} catch (Exception e) {
 					Logger.warn("Could not establish WebSocket connection", e);
 				}
 			}
 		};
-		
+
 		return webSocket;
 	}
 }

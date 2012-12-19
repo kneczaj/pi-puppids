@@ -8,7 +8,7 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
-import securesocial.core.java.SocialUser;
+import services.api.AuthenticationService;
 import services.api.LocationTrackingService;
 import services.api.error.LocationTrackingServiceException;
 
@@ -22,6 +22,9 @@ import daos.PlayerDAO;
  * @author markus
  */
 public class LocationController extends Controller {
+
+	@Inject
+	private static AuthenticationService authenticationService;
 	
 	@Inject
 	private static LocationTrackingService locationTracking; 
@@ -32,8 +35,7 @@ public class LocationController extends Controller {
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result updateLocation(String lat,
 			String lng, String uncertainty, String speed, String timestamp) {
-		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
-		Player p = playerDAO.findOne("email", user.getEmail());
+		Player p = authenticationService.getPlayer(ctx());
 		
 		if (p == null) {
 			return badRequest();

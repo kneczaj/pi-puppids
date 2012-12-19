@@ -15,8 +15,7 @@ GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResour
 GET     /profile                    				controllers.Application.profile()
 
 # Invite a new member
-GET		/invite										controllers.TeamController.inviteForm()
-GET		/checkEmail/:email							controllers.TeamController.canInvite(email)
+GET		/invite/:username							controllers.TeamController.tryInvite(username)
 GET		/acceptInvitation/:token					controllers.TeamController.acceptInvitation(token)
 
 # Map static resources from the /public folder to the /assets URL path
