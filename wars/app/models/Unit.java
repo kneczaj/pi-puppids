@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Map;
+
 import org.bson.types.ObjectId;
 
 import com.google.code.morphia.annotations.Entity;
@@ -16,6 +18,7 @@ public class Unit {
 	private Integer minStrength;
 	private Integer maxStrength;
 	private Double chanceOfFailure;
+	private Map<ResourceType, Integer> costs;
 	
 	@Reference 
 	private Player player;
@@ -66,6 +69,14 @@ public class Unit {
 
 	public void setPlayer(Player player) {
 		this.player = player;
+	}
+
+	public Map<ResourceType, Integer> getCosts() {
+		return costs;
+	}
+
+	public void setCosts(Map<ResourceType, Integer> costs) {
+		this.costs = costs;
 	}
 
 	@Override
