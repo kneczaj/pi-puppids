@@ -8,11 +8,7 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
-
-import org.bson.types.ObjectId;
-
 import services.api.TeamService;
-import services.api.error.TeamServiceException;
 
 import com.google.inject.Inject;
 import com.typesafe.plugin.MailerAPI;
@@ -23,7 +19,6 @@ import daos.FactionDAO;
 import daos.InvitationDAO;
 import daos.PlayerDAO;
 import daos.TeamDAO;
-//import play.Logger;
 
 /**
  * Implementation of a TeamService
@@ -124,60 +119,14 @@ public class TeamServiceImpl implements TeamService {
 		invitation.setSent();
 		invitationDAO.save(invitation);
 	}
-	
-	@Override
-	public Player joinCity(Player player, String cityId) throws TeamServiceException {
-		if (player == null || player.getTeam() == null || cityId == null) {
-			throw new NullPointerException("Player and city and a player's team must not be null");
-		}
-		
-		City newCity = cityDAO.get(new ObjectId(cityId));
-		if (newCity == null) {
-			throw new TeamServiceException("The Faction with this factionId could not be found.");
-		}
-		
-		City oldCity = player.getTeam().getCity();
-		if (oldCity != null) {
-			// Player belongs already to this faction => is okay
-			if (oldCity.getId().toString().equals(newCity.getId().toString())) {
-				return player;
-			}
-			else {
-				throw new TeamServiceException("Player already belongs to an other city.");
-			}
-		}
-		
-		teamDAO.updateCityOfTeam(player.getTeam(), newCity);
-		Player p = playerDAO.get(player.getId());
-		
-		return p;
-	}
 
 	@Override
-	public Player joinFaction(Player player, String factionId) throws TeamServiceException {
-		if (player == null || player.getTeam() == null || factionId == null) {
-			throw new NullPointerException("Player and factionId and a player's team must not be null");
-		}
+	public Team createPseudoTeam() {
+		Team t = new Team();
+		t.setCreatedAt(new Date());
+		t.setName("pseudo");
+		teamDAO.save(t);
 		
-		Faction newFaction = factionDAO.get(new ObjectId(factionId));
-		if (newFaction == null) {
-			throw new TeamServiceException("The Faction with this factionId could not be found.");
-		}
-		
-		Faction oldFaction = player.getTeam().getFaction();
-		if (oldFaction != null) {
-			// Player belongs already to this faction => is okay
-			if (oldFaction.getName().equals(newFaction.getName())) {
-				return player;
-			}
-			else {
-				throw new TeamServiceException("Player already belongs to an other faction.");
-			}
-		}
-		
-		teamDAO.updateFactionOfTeam(player.getTeam(), newFaction);
-		Player p = playerDAO.get(player.getId());
-		
-		return p;
+		return t;
 	}
 }
