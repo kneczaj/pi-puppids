@@ -8,16 +8,22 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
-//import play.Logger;
+
+import org.bson.types.ObjectId;
+
 import services.api.TeamService;
+import services.api.error.TeamServiceException;
 
 import com.google.inject.Inject;
 import com.typesafe.plugin.MailerAPI;
 import com.typesafe.plugin.MailerPlugin;
 
+import daos.CityDAO;
+import daos.FactionDAO;
 import daos.InvitationDAO;
 import daos.PlayerDAO;
 import daos.TeamDAO;
+//import play.Logger;
 
 /**
  * Implementation of a TeamService
@@ -33,8 +39,20 @@ public class TeamServiceImpl implements TeamService {
 	private PlayerDAO playerDAO;
 	
 	@Inject
+	private CityDAO cityDAO;
+	
+	@Inject
 	private InvitationDAO invitationDAO;
 	
+	@Inject
+	private FactionDAO factionDAO;
+	
+	@Override
+	public Team createTeam(City city, String name) {
+		return createTeam(null, city, name);
+	}
+	
+	@Override
 	public Team createTeam(Faction faction, City city, String name) {
 		Team team = new Team();
 		team.setCity(city);
@@ -47,6 +65,7 @@ public class TeamServiceImpl implements TeamService {
 		return team;
 	}
 	
+	@Override
 	public Invitation invite(Player sender, Player receiver) {
 		
 		Invitation invitation = new Invitation(sender, receiver);
@@ -54,6 +73,7 @@ public class TeamServiceImpl implements TeamService {
 		return invitation;
 	}
 
+	@Override
 	public Player acceptInvite(Invitation invitation) {
 		
 		Player player = invitation.getRecipient();
@@ -65,12 +85,14 @@ public class TeamServiceImpl implements TeamService {
 		return player;
 	}
 	
+	@Override
 	public Invitation iniviteStranger(Player sender, String emailAddress) {
 		Invitation invitation = new Invitation(sender, emailAddress);
 		invitationDAO.save(invitation);
 		return invitation;
 	}
 	
+	@Override
 	public void sendInvitation(Invitation invitation) {
 		
 		String token = UUID.randomUUID().toString();
@@ -101,5 +123,61 @@ public class TeamServiceImpl implements TeamService {
 		
 		invitation.setSent();
 		invitationDAO.save(invitation);
+	}
+	
+	@Override
+	public Player joinCity(Player player, String cityId) throws TeamServiceException {
+		if (player == null || player.getTeam() == null || cityId == null) {
+			throw new NullPointerException("Player and city and a player's team must not be null");
+		}
+		
+		City newCity = cityDAO.get(new ObjectId(cityId));
+		if (newCity == null) {
+			throw new TeamServiceException("The Faction with this factionId could not be found.");
+		}
+		
+		City oldCity = player.getTeam().getCity();
+		if (oldCity != null) {
+			// Player belongs already to this faction => is okay
+			if (oldCity.getId().toString().equals(newCity.getId().toString())) {
+				return player;
+			}
+			else {
+				throw new TeamServiceException("Player already belongs to an other city.");
+			}
+		}
+		
+		teamDAO.updateCityOfTeam(player.getTeam(), newCity);
+		Player p = playerDAO.get(player.getId());
+		
+		return p;
+	}
+
+	@Override
+	public Player joinFaction(Player player, String factionId) throws TeamServiceException {
+		if (player == null || player.getTeam() == null || factionId == null) {
+			throw new NullPointerException("Player and factionId and a player's team must not be null");
+		}
+		
+		Faction newFaction = factionDAO.get(new ObjectId(factionId));
+		if (newFaction == null) {
+			throw new TeamServiceException("The Faction with this factionId could not be found.");
+		}
+		
+		Faction oldFaction = player.getTeam().getFaction();
+		if (oldFaction != null) {
+			// Player belongs already to this faction => is okay
+			if (oldFaction.getName().equals(newFaction.getName())) {
+				return player;
+			}
+			else {
+				throw new TeamServiceException("Player already belongs to an other faction.");
+			}
+		}
+		
+		teamDAO.updateFactionOfTeam(player.getTeam(), newFaction);
+		Player p = playerDAO.get(player.getId());
+		
+		return p;
 	}
 }

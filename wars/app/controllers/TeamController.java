@@ -2,11 +2,13 @@ package controllers;
 
 import models.Invitation;
 import models.Player;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import services.api.AuthenticationService;
 import services.api.TeamService;
+import services.api.error.TeamServiceException;
 import views.html.message;
 
 import com.google.inject.Inject;
@@ -54,6 +56,23 @@ public class TeamController extends Controller {
 		teamService.sendInvitation(invitation);
 		
 		return ok("ok");
+	}
+	
+	@SecureSocial.SecuredAction(ajaxCall=true)
+	public static Result joinFactionAndCity(String factionId, String cityId) {
+		Player player = authenticationService.getPlayer(ctx());
+		
+		Logger.debug("player tries to join " + factionId + " faction and the city " + cityId);
+		try {
+			teamService.joinFaction(player, factionId);
+			teamService.joinCity(player, cityId);
+			
+			return ok("ok");
+		} catch (TeamServiceException e) {
+			Logger.info(e.toString());
+			
+			return ok("error");
+		}
 	}
 	
 	@SecureSocial.SecuredAction

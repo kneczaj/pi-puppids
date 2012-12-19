@@ -13,8 +13,8 @@ import securesocial.core.java.SecureSocial;
 import services.api.AuthenticationService;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
+import util.JsonHelper;
 
-import com.google.gson.Gson;
 import com.google.inject.Inject;
 
 import daos.PlayerDAO;
@@ -47,8 +47,7 @@ public class ResourceController extends Controller {
 		try {
 			Map<Place, ResourceType> resourcePlaces = resourceService.getResourceSourcesOfPlayer(p);
 			
-			Gson gson = new Gson();
-			return ok(gson.toJson(resourcePlaces.keySet()));
+			return ok(JsonHelper.toJson(resourcePlaces.keySet()));
 		} catch (ResourceServiceException e) {
 			Logger.warn("Could not find resource sources of player", e);
 
@@ -63,9 +62,7 @@ public class ResourceController extends Controller {
 		try {
 			Map<ResourceType, Integer> resourcePlaces = resourceService.getResourcesOfPlayer(p);
 			
-			Gson gson = new Gson();
-			String jsonString = gson.toJson(resourcePlaces);
-			return ok(jsonString);
+			return ok(JsonHelper.toJson(resourcePlaces));
 		} catch (ResourceServiceException e) {
 			Logger.warn("Could not find resources of player", e);
 
@@ -81,9 +78,7 @@ public class ResourceController extends Controller {
 		try {
 			Map<ResourceType, Integer> resourcePlaces = resourceService.getResourcesOfTeam(t);
 			
-			Gson gson = new Gson();
-			String jsonString = gson.toJson(resourcePlaces);
-			return ok(jsonString);
+			return ok(JsonHelper.toJson(resourcePlaces));
 		} catch (ResourceServiceException e) {
 			Logger.warn("Could not find resources of player", e);
 
