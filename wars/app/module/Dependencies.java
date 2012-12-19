@@ -1,6 +1,7 @@
 package module;
 
 
+import services.api.AuthenticationService;
 import services.api.LocationTrackingService;
 import services.api.MapInfoService;
 import services.api.ResourceService;
@@ -8,6 +9,7 @@ import services.api.ScoreService;
 import services.api.TeamService;
 import services.dummy.ResourceServiceDummyImpl;
 import services.dummy.ScoreServiceDummyImpl;
+import services.impl.AuthenticationServiceImpl;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
 import services.impl.TeamServiceImpl;
@@ -27,7 +29,6 @@ import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
 import daos.ResourceDepotDAO;
 import daos.TeamDAO;
-import daos.TeamInviteDAO;
 import daos.UnitDAO;
 
 /**
@@ -45,13 +46,13 @@ public class Dependencies implements Module {
 		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
 		binder.bind(ResourceService.class).to(ResourceServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(ScoreService.class).to(ScoreServiceDummyImpl.class).in(Singleton.class);
+		binder.bind(AuthenticationService.class).to(AuthenticationServiceImpl.class).in(Singleton.class);
 	
 		binder.bind(Morphia.class);
 		binder.bind(Mongo.class);
 		
 		binder.bind(PlayerDAO.class).in(Singleton.class);
 		binder.bind(TeamDAO.class).in(Singleton.class);
-		binder.bind(TeamInviteDAO.class).in(Singleton.class);
 		binder.bind(InvitationDAO.class).in(Singleton.class);
 		binder.bind(FactionDAO.class).in(Singleton.class);
 		binder.bind(CityDAO.class).in(Singleton.class);

@@ -10,7 +10,7 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
-import securesocial.core.java.SocialUser;
+import services.api.AuthenticationService;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
 
@@ -29,6 +29,9 @@ import daos.TeamDAO;
 public class ResourceController extends Controller {
 	
 	@Inject
+	private static AuthenticationService authenticationService;
+	
+	@Inject
 	private static ResourceService resourceService;
 	
 	@Inject
@@ -39,8 +42,7 @@ public class ResourceController extends Controller {
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourceSourcesOfPlayer() {
-		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
-		Player p = playerDAO.findOne("email", user.getEmail());
+		Player p = authenticationService.getPlayer(ctx());
 		
 		try {
 			Map<Place, ResourceType> resourcePlaces = resourceService.getResourceSourcesOfPlayer(p);
@@ -56,8 +58,7 @@ public class ResourceController extends Controller {
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourcesOfPlayer() {
-		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
-		Player p = playerDAO.findOne("email", user.getEmail());
+		Player p = authenticationService.getPlayer(ctx());
 		
 		try {
 			Map<ResourceType, Integer> resourcePlaces = resourceService.getResourcesOfPlayer(p);
@@ -74,8 +75,7 @@ public class ResourceController extends Controller {
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourcesOfTeam() {
-		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
-		Player p = playerDAO.findOne("email", user.getEmail());
+		Player p = authenticationService.getPlayer(ctx());
 		Team t = p.getTeam();
 		
 		try {

@@ -8,38 +8,28 @@ import models.Team;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
-import securesocial.core.java.SocialUser;
-import services.api.TeamService;
+import services.api.AuthenticationService;
 import views.html.index;
 import views.html.profile;
 
 import com.google.inject.Inject;
 
-import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
-import daos.TeamDAO;
 
 public class Application extends Controller {
 
 	@Inject
-	private static PlayerDAO playerDAO;
+	private static AuthenticationService authenticationService;
 	
 	@Inject
 	private static PlayerLocationDAO playerLocationDAO;
 	
-	@Inject
-	private static TeamDAO teamDAO;
-	
-	@Inject
-	private static TeamService teamService;
-	
 	@SecureSocial.SecuredAction
 	public static Result index() {
-		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
-		Player player = playerDAO.findOne("email", user.getEmail());
+		Player player = authenticationService.getPlayer(ctx());
 		
 		Team team = player.getTeam();
-		List<Player> teammates = teamService.getMembers(team);
+		List<Player> teammates = team.getPlayers();
 		PlayerLocation playerLocation = playerLocationDAO.findLatestLocation(player);
 		
 		return ok(index.render(player, playerLocation, teammates));
@@ -47,8 +37,7 @@ public class Application extends Controller {
 	
 	@SecureSocial.SecuredAction
 	public static Result profile() {
-		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
-		Player player = playerDAO.findOne("email", user.getEmail());
+		Player player = authenticationService.getPlayer(ctx());
 		return ok(profile.render(player));
 	}
 
