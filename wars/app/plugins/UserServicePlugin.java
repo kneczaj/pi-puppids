@@ -1,13 +1,7 @@
-package services.impl;
-
-import java.net.UnknownHostException;
-import java.util.Date;
+package plugins;
 
 import models.AccessToken;
-import models.City;
-import models.Faction;
 import models.Player;
-import models.Team;
 import play.Application;
 import play.Logger;
 import securesocial.core.java.AuthenticationMethod;
@@ -16,19 +10,16 @@ import securesocial.core.java.PasswordInfo;
 import securesocial.core.java.SocialUser;
 import securesocial.core.java.Token;
 import securesocial.core.java.UserId;
+import services.api.PlayerService;
 import services.api.TeamService;
+import services.api.error.PlayerServiceException;
 
-import com.google.code.morphia.Morphia;
 import com.google.code.morphia.logging.MorphiaLoggerFactory;
 import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
-import com.google.inject.Inject;
-import com.mongodb.Mongo;
+import com.google.inject.Injector;
 
 import daos.AccessTokenDAO;
-import daos.CityDAO;
-import daos.FactionDAO;
 import daos.PlayerDAO;
-import daos.TeamDAO;
 
 /**
  * Implementation of a UserServicePlugin needed for SecureSocial
@@ -40,90 +31,40 @@ public class UserServicePlugin extends BaseUserService {
 
 	private PlayerDAO playerDAO;
 	private AccessTokenDAO accessTokenDAO;
-	private TeamDAO teamDAO;
-	private FactionDAO factionDAO;
-	private CityDAO cityDAO;
-	
-	@Inject
 	private TeamService teamService;
+	private PlayerService playerService;
+	
+	private Application application;
 
 	public UserServicePlugin(Application application) {
-		super(application);
+		super(application);		
+		this.application = application;
+		
 		MorphiaLoggerFactory.reset();
 		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
-
 		Logger.info("Loading UserServicePlugin");
-		
-		try {
-			Mongo mongo = new Mongo();
-			Morphia morphia = new Morphia();
-			
-			playerDAO = new PlayerDAO(mongo, morphia);
-			accessTokenDAO = new AccessTokenDAO(mongo, morphia);
-			factionDAO = new FactionDAO(mongo, morphia);
-			cityDAO = new CityDAO(mongo, morphia);
-			teamDAO = new TeamDAO(mongo, morphia);
-		} catch (UnknownHostException e) {
-			Logger.error("Could not instantiate DAOs necessary for the authentication");
-		}
 	}
 	
-	private Faction getRedFaction() {
-		Faction load = factionDAO.findOne("name", "red");
-		if (load != null) {
-			return load;
-		}
+	public void onMyStart() {
+		Logger.info("Starting UserServicePlugin");
 		
-		Faction faction = new Faction();
-		faction.setName("red");
-		faction.setScore(0);
-		factionDAO.save(faction);
+		GuicePlugin plugin = application.plugin(GuicePlugin.class);
+		Injector injector = plugin.getInjector();
 		
-		return faction;
-	}
-	
-	private City getMunich() {
-		City load = cityDAO.findOne("name", "Munich");
-		if (load != null) {
-			return load;
-		}
-		
-		City munich = new City();
-		munich.setCountry("de");
-		munich.setName("Munich");
-		munich.setLatitude(48.133333);
-		munich.setLongitude(11.566667);
-		cityDAO.save(munich);
-		
-		return munich;
-	}
-	
-	private Team createPseudoTeamForPlayer() {
-		Team t = new Team();
-		t.setCreatedAt(new Date());
-		t.setName("pseudo");
-		teamDAO.save(t);
-		
-		return t;
+		playerDAO = injector.getInstance(PlayerDAO.class);
+		accessTokenDAO = injector.getInstance(AccessTokenDAO.class);
+		teamService = plugin.getInjector().getInstance(TeamService.class);
+		playerService = plugin.getInjector().getInstance(PlayerService.class);
 	}
 
 	@Override
 	public void doSave(SocialUser user) {
 		Logger.debug("save user");
-		Player p = new Player();
-		p.setAuthenticationProvider(user.getAuthMethod().toString());
-		p.setEmail(user.getEmail());
-		p.setFirstname(user.getFirstName());
-		p.setName(user.getLastName());
-		p.setPasswordHash(user.getPasswordInfo().getPassword());
-		p.setUsername(user.getId().getId());
 		
-		Player load = playerDAO.findOne("email", user.getEmail());
-		if (load == null) {
-			Team pseudoTeam = createPseudoTeamForPlayer();
-			p.setTeam(pseudoTeam);
-			
-			playerDAO.save(p);
+		try {
+			playerService.register(user);
+		} catch (PlayerServiceException e) {
+			Logger.error(e.toString());
 		}
 	}
 

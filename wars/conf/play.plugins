@@ -1,7 +1,8 @@
-1499:plugins.GuicePlugin
+1001:plugins.GuicePlugin
 1500:com.typesafe.plugin.CommonsMailerPlugin
-9996:securesocial.core.providers.utils.DefaultPasswordValidator
-9997:securesocial.controllers.DefaultTemplatesPlugin
-9998:services.impl.UserServicePlugin
-9999:securesocial.core.providers.utils.BCryptPasswordHasher
+9995:securesocial.core.providers.utils.DefaultPasswordValidator
+9996:securesocial.controllers.DefaultTemplatesPlugin
+9997:plugins.UserServicePlugin
+9998:plugins.UserServicePluginStarter
+10000:securesocial.core.providers.utils.BCryptPasswordHasher
 10004:securesocial.core.providers.UsernamePasswordProvider

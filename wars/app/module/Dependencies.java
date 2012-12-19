@@ -4,6 +4,7 @@ package module;
 import services.api.AuthenticationService;
 import services.api.LocationTrackingService;
 import services.api.MapInfoService;
+import services.api.PlayerService;
 import services.api.ResourceService;
 import services.api.ScoreService;
 import services.api.TeamService;
@@ -12,6 +13,7 @@ import services.dummy.ScoreServiceDummyImpl;
 import services.impl.AuthenticationServiceImpl;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
+import services.impl.PlayerServiceImpl;
 import services.impl.TeamServiceImpl;
 
 import com.google.code.morphia.Morphia;
@@ -47,7 +49,8 @@ public class Dependencies implements Module {
 		binder.bind(ResourceService.class).to(ResourceServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(ScoreService.class).to(ScoreServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(AuthenticationService.class).to(AuthenticationServiceImpl.class).in(Singleton.class);
-	
+		binder.bind(PlayerService.class).to(PlayerServiceImpl.class).in(Singleton.class);
+		
 		binder.bind(Morphia.class);
 		binder.bind(Mongo.class);
 		

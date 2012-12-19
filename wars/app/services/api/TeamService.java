@@ -64,30 +64,10 @@ public interface TeamService {
 	public void sendInvitation(Invitation invitation);
 
 	/**
-	 * Allows a player to join a faction.
+	 * Creates a pseudo team, that consists just of one player
 	 * 
-	 * @param player
-	 * @param factionId
-	 * @throws TeamServiceException
-	 *             if the Player already belongs to an other Faction or the factionId
-	 *             is not valid
-	 * @throws NullPointerException
-	 *             if Player, factionId or Player's team is null
+	 * @return
 	 */
-	public Player joinFaction(Player player, String factionId)
-			throws TeamServiceException;
-
-	/**
-	 * Allows a player to join a city.
-	 * 
-	 * @param player
-	 * @param cityId
-	 * @throws TeamServiceException
-	 *             if the Player already belongs to an other City or the cityId
-	 *             is not valid
-	 * @throws NullPointerException
-	 *             if Player, cityId or Player's team is null
-	 */
-	public Player joinCity(Player player, String cityId) throws TeamServiceException;
+	public Team createPseudoTeam();
 
 }

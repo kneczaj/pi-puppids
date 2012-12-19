@@ -10,6 +10,8 @@ import play.Application;
 import play.Logger;
 import services.api.Service;
 
+import com.google.code.morphia.logging.MorphiaLoggerFactory;
+import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -25,6 +27,10 @@ public class GuicePlugin extends InjectPlugin {
 
 	public GuicePlugin(Application app) {
 		super(app);
+		
+		MorphiaLoggerFactory.reset();
+		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
+		Logger.info("Loading guice plugin");
 	}
 
 	@Override
@@ -56,12 +62,13 @@ public class GuicePlugin extends InjectPlugin {
 		Class[] r = (Class[]) classNames.toArray(new Class[classNames.size()]);
 		return (Class<Object>[]) r;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected Class<Object>[] filterServiceClasses(Class[] fullClassList) {
 		ArrayList<Class<Object>> classNames = new ArrayList<Class<Object>>();
 		for (Class c : fullClassList) {
-			if (Service.class.isAssignableFrom(c) && !c.getName().equals("Service")) {
+			if (Service.class.isAssignableFrom(c)
+					&& !c.getName().equals("Service")) {
 				classNames.add(c);
 			}
 		}
@@ -69,12 +76,13 @@ public class GuicePlugin extends InjectPlugin {
 		Class[] r = (Class[]) classNames.toArray(new Class[classNames.size()]);
 		return (Class<Object>[]) r;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected Class<Object>[] filterDAOClasses(Class[] fullClassList) {
 		ArrayList<Class<Object>> classNames = new ArrayList<Class<Object>>();
 		for (Class c : fullClassList) {
-			if (AbstractDAO.class.isAssignableFrom(c) && !c.getName().equals("daos.AbstractDAO")) {
+			if (AbstractDAO.class.isAssignableFrom(c)
+					&& !c.getName().equals("daos.AbstractDAO")) {
 				classNames.add(c);
 			}
 		}
@@ -86,13 +94,19 @@ public class GuicePlugin extends InjectPlugin {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void onStart() {
-		Class[] services = filterServiceClasses(Helper.getClasses("services.impl", app.classloader()));
-		Class[] daos = filterDAOClasses(Helper.getClasses("daos", app.classloader()));
-		Class[] controllers = filterControllerClasses(Helper.getClasses("controllers", app.classloader()));
+		Logger.info("Starting guice plugin");
+		Class[] services = filterServiceClasses(Helper.getClasses(
+				"services.impl", app.classloader()));
+		Class[] daos = filterDAOClasses(Helper.getClasses("daos",
+				app.classloader()));
+		Class[] controllers = filterControllerClasses(Helper.getClasses(
+				"controllers", app.classloader()));
 
-		Class<Object>[] injectables = (Class<Object>[]) ArrayUtils.addAll(daos, services);
-		injectables = (Class<Object>[]) ArrayUtils.addAll(injectables, controllers);
-		
+		Class<Object>[] injectables = (Class<Object>[]) ArrayUtils.addAll(daos,
+				services);
+		injectables = (Class<Object>[]) ArrayUtils.addAll(injectables,
+				controllers);
+
 		// create injector with static support
 		injector = Guice.createInjector(convertToModules(availableModules(),
 				injectables));
@@ -106,6 +120,10 @@ public class GuicePlugin extends InjectPlugin {
 				Logger.debug("skipping injection for " + clazz.getName());
 			}
 		}
+	}
+	
+	public Injector getInjector() {
+		return injector;
 	}
 
 	/**

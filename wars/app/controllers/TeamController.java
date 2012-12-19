@@ -7,8 +7,9 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import services.api.AuthenticationService;
+import services.api.PlayerService;
 import services.api.TeamService;
-import services.api.error.TeamServiceException;
+import services.api.error.PlayerServiceException;
 import views.html.message;
 
 import com.google.inject.Inject;
@@ -23,6 +24,9 @@ public class TeamController extends Controller {
 	
 	@Inject
 	private static TeamService teamService;
+	
+	@Inject
+	private static PlayerService playerService;
 
 	@Inject
 	private static PlayerDAO playerDAO;
@@ -64,11 +68,11 @@ public class TeamController extends Controller {
 		
 		Logger.debug("player tries to join " + factionId + " faction and the city " + cityId);
 		try {
-			teamService.joinFaction(player, factionId);
-			teamService.joinCity(player, cityId);
+			playerService.joinFaction(player, factionId);
+			playerService.joinCity(player, cityId);
 			
 			return ok("ok");
-		} catch (TeamServiceException e) {
+		} catch (PlayerServiceException e) {
 			Logger.info(e.toString());
 			
 			return ok("error");
