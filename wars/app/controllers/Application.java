@@ -2,6 +2,8 @@ package controllers;
 
 import java.util.List;
 
+import models.City;
+import models.Faction;
 import models.Player;
 import models.PlayerLocation;
 import models.Team;
@@ -14,6 +16,8 @@ import views.html.profile;
 
 import com.google.inject.Inject;
 
+import daos.CityDAO;
+import daos.FactionDAO;
 import daos.PlayerLocationDAO;
 
 public class Application extends Controller {
@@ -24,15 +28,24 @@ public class Application extends Controller {
 	@Inject
 	private static PlayerLocationDAO playerLocationDAO;
 	
+	@Inject
+	private static FactionDAO factionDAO;
+	
+	@Inject
+	private static CityDAO cityDAO;
+	
 	@SecureSocial.SecuredAction
 	public static Result index() {
 		Player player = authenticationService.getPlayer(ctx());
 		
 		Team team = player.getTeam();
 		List<Player> teammates = team.getPlayers();
+		List<Faction> factions = factionDAO.find().asList();
+		List<City> cities = cityDAO.find().asList();
+		
 		PlayerLocation playerLocation = playerLocationDAO.findLatestLocation(player);
 		
-		return ok(index.render(player, playerLocation, teammates));
+		return ok(index.render(player, playerLocation, teammates, factions, cities));
 	}
 	
 	@SecureSocial.SecuredAction

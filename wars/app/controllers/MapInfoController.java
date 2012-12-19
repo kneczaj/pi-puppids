@@ -13,8 +13,8 @@ import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import services.api.MapInfoService;
 import services.api.error.MapInfoServiceException;
+import util.JsonHelper;
 
-import com.google.gson.Gson;
 import com.google.inject.Inject;
 
 /**
@@ -41,9 +41,7 @@ public class MapInfoController extends Controller {
 			Map<String, PlayerLocation> playerLocations = mapInfoService
 					.findPlayersNearby(location, null, youngerThan);
 
-			Gson gson = new Gson();
-			String jsonString = gson.toJson(playerLocations);
-			return ok(jsonString);
+			return ok(JsonHelper.toJson(playerLocations));
 		} catch (MapInfoServiceException e) {
 			Logger.warn("Could not find nearby players", e);
 
@@ -61,8 +59,7 @@ public class MapInfoController extends Controller {
 			Map<Place, Location> placeLocations = mapInfoService
 					.findPlacesNearby(l);
 
-			Gson gson = new Gson();
-			return ok(gson.toJson(placeLocations));
+			return ok(JsonHelper.toJson(placeLocations));
 		} catch (MapInfoServiceException e) {
 			Logger.warn("Could not find nearby places", e);
 

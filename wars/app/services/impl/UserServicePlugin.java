@@ -100,9 +100,7 @@ public class UserServicePlugin extends BaseUserService {
 	
 	private Team createPseudoTeamForPlayer() {
 		Team t = new Team();
-		t.setCity(getMunich());
 		t.setCreatedAt(new Date());
-		t.setFaction(getRedFaction());
 		t.setName("pseudo");
 		teamDAO.save(t);
 		
