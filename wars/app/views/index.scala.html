@@ -15,6 +15,34 @@
 		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)"
 	};
 	
+	function tryInvite() {
+
+		var checkEmailRequest = new XMLHttpRequest();
+		var username = document.getElementById("userToInvite").value;
+		
+		checkEmailRequest.onreadystatechange = function() {
+	
+	  		if (checkEmailRequest.readyState == 4 && checkEmailRequest.status == 200) {
+	  		
+				var response = checkEmailRequest.responseText;
+				var message;
+				if (response == "ok") {
+					message = username + " has been succesfully invited";
+				} else if (response == "userIsYou") {
+					message = "You cannot invite yourself";
+				} else if (response == "givenUserDoesntExist") {
+					message = "The given user was not found";
+				}
+				
+				document.getElementById("error-message").innerHTML = message;
+				document.getElementById("userToInvite").value = "";
+			}
+  		}
+  	
+		checkEmailRequest.open("GET","invite/"+username, true);
+		checkEmailRequest.send();
+	};
+	
 	$(document).ready(function() {
 		$(window).resize(function() {
 			if ($(this).width() < 768) {
@@ -153,9 +181,13 @@
 					<div id="team" class="accordion-body collapse">
 						<div class="accordion-inner">
 							@for(member <- teammates) {
-								@member.getFirstname() @member.getName()<br>
+								@member.getUsername()<br>
 							}
-							<button type="button" class="btn" onclick="location.href='invite'">Invite a new member</button>
+							<hr>
+							<input type="text" placeholder="Email or user name" id="userToInvite">
+							&nbsp;
+							<button type="button" class="btn" onclick="tryInvite()">Invite</button>
+							<div id="error-message" class="control-group"></div>
 						</div> 
 					</div>
 				</div>
