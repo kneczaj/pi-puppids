@@ -38,15 +38,15 @@ public interface TeamService {
 	 */
 	public Player acceptInvite(Invitation invitation);
 
-//	/**
-//	 * Invite strangers (people that are not already registered at ARWars) via
-//	 * emailAdress to a team. Sends an email to the adress with an invitation
-//	 * link.
-//	 * 
-//	 * @param emailAdress
-//	 * @param team
-//	 */
-//	public void iniviteStranger(String emailAdress, Team team);
+	/**
+	 * Invite strangers (people that are not already registered at ARWars) via
+	 * emailAdress to a team. Sends an email to the adress with an invitation
+	 * link.
+	 * 
+	 * @param sender
+	 * @param emailAdress
+	 */
+	public Invitation iniviteStranger(Player sender, String emailAddress);
 	
 	public void sendInvitation(Invitation invitation);
 

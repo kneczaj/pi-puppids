@@ -31,22 +31,35 @@ public class Invitation {
 	private long creationDate;
 	private long expirationDate;
 	private String token;
+	private String email;
 	
 	// ---------------------------------------
 	
 	public Invitation() {
 		state = State.CREATED;
+		this.creationDate = System.currentTimeMillis();
 	}
 	
 	public Invitation(Player sender, Player recipient) {
-		state = State.CREATED;
+		this();
 		this.sender = sender;
 		this.recipient = recipient;
-		this.creationDate = System.currentTimeMillis();
+	}
+	
+	public Invitation(Player sender, String email) {
+		this();
+		this.sender = sender;
+		this.email = email;
 	}
 
 	public ObjectId getId() {
 		return id;
+	}
+	
+	public String getEmail() {
+		if (email.isEmpty())
+			return recipient.getEmail();
+		return email;
 	}
 
 	public Player getSender() {

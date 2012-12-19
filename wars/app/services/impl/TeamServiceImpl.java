@@ -8,7 +8,7 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
-import play.Logger;
+//import play.Logger;
 import services.api.TeamService;
 
 import com.google.inject.Inject;
@@ -35,7 +35,6 @@ public class TeamServiceImpl implements TeamService {
 	@Inject
 	private InvitationDAO invitationDAO;
 	
-	@Override
 	public Team createTeam(Faction faction, City city, String name) {
 		Team team = new Team();
 		team.setCity(city);
@@ -48,7 +47,6 @@ public class TeamServiceImpl implements TeamService {
 		return team;
 	}
 	
-	@Override
 	public Invitation invite(Player sender, Player receiver) {
 		
 		Invitation invitation = new Invitation(sender, receiver);
@@ -56,7 +54,6 @@ public class TeamServiceImpl implements TeamService {
 		return invitation;
 	}
 
-	@Override
 	public Player acceptInvite(Invitation invitation) {
 		
 		Player player = invitation.getRecipient();
@@ -68,21 +65,39 @@ public class TeamServiceImpl implements TeamService {
 		return player;
 	}
 	
+	public Invitation iniviteStranger(Player sender, String emailAddress) {
+		Invitation invitation = new Invitation(sender, emailAddress);
+		invitationDAO.save(invitation);
+		return invitation;
+	}
+	
 	public void sendInvitation(Invitation invitation) {
 		
 		String token = UUID.randomUUID().toString();
 		invitation.setToken(token);
 		
 		String link = "http://localhost:9000/acceptInvitation/" + token;
-		
-		Logger.info("to accept invitation go to " + link);
+		Player recipient = invitation.getRecipient();
+		Player sender = invitation.getSender();
 		
 		MailerAPI mail = play.Play.application().plugin(MailerPlugin.class).email();
 		
 		mail.setSubject("ARWars - invitation to team " + invitation.getTeam().getName());
-		mail.addRecipient(invitation.getRecipient().getEmail());
+		mail.addRecipient(invitation.getEmail());
 		mail.addFrom("arwars.game@gmail.com");
-		mail.send( "Invitation " + link);
+		
+		String name;
+		if (recipient == null)
+			name = "New Player";
+		else
+			name = recipient.getFirstname() + " " + recipient.getName();
+		
+		mail.send(
+			"Dear "+ name + "<br><br>" +
+			"Player " + sender.getUsername() + " has invited you to their team " + invitation.getTeam().getName() + ". " +
+			"Click <a href=\"" + link + "\">here</a> to confirm." + "<br><br>" +
+			"Enjoy!"
+		);
 		
 		invitation.setSent();
 		invitationDAO.save(invitation);
