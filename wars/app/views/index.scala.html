@@ -1,14 +1,18 @@
-@(player: Player)(location: PlayerLocation)(teammates: List[Player]) 
+@(player: Player)(location: PlayerLocation)(teammates: List[Player])
 
 @scripts = {
-
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&sensor=false"></script>
-
 <script type="text/javascript">
 	/*
 	 * Setting globals
 	 */
 	var playerId = "@player.getId().toString()";
+	var factionHasToBeChosen = false;
+	
+	@if(player.getTeam().getFaction() == null) {
+		factionHasToBeChosen = true;
+	}
+	
 	window.ArWars = { 
 		playerId: playerId,
 		mapSelector: '#map_canvas',
@@ -16,21 +20,6 @@
 	};
 	
 	$(document).ready(function() {
-		$(window).resize(function() {
-			if ($(this).width() < 768) {
-				$('#map_canvas').appendTo('#map_container_mobile');
-				$('#playerDetails').appendTo('#map_container_mobile');
-				var offsetTop = 180;
-			} else {
-				$('#map_canvas').appendTo('#map_container_desktop');
-				$('#playerDetails').appendTo('#map_container_desktop');
-				$('#map').removeClass('in');
-				var offsetTop = 130;
-			}
-			var h = $(window).height();
-			$('#map_canvas').css('height', (h - offsetTop));
-		}).resize();
-		
 		$('#accordion2 div:visible:first > .accordion-body').addClass('in');
 		
 		$.getJSON('/resource/getResourceSourcesOfPlayer', function(data) {

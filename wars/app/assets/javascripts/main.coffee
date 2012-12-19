@@ -2,6 +2,27 @@
 log = (args...) ->
     console.log.apply console, args if console.log?
 
+class ArWars.LayoutResizer
+	constructor: (@mapNode, @mobileNode, @desktopNode, @playerDetailsNode) ->
+		$(window).resize(@resize).resize()
+
+	resize: () =>
+		offsetTop = 0
+
+		if $(window).width() < 768
+			@mapNode.appendTo @mobileNode
+			@playerDetailsNode.appendTo @mobileNode
+			offsetTop = 180
+
+		else
+			@mapNode.appendTo @desktopNode
+			@playerDetailsNode.appendTo @desktopNode
+			offsetTop = 130
+
+		height = $(window).height()
+		newHeight = height-offsetTop
+		@mapNode.css 'height', newHeight
+
 # Handels WebSocket communication
 class ArWars.CustomWebSocket
 	@wsInstance: null
@@ -144,7 +165,7 @@ class ArWars.PlayerPositionManager
 		# Register ClickHandler for this marker
 		google.maps.event.addListener marker, 'click', () =>
 			player = @players[pId]
-			if player is null then return
+			if not player? then return
 
 			username = if player.username then player.username else ""
 			team = if player.team.name is "pseudo" then "loner" else player.team.name
@@ -181,6 +202,7 @@ class ArWars.PlayerPositionManager
 		@circles[pId] = circle
 
 $(document).ready ->
+	layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
 	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails')
 	webSocket = new window.ArWars.CustomWebSocket playerPositionManager
 	webSocket.establishWebSocket window.ArWars.webSocketURL

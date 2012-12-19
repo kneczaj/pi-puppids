@@ -21,6 +21,7 @@ import com.mongodb.Mongo;
 import daos.AccessTokenDAO;
 import daos.CityDAO;
 import daos.FactionDAO;
+import daos.InvitationDAO;
 import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
@@ -51,6 +52,7 @@ public class Dependencies implements Module {
 		binder.bind(PlayerDAO.class).in(Singleton.class);
 		binder.bind(TeamDAO.class).in(Singleton.class);
 		binder.bind(TeamInviteDAO.class).in(Singleton.class);
+		binder.bind(InvitationDAO.class).in(Singleton.class);
 		binder.bind(FactionDAO.class).in(Singleton.class);
 		binder.bind(CityDAO.class).in(Singleton.class);
 		binder.bind(UnitDAO.class).in(Singleton.class);
