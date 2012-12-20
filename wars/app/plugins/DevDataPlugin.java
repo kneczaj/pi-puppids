@@ -45,11 +45,13 @@ public class DevDataPlugin extends Plugin {
 		if (factionDAO.findOne("name", "red") == null) {
 			Faction red = new Faction();
 			red.setName("red");
+			factionDAO.save(red);
 		}
 
 		if (factionDAO.findOne("name", "blue") == null) {
-			Faction red = new Faction();
-			red.setName("blue");
+			Faction blue = new Faction();
+			blue.setName("blue");
+			factionDAO.save(blue);
 		}
 	}
 
