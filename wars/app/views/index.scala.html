@@ -59,7 +59,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li id="' + val.resource + '">' + val.name + ' yields <b>' + val.amount + '</b> of ' + val.resource + '</li>');
+				    items.push('<li class="' + val.resource + ' ">' + val.name + ' yields <b>' + val.amount + '</b> of ' + val.resource + '</li>');
 				  });
 	
 				  $('<ul/>', {
@@ -68,7 +68,7 @@
 			  }
 			});
 		
-		$.getJSON('/resource/getResourcesOfPlayer', function(data) {
+			$.getJSON('/resource/getResourcesOfPlayer', function(data) {
 			  var items = [];
 			  
 			  if ($.isEmptyObject(data)) {
@@ -76,13 +76,15 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<dt id="' + key + '">' + key + '</dt><dd>' + val + '</dd>');
+				    items.push('<li class="' + key + '"><a href="#" rel="tooltip" title="' + key + '"> <i class="icon-gift icon-white"></i> ' + val + ' </a></li>');
 				  });
 	
-				  $('<dl/>', {
-					'class': 'dl-horizontal',
+				  $('<ul/>', {
+					'class': 'inline',
 				    html: items.join('')
 				  }).appendTo('#resourcesPlayer');
+				  
+	                $("a").tooltip();
 			  }
 			});
 		
@@ -94,7 +96,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<dt id="' + key + '">' + key + '</dt><dd>' + val + '</dd>');
+				    items.push('<dt class="' + key + '">' + key + '</dt><dd>' + val + '</dd>');
 				  });
 	
 				  $('<dl/>', {
@@ -132,18 +134,12 @@
 				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#resources"><i class="icon-folder-close icon-white"></i> Resources </a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#places"><i class="icon-map-marker icon-white"></i> Places </a>
 					</div>
-					<div id="resources" class="accordion-body collapse">
+					<div id="places" class="accordion-body collapse">
 						<div class="accordion-inner">
 							<div id="resourceSources">
 								<h5>Resource Sources:</h5>
-							</div>
-							<div id="resourcesPlayer">
-								<h5>Resources Player:</h5>
-							</div>
-							<div id="resourcesTeam">
-								<h5>Resources Team:</h5>
 							</div>
 						</div>
 					</div>
@@ -170,11 +166,18 @@
 					</div>
 					<div id="team" class="accordion-body collapse">
 						<div class="accordion-inner">
-							@for(member <- teammates) {
-								@member.getUsername()<br>
-							}
-							<hr>
-							<input type="text" placeholder="Email or user name" id="userToInvite">
+							<div id="resourcesTeam">
+								<h5>Resources Team:</h5>
+							</div>
+							<div id="teamMembers">
+								<h5>Team members:</h5>
+								@for(member <- teammates) {
+									@member.getUsername()<br>
+								}
+	
+								<hr>
+								<input type="text" placeholder="Email or user name" id="userToInvite">
+							</div>
 							&nbsp;
 							<button type="button" class="btn" onclick="tryInvite()">Invite</button>
 							<div id="error-message" class="control-group"></div>
@@ -198,19 +201,13 @@
 					</div>
 				</div>
 			</div>
-
-			<!--<ul class="nav nav-tabs">
-				<li class="active"><a href="#">Units</a></li>
-				<li><a href="#">Resources</a></li>
-				<li><a href="#">Stats</a></li>
-				<li><a href="#">Team</a></li>
-			</ul-->
-			
 		</div>
 		<!--/sidebar-nav -->
 	</div>
 	<!--/span-->
-	<div id="map_container_desktop" class="span8 hidden-phone">
+	<div class="span8">
+		<div id="resourcesPlayer" class="well well-small"></div>
+		<div id="map_container_desktop" class="hidden-phone"></div>
 	</div>
 	<!--/span-->
 </div>
