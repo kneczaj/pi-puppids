@@ -7,5 +7,5 @@ package models;
  */
 public enum UnitType {
 	GRUNT,
-	CRUISER
+	INFANTRY
 }

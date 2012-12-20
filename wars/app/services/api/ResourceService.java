@@ -1,9 +1,11 @@
 package services.api;
 
+import java.util.List;
 import java.util.Map;
 
 import models.Place;
 import models.Player;
+import models.ResourceDepot;
 import models.ResourceType;
 import models.Team;
 import services.api.error.ResourceServiceException;
@@ -45,4 +47,12 @@ public interface ResourceService extends Service {
 	 */
 	public Map<ResourceType, Integer> getResourcesOfTeam(Team team)
 			throws ResourceServiceException;
+
+	/**
+	 * Returns a list of all possible ResourceDepots with value 0 Used to
+	 * instantiate the list of ResourceDepots in the Player
+	 * 
+	 * @return
+	 */
+	public List<ResourceDepot> instantiateResourceDepots(Player player) throws NullPointerException;
 }
