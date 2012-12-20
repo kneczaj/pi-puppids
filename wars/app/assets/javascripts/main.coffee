@@ -12,12 +12,12 @@ class ArWars.LayoutResizer
 		if $(window).width() < 768
 			@mapNode.appendTo @mobileNode
 			@playerDetailsNode.appendTo @mobileNode
-			offsetTop = 180
+			offsetTop = 200
 
 		else
 			@mapNode.appendTo @desktopNode
 			@playerDetailsNode.appendTo @desktopNode
-			offsetTop = 130
+			offsetTop = 180
 
 		height = $(window).height()
 		newHeight = height-offsetTop
