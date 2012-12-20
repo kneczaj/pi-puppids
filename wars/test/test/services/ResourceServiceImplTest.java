@@ -11,7 +11,6 @@ import models.Team;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -47,15 +46,11 @@ public class ResourceServiceImplTest {
 	    teamDAO = injector.getInstance(TeamDAO.class);
 	    resourceService = injector.getInstance(ResourceServiceImpl.class);
 	    
-	    Assert.assertNotNull(resourceService);
-	}
-
-	@Before
-	public void DAOsNotNull() {
 		Assert.assertNotNull(playerDAO);
 		Assert.assertNotNull(placeDAO);
 		Assert.assertNotNull(resourceDepotDAO);
 		Assert.assertNotNull(teamDAO);
+	    Assert.assertNotNull(resourceService);
 	}
 
 	/**

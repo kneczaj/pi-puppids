@@ -46,6 +46,9 @@ public class Player {
 
 	@Reference
 	private Team team;
+	
+	@Reference
+	private List<Unit> units = Lists.newLinkedList();
 
 	public ObjectId getId() {
 		return id;
@@ -182,6 +185,14 @@ public class Player {
 
 	public void setConquered(List<Place> conquered) {
 		this.conquered = conquered;
+	}
+
+	public List<Unit> getUnits() {
+		return units;
+	}
+
+	public void setUnits(List<Unit> units) {
+		this.units = units;
 	}
 
 	public SocialUser toSocialUser() {

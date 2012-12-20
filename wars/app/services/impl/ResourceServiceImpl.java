@@ -11,6 +11,7 @@ import models.Team;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
@@ -132,6 +133,29 @@ public class ResourceServiceImpl implements ResourceService {
 		}
 
 		return teamResourceMap;
+	}
+
+	@Override
+	public List<ResourceDepot> instantiateResourceDepots(Player player) throws NullPointerException {
+		Player load = playerDAO.findOne("username", player.getUsername());
+
+		if (load == null)
+			throw new NullPointerException("Could not find player with name "
+					+ player.getUsername() + ".");
+		
+		List<ResourceDepot> depotList = Lists.newLinkedList();
+		
+		for (ResourceType type : ResourceType.values()) {
+			ResourceDepot depot = new ResourceDepot();
+			depot.setAmount(0);
+			depot.setResourceType(type);
+			depot.setPlayer(player);
+			resourceDepotDAO.save(depot);
+		}
+		
+		playerDAO.save(load);
+		
+		return depotList;
 	}
 
 }
