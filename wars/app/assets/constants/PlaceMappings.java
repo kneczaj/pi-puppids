@@ -8,7 +8,7 @@ import models.ResourceType;
 
 import com.google.common.collect.Maps;
 
-public class Mappings {
+public class PlaceMappings {
 	
 	/**
 	 * Map of google maps place types to resource types

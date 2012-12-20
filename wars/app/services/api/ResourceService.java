@@ -11,7 +11,7 @@ import services.api.error.ResourceServiceException;
 /**
  * ResourceService
  * 
- * @author markus
+ * @author michi
  */
 public interface ResourceService extends Service {
 
