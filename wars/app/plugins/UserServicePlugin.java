@@ -45,7 +45,7 @@ public class UserServicePlugin extends BaseUserService {
 		Logger.info("Loading UserServicePlugin");
 	}
 	
-	public void onMyStart() {
+	public void start() {
 		Logger.info("Starting UserServicePlugin");
 		
 		GuicePlugin plugin = application.plugin(GuicePlugin.class);
