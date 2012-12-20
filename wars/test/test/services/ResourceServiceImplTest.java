@@ -1,6 +1,5 @@
 package test.services;
 
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -12,15 +11,17 @@ import models.Team;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.code.morphia.Morphia;
-import com.google.code.morphia.logging.MorphiaLoggerFactory;
-import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
+import services.api.ResourceService;
+import services.api.error.ResourceServiceException;
+import services.impl.ResourceServiceImpl;
+import test.util.InjectorHelper;
+
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.mongodb.Mongo;
+import com.google.inject.Injector;
 
 import daos.PlaceDAO;
 import daos.PlayerDAO;
@@ -33,25 +34,23 @@ public class ResourceServiceImplTest {
 	private static PlaceDAO placeDAO;
 	private static ResourceDepotDAO resourceDepotDAO;
 	private static TeamDAO teamDAO;
+	private static ResourceService resourceService;
 
 	@BeforeClass
 	public static void before() {
-		MorphiaLoggerFactory.reset();
-		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
-
-		try {
-			Mongo mongo = new Mongo();
-			Morphia morphia = new Morphia();
-			playerDAO = new PlayerDAO(mongo, morphia);
-			placeDAO = new PlaceDAO(mongo, morphia);
-			teamDAO = new TeamDAO(mongo, morphia);
-			resourceDepotDAO = new ResourceDepotDAO(mongo, morphia);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+		Injector injector = InjectorHelper.getInjector();
+		Assert.assertNotNull(injector);
+		
+	    playerDAO = injector.getInstance(PlayerDAO.class);
+	    placeDAO = injector.getInstance(PlaceDAO.class);
+	    resourceDepotDAO = injector.getInstance(ResourceDepotDAO.class);
+	    teamDAO = injector.getInstance(TeamDAO.class);
+	    resourceService = injector.getInstance(ResourceServiceImpl.class);
+	    
+	    Assert.assertNotNull(resourceService);
 	}
 
-	@Test
+	@Before
 	public void DAOsNotNull() {
 		Assert.assertNotNull(playerDAO);
 		Assert.assertNotNull(placeDAO);
@@ -114,9 +113,10 @@ public class ResourceServiceImplTest {
 	 * for the player
 	 * 
 	 * @author michi
+	 * @throws ResourceServiceException 
 	 */
 	@Test
-	public void getResourcesOfPlayerTest() {
+	public void getResourcesOfPlayerTest() throws ResourceServiceException {
 		Player player = playerDAO.findOne("email", "bob@bobson.de");
 
 		ResourceDepot materialDepot = new ResourceDepot();
@@ -137,13 +137,7 @@ public class ResourceServiceImplTest {
 
 		player = playerDAO.findOne("email", "bob@bobson.de");
 
-		Map<ResourceType, Integer> resourceMap = Maps.newHashMap();
-
-		List<ResourceDepot> depotList = player.getResourceDepots();
-
-		for (ResourceDepot depot : depotList) {
-			resourceMap.put(depot.getResourceType(), depot.getAmount());
-		}
+		Map<ResourceType, Integer> resourceMap = resourceService.getResourcesOfPlayer(player);
 
 		Assert.assertNotNull(player);
 		Assert.assertNotNull(resourceMap);
@@ -161,7 +155,7 @@ public class ResourceServiceImplTest {
 	}
 
 	@Test
-	public void getResourceSourcesOfPlayerTest() {
+	public void getResourceSourcesOfPlayerTest() throws ResourceServiceException {
 		Player player = playerDAO.findOne("email", "bob@bobson.de");
 
 		List<Player> conqueredBy = Lists.newLinkedList();
@@ -190,16 +184,9 @@ public class ResourceServiceImplTest {
 
 		player = playerDAO.findOne("email", "bob@bobson.de");
 
-		List<Place> conquered = player.getConquered();
-
-		Map<Place, ResourceType> map = Maps.newHashMap();
-
-		for (Place place : conquered) {
-			map.put(place, place.getResource());
-		}
+		Map<Place, ResourceType> map = resourceService.getResourceSourcesOfPlayer(player);
 
 		Assert.assertNotNull(player);
-		Assert.assertNotNull(conquered);
 		Assert.assertEquals(2, map.size());
 	}
 
@@ -251,32 +238,10 @@ public class ResourceServiceImplTest {
 	}
 
 	@Test
-	public void getResourcesOfTeamTest() {
+	public void getResourcesOfTeamTest() throws ResourceServiceException {
 		Team team = teamDAO.findOne("name", "The fighting Mongooses");
-
-		List<Player> players = team.getPlayers();
-		Map<ResourceType, Integer> teamResourceMap = Maps.newHashMap();
-
-		// initialize the map for every resource with 0
-		for (ResourceType type : ResourceType.values()) {
-			teamResourceMap.put(type, 0);
-		}
-
-		for (Player player : players) {
-			Map<ResourceType, Integer> playerResourceMap = Maps.newHashMap();
-
-			List<ResourceDepot> depotList = player.getResourceDepots();
-
-			for (ResourceDepot depot : depotList) {
-				playerResourceMap.put(depot.getResourceType(), depot.getAmount());
-			}
-
-			for (ResourceType key : playerResourceMap.keySet()) {
-				Integer value = teamResourceMap.get(key);
-				value += playerResourceMap.get(key);
-				teamResourceMap.put(key, value);
-			}
-		}
+		
+		Map<ResourceType, Integer> teamResourceMap = resourceService.getResourcesOfTeam(team);
 		
 		Assert.assertNotNull(teamResourceMap);
 		Assert.assertEquals(ResourceType.values().length, teamResourceMap.size());

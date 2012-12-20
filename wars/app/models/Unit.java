@@ -14,11 +14,15 @@ public class Unit {
 
 	@Id
 	private ObjectId id;
+	private UnitType type;
 	private String name;
 	private Integer minStrength;
 	private Integer maxStrength;
 	private Double chanceOfFailure;
 	private Map<ResourceType, Integer> costs;
+	
+	@Reference
+	private Place deployedAt;
 	
 	@Reference 
 	private Player player;
@@ -29,6 +33,14 @@ public class Unit {
 
 	public void setId(ObjectId id) {
 		this.id = id;
+	}
+
+	public UnitType getType() {
+		return type;
+	}
+
+	public void setType(UnitType type) {
+		this.type = type;
 	}
 
 	public String getName() {
@@ -63,6 +75,14 @@ public class Unit {
 		this.chanceOfFailure = chanceOfFailure;
 	}
 	
+	public Place getDeployedAt() {
+		return deployedAt;
+	}
+
+	public void setDeployedAt(Place deployedAt) {
+		this.deployedAt = deployedAt;
+	}
+
 	public Player getPlayer() {
 		return player;
 	}

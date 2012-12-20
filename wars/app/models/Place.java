@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -21,7 +22,12 @@ public class Place {
 	private PlaceType type;
 	private Integer amount;
 	private ResourceType resource;
+	
+	@Reference
 	private List<Player> conqueredBy = Lists.newArrayList();
+	
+	@Reference
+	private List<Unit> deployedUnits = Lists.newLinkedList();
 	
 	public ObjectId getId() {
 		return id;
@@ -87,6 +93,14 @@ public class Place {
 		this.conqueredBy = conqueredBy;
 	}
 	
+	public List<Unit> getDeployedUnits() {
+		return deployedUnits;
+	}
+
+	public void setDeployedUnits(List<Unit> deployedUnits) {
+		this.deployedUnits = deployedUnits;
+	}
+
 	@Override
 	public String toString() {
 		Joiner joiner = Joiner.on(", ").skipNulls();

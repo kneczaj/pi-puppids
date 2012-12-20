@@ -5,7 +5,7 @@ import models.Team;
 import services.api.error.ScoreServiceException;
 
 /**
- * ScoreService calculates scores
+ * ScoreService calculates scores for players or teams
  * @author michi
  *
  */

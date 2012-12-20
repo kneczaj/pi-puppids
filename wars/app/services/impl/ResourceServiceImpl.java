@@ -21,8 +21,9 @@ import daos.TeamDAO;
 
 /**
  * Implementation of the ResourceService
+ * 
  * @author michi
- *
+ * 
  */
 
 public class ResourceServiceImpl implements ResourceService {
@@ -32,13 +33,13 @@ public class ResourceServiceImpl implements ResourceService {
 
 	@Inject
 	private PlaceDAO placeDAO;
-	
+
 	@Inject
 	private ResourceDepotDAO resourceDepotDAO;
-	
+
 	@Inject
 	private TeamDAO teamDAO;
-	
+
 	/**
 	 * Get a listing of the sources which generate resources for a given player.
 	 * 
@@ -50,19 +51,20 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public Map<Place, ResourceType> getResourceSourcesOfPlayer(Player player)
 			throws ResourceServiceException {
-		Player load = playerDAO.findOne("id", player.getId());
-		
+		Player load = playerDAO.findOne("username", player.getUsername());
+
 		if (load == null)
-			throw new ResourceServiceException("Player " + player.getId() + " not found!");
-		
+			throw new NullPointerException("Could not find player with name "
+					+ player.getUsername() + ".");
+
 		List<Place> conquered = load.getConquered();
-		
+
 		Map<Place, ResourceType> map = Maps.newHashMap();
-		
+
 		for (Place place : conquered) {
 			map.put(place, place.getResource());
 		}
-		
+
 		return map;
 	}
 
@@ -76,20 +78,21 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public Map<ResourceType, Integer> getResourcesOfPlayer(Player player)
 			throws ResourceServiceException {
-		
+
 		Map<ResourceType, Integer> map = Maps.newHashMap();
-		
-		Player load = playerDAO.findOne("id", player.getId());
-		
+
+		Player load = playerDAO.findOne("username", player.getUsername());
+
 		if (load == null)
-			throw new ResourceServiceException("Player " + player.getId() + " not found!");
-		
+			throw new NullPointerException("Could not find player with name "
+					+ player.getUsername() + ".");
+
 		List<ResourceDepot> depotList = load.getResourceDepots();
-		
+
 		for (ResourceDepot depot : depotList) {
 			map.put(depot.getResourceType(), depot.getAmount());
 		}
-		
+
 		return map;
 	}
 
@@ -103,26 +106,31 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public Map<ResourceType, Integer> getResourcesOfTeam(Team team)
 			throws ResourceServiceException {
-		
+
 		Team load = teamDAO.findOne("id", team.getId());
+		
+		if (load == null)
+			throw new NullPointerException("Could not find team with id " + team.getId() + ".");
+		
 		List<Player> players = load.getPlayers();
 		Map<ResourceType, Integer> teamResourceMap = Maps.newHashMap();
-		
-		//initialize the map for every resource with 0
+
+		// initialize the map for every resource with 0
 		for (ResourceType type : ResourceType.values()) {
 			teamResourceMap.put(type, 0);
 		}
-		
+
 		for (Player player : players) {
-			Map<ResourceType, Integer> playerResourceMap = this.getResourcesOfPlayer(player);
-			
+			Map<ResourceType, Integer> playerResourceMap = this
+					.getResourcesOfPlayer(player);
+
 			for (ResourceType key : playerResourceMap.keySet()) {
 				Integer value = teamResourceMap.get(key);
 				value += playerResourceMap.get(key);
 				teamResourceMap.put(key, value);
 			}
 		}
-		
+
 		return teamResourceMap;
 	}
 
