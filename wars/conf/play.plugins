@@ -1,5 +1,6 @@
 1001:plugins.GuicePlugin
 1500:com.typesafe.plugin.CommonsMailerPlugin
+1501:plugins.DevDataPlugin
 9995:securesocial.core.providers.utils.DefaultPasswordValidator
 9996:securesocial.controllers.DefaultTemplatesPlugin
 9997:plugins.UserServicePlugin

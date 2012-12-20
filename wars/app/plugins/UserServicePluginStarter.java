@@ -16,7 +16,10 @@ public class UserServicePluginStarter extends Plugin {
 	public void onStart() {
 		Logger.info("UserServicePluginInjector");
 		UserServicePlugin usp = application.plugin(UserServicePlugin.class);
-		usp.onMyStart();
+		usp.start();
+		
+		DevDataPlugin ddp = application.plugin(DevDataPlugin.class);
+		ddp.start();
 	}
 
 }
