@@ -1,12 +1,27 @@
+a:hover {
+	text-decoration: none;
+}
+
 .logo {
 	padding-right: 20px;
 	margin-top: -10px;
 }
 
+#resourcesPlayer {
+	text-align: center;
+}
+
+#resourcesPlayer > ul {
+	margin-bottom: 0;
+}
 
 #map_container_desktop {
 	position: relative;
     overflow: hidden;
+}
+
+#map_canvas {
+  border-radius: 3px 3px 3px 3px;
 }
 
 #playerDetails {
@@ -36,15 +51,6 @@
 	margin-top: 0;
 }
 
-
-#team {
-	text-align: center;
-}
-
-	-webkit-input-placeholder { color:#f00; }
-	-moz-placeholder { color:#f00; } /* firefox 19+ */
-	input:-moz-placeholder { color:#f00; }
-
-#map_canvas {
-  border-radius: 3px 3px 3px 3px;
-}
+-webkit-input-placeholder { color:#f00; }
+-moz-placeholder { color:#f00; } /* firefox 19+ */
+input:-moz-placeholder { color:#f00; }
