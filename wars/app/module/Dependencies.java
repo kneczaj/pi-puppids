@@ -52,6 +52,7 @@ public class Dependencies implements Module {
 		binder.bind(MapInfoService.class).to(MapInfoServiceImpl.class).in(Singleton.class);
 		binder.bind(PlaceService.class).to(PlaceServiceImpl.class).in(Singleton.class);
 		binder.bind(PlayerService.class).to(PlayerServiceImpl.class).in(Singleton.class);
+		
 		binder.bind(ResourceService.class).to(ResourceServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(ScoreService.class).to(ScoreServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
@@ -59,7 +60,7 @@ public class Dependencies implements Module {
 		
 		binder.bind(Morphia.class);
 		binder.bind(Mongo.class);
-		
+	
 		binder.bind(AccessTokenDAO.class).in(Singleton.class);
 		binder.bind(CityDAO.class).in(Singleton.class);
 		binder.bind(FactionDAO.class).in(Singleton.class);
