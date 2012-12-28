@@ -26,7 +26,7 @@ import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.UnitDAO;
 
-public class PlaceServiceImplTest {
+public class PlaceServiceTest {
 
 	private static PlayerDAO playerDAO;
 	private static PlaceDAO placeDAO;

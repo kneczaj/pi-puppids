@@ -11,7 +11,6 @@ import securesocial.core.java.SocialUser;
 import securesocial.core.java.Token;
 import securesocial.core.java.UserId;
 import services.api.PlayerService;
-import services.api.TeamService;
 import services.api.error.PlayerServiceException;
 
 import com.google.code.morphia.logging.MorphiaLoggerFactory;
@@ -31,7 +30,6 @@ public class UserServicePlugin extends BaseUserService {
 
 	private PlayerDAO playerDAO;
 	private AccessTokenDAO accessTokenDAO;
-	private TeamService teamService;
 	private PlayerService playerService;
 	
 	private Application application;
@@ -53,7 +51,6 @@ public class UserServicePlugin extends BaseUserService {
 		
 		playerDAO = injector.getInstance(PlayerDAO.class);
 		accessTokenDAO = injector.getInstance(AccessTokenDAO.class);
-		teamService = plugin.getInjector().getInstance(TeamService.class);
 		playerService = plugin.getInjector().getInstance(PlayerService.class);
 	}
 
