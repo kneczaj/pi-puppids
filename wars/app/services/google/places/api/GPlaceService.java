@@ -6,8 +6,6 @@ import java.util.Map;
 
 import models.Location;
 import models.PlaceType;
-import services.google.places.impl.GPlace;
-import services.google.places.impl.GPlaceServiceException;
 
 /**
  * Wrapper for easy access from Java to the RESTful Google Places API

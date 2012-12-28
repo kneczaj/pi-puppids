@@ -19,7 +19,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import play.Logger;
+import services.google.places.api.GPlace;
 import services.google.places.api.GPlaceService;
+import services.google.places.api.GPlaceServiceException;
+import services.google.places.api.RequestURL;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

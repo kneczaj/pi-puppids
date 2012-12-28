@@ -1,4 +1,4 @@
-package services.google.places.impl;
+package services.google.places.api;
 
 public class GPlaceServiceException extends Exception {
 
