@@ -26,7 +26,7 @@ import daos.PlayerDAO;
 import daos.ResourceDepotDAO;
 import daos.TeamDAO;
 
-public class ResourceServiceImplTest {
+public class ResourceServiceTest {
 
 	private static PlayerDAO playerDAO;
 	private static PlaceDAO placeDAO;
