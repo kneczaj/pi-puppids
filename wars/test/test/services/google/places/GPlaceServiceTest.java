@@ -10,9 +10,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import services.google.places.api.GPlace;
 import services.google.places.api.GPlaceService;
-import services.google.places.impl.GPlace;
-import services.google.places.impl.GPlaceServiceException;
+import services.google.places.api.GPlaceServiceException;
 import test.util.InjectorHelper;
 import test.util.SampleLocations;
 
