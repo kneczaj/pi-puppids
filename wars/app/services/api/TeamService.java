@@ -5,7 +5,6 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
-import services.api.error.TeamServiceException;
 
 /**
  * Manage Teams

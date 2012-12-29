@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
-import services.impl.ResourceServiceImpl;
 import test.util.InjectorHelper;
 
 import com.google.common.collect.Lists;
@@ -27,7 +26,7 @@ import daos.PlayerDAO;
 import daos.ResourceDepotDAO;
 import daos.TeamDAO;
 
-public class ResourceServiceImplTest {
+public class ResourceServiceTest {
 
 	private static PlayerDAO playerDAO;
 	private static PlaceDAO placeDAO;
@@ -44,7 +43,7 @@ public class ResourceServiceImplTest {
 	    placeDAO = injector.getInstance(PlaceDAO.class);
 	    resourceDepotDAO = injector.getInstance(ResourceDepotDAO.class);
 	    teamDAO = injector.getInstance(TeamDAO.class);
-	    resourceService = injector.getInstance(ResourceServiceImpl.class);
+	    resourceService = injector.getInstance(ResourceService.class);
 	    
 		Assert.assertNotNull(playerDAO);
 		Assert.assertNotNull(placeDAO);
