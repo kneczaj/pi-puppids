@@ -1,12 +1,14 @@
 package daos;
 
+import play.Play;
+
 import com.google.code.morphia.Morphia;
 import com.google.code.morphia.dao.BasicDAO;
 import com.mongodb.Mongo;
 
 public class AbstractDAO<T, V> extends BasicDAO<T, V> {
 
-	public final static String dbName = "arwars";
+	protected static String dbName = Play.isTest() ? "arwars_test" : "arwars";
 	
 	protected Mongo mongo;
 	
