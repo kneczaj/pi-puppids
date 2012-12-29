@@ -96,6 +96,52 @@ class ArWars.PlayerPositionManager
 			
 			error : (jqXHR, textStatus, errorThrown) ->
 				log textStatus
+				
+	# Show places on the map around the player location
+	loadPlacesNearby: (lat, lng) ->
+		request = 
+			location: 	new google.maps.LatLng(lat, lng)
+			radius: 	1000
+			types: 		["atm", "bakery", "school", "church", "movie_theater", "pharmacy", "train_station"]
+
+		service = new google.maps.places.PlacesService(@map)
+		service.search(request, @callback)
+
+	callback: (results, status, pagination) =>
+		if status is google.maps.places.PlacesServiceStatus.OK
+			console.log results
+			@createMarker(i) for i in results
+			
+		if pagination.hasNextPage
+    		pagination.nextPage()
+
+	createMarker: (place) ->
+		placeLoc = place.geometry.location
+		iconUrl = undefined
+		switch place.types[0]
+		  when "atm"
+		    iconUrl = "/assets/images/credits.png"
+		  when "bakery"
+		    iconUrl = "/assets/images/food.png"
+		  when "school"
+		    iconUrl = "/assets/images/knowledge.png"
+		  when "church"
+		    iconUrl = "/assets/images/special.png"
+		  when "movie_theater"
+		    iconUrl = "/assets/images/cultural.png"
+		  when "pharmacy"
+		    iconUrl = "/assets/images/material.png"
+		  when "train_station"
+		    iconUrl = "/assets/images/transportation.png"
+		  else
+		    iconUrl = ""
+		
+		markerOpts = 
+			map: @map
+			position: place.geometry.location
+			icon: iconUrl
+		
+		marker = new google.maps.Marker markerOpts
 
 	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>
@@ -130,6 +176,7 @@ class ArWars.PlayerPositionManager
 				log textStatus
 		
 		@loadPlayersNearby coords.latitude, coords.longitude
+		@loadPlacesNearby coords.latitude, coords.longitude
 
 	# Called when the LocationAPI threw an error
 	onPositionError: (error) ->
