@@ -35,7 +35,7 @@ public class ScoreServiceImpl implements ScoreService {
 		
 		for (Place place : load.getConquered()) {
 			if (place.getResource().equals(ResourceType.Special))
-				score += ScoreValues.SPECIAL_PLACE_SCORE_VALUE;
+				score += place.getAmount();
 			else
 				score += ScoreValues.PLACE_SCORE_VALUE;
 		}
