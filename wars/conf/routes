@@ -1,0 +1,47 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           				controllers.Application.index()
+GET		/updateLocation								controllers.LocationController.updateLocation(lat, lng, uncertainty, speed, timestamp)
+GET     /websocket/connect          				controllers.WebSocketController.connect(playerId)
+GET     /mapinfo/playersNearby						controllers.MapInfoController.playersNearby(lat, lng)
+GET     /resource/getResourceSourcesOfPlayer		controllers.ResourceController.getResourceSourcesOfPlayer()
+GET     /resource/getResourcesOfPlayer				controllers.ResourceController.getResourcesOfPlayer()
+GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResourcesOfTeam()
+GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(factionId, cityId)
+
+# Player profile
+GET     /profile                    				controllers.Application.profile()
+
+# Invite a new member
+GET		/invite/:username							controllers.TeamController.tryInvite(username)
+GET		/acceptInvitation/:token					controllers.TeamController.checkInvitationToken(token)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               				controllers.Assets.at(path="/public", file)
+
+###
+# Authentication and Authorization with SecureSocial
+###
+
+# Login page
+GET     /login                      				securesocial.controllers.LoginPage.login
+GET     /logout                     				securesocial.controllers.LoginPage.logout
+
+# User Registration and password handling (only needed if you are using UsernamePasswordProvider)
+GET     /signup                     				securesocial.controllers.Registration.startSignUp
+POST    /signup                     				securesocial.controllers.Registration.handleStartSignUp
+GET     /signup/:token              				securesocial.controllers.Registration.signUp(token)
+POST    /signup/:token              				securesocial.controllers.Registration.handleSignUp(token)
+GET     /reset                      				securesocial.controllers.Registration.startResetPassword
+POST    /reset                      				securesocial.controllers.Registration.handleStartResetPassword
+GET     /reset/:token               				securesocial.controllers.Registration.resetPassword(token)
+POST    /reset/:token               				securesocial.controllers.Registration.handleResetPassword(token)
+GET     /password                   				securesocial.controllers.PasswordChange.page
+POST    /password                   				securesocial.controllers.PasswordChange.handlePasswordChange
+
+# Providers entry points
+GET     /authenticate/:provider     				securesocial.controllers.ProviderController.authenticate(provider)
+POST    /authenticate/:provider     				securesocial.controllers.ProviderController.authenticateByPost(provider)
