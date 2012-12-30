@@ -57,7 +57,11 @@ public class TeamController extends Controller {
 				return ok("givenUserDoesntExist");
 			invitation = teamService.iniviteStranger(loggedPlayer, invitedUserOrEmail);
 			
-		} else
+		} else if (invitedPlayer.getTeam().getId().equals(loggedPlayer.getTeam().getId()))
+			
+			return ok("alreadyInTheTeam");
+		
+		else
 			invitation = teamService.invite(loggedPlayer, invitedPlayer);
 		
 		teamService.sendInvitation(invitation);
@@ -83,17 +87,27 @@ public class TeamController extends Controller {
 	}
 	
 	@SecureSocial.SecuredAction
-	public static Result checkInvitationToken(String token) {
+	public static Result acceptInvitation(String token) {
 		
 		Invitation invitation = invitationDAO.findOne("token", token);
 		if (invitation == null)
 			return ok(message.render("Given invitation token is invalid"));
 		
-		Player loggedPlayer = authenticationService.getPlayer();
+		// invited person does not exist in db - create a new account
+		if (invitation.getRecipient() == null) 
+		{
+			ctx().flash().put("error", "You are a new player - please make an account, and try the invitation link again");
+			return redirect(RoutesHelper.startSignUp());
+		}
 		
+		// invited player is not currently logged in
+		Player loggedPlayer = authenticationService.getPlayer();
 		if ((loggedPlayer == null) || (!loggedPlayer.getUsername().equals(invitation.getRecipient().getUsername()) ) )
 		{
+			// After logging in try again this action
 			ctx().session().put("securesocial.originalUrl", ctx().request().uri());
+			
+			// redirect to login page with the error message below.
 			ctx().flash().put("error", "You must log in as the recipient of the invitation");
 			return redirect(RoutesHelper.login());
 		}
@@ -101,5 +115,4 @@ public class TeamController extends Controller {
 		teamService.acceptInvite(invitation);
 		return ok(message.render("You have successfully joined " + invitation.getTeam().getName() + " team"));
 	}
-
 }
