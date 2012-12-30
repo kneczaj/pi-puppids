@@ -42,7 +42,7 @@ public class ResourceController extends Controller {
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourceSourcesOfPlayer() {
-		Player p = authenticationService.getPlayer(ctx());
+		Player p = authenticationService.getPlayer();
 		
 		try {
 			Map<Place, ResourceType> resourcePlaces = resourceService.getResourceSourcesOfPlayer(p);
@@ -57,7 +57,7 @@ public class ResourceController extends Controller {
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourcesOfPlayer() {
-		Player p = authenticationService.getPlayer(ctx());
+		Player p = authenticationService.getPlayer();
 		
 		try {
 			Map<ResourceType, Integer> resourcePlaces = resourceService.getResourcesOfPlayer(p);
@@ -72,7 +72,7 @@ public class ResourceController extends Controller {
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getResourcesOfTeam() {
-		Player p = authenticationService.getPlayer(ctx());
+		Player p = authenticationService.getPlayer();
 		Team t = p.getTeam();
 		
 		try {

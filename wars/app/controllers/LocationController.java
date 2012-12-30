@@ -35,7 +35,7 @@ public class LocationController extends Controller {
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result updateLocation(String lat,
 			String lng, String uncertainty, String speed, String timestamp) {
-		Player p = authenticationService.getPlayer(ctx());
+		Player p = authenticationService.getPlayer();
 		
 		if (p == null) {
 			return badRequest();

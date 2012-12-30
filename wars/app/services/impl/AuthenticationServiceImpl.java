@@ -1,7 +1,6 @@
 package services.impl;
 
 import models.Player;
-import play.mvc.Http;
 import securesocial.core.java.SecureSocial;
 import securesocial.core.java.SocialUser;
 import services.api.AuthenticationService;
@@ -19,16 +18,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	
 	@Inject
 	private PlayerDAO playerDAO;
-
-	@Override
-	public SocialUser getUser(Http.Context ctx) {
-		SocialUser user = (SocialUser) ctx.args.get(SecureSocial.USER_KEY);
-		return user;
-	}
 	
-	@Override
-	public Player getPlayer(Http.Context ctx) {
-		SocialUser user = getUser(ctx);
+	@SecureSocial.SecuredAction
+	public Player getPlayer() {
+		SocialUser user = SecureSocial.currentUser();
 		return playerDAO.findOne("email", user.getEmail());
 	}
 

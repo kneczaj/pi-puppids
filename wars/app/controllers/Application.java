@@ -36,7 +36,7 @@ public class Application extends Controller {
 	
 	@SecureSocial.SecuredAction
 	public static Result index() {
-		Player player = authenticationService.getPlayer(ctx());
+		Player player = authenticationService.getPlayer();
 		
 		Team team = player.getTeam();
 		List<Player> teammates = team.getPlayers();
@@ -50,7 +50,7 @@ public class Application extends Controller {
 	
 	@SecureSocial.SecuredAction
 	public static Result profile() {
-		Player player = authenticationService.getPlayer(ctx());
+		Player player = authenticationService.getPlayer();
 		return ok(profile.render(player));
 	}
 
