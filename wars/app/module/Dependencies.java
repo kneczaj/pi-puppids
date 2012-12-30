@@ -12,6 +12,8 @@ import services.api.TeamService;
 import services.api.UnitService;
 import services.dummy.ResourceServiceDummyImpl;
 import services.dummy.ScoreServiceDummyImpl;
+import services.google.places.api.GPlaceService;
+import services.google.places.impl.GPlaceServiceImpl;
 import services.impl.AuthenticationServiceImpl;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
@@ -52,6 +54,7 @@ public class Dependencies implements Module {
 		binder.bind(MapInfoService.class).to(MapInfoServiceImpl.class).in(Singleton.class);
 		binder.bind(PlaceService.class).to(PlaceServiceImpl.class).in(Singleton.class);
 		binder.bind(PlayerService.class).to(PlayerServiceImpl.class).in(Singleton.class);
+		binder.bind(GPlaceService.class).to(GPlaceServiceImpl.class).in(Singleton.class);
 		
 		binder.bind(ResourceService.class).to(ResourceServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(ScoreService.class).to(ScoreServiceDummyImpl.class).in(Singleton.class);
