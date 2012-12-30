@@ -1,6 +1,5 @@
 package services.impl;
 
-import java.util.Date;
 import java.util.UUID;
 
 import models.City;
@@ -49,11 +48,9 @@ public class TeamServiceImpl implements TeamService {
 	
 	@Override
 	public Team createTeam(Faction faction, City city, String name) {
-		Team team = new Team();
+		Team team = new Team(name);
 		team.setCity(city);
-		team.setCreatedAt(new Date());
 		team.setFaction(faction);
-		team.setName(name);
 		
 		teamDAO.save(team);
 		
@@ -67,13 +64,36 @@ public class TeamServiceImpl implements TeamService {
 		invitationDAO.save(invitation);
 		return invitation;
 	}
+	
+	@Override
+	public Player joinTeam(Player player, Team team) {
+		
+		Team oldTeam = player.getTeam();
+		if (oldTeam != null) {
+			
+			oldTeam.removePlayer(player);
+			if (oldTeam.getPlayers().isEmpty())
+				teamDAO.delete(oldTeam);
+			else
+				teamDAO.save(oldTeam);
+		}
+		
+		player.setTeam(team);
+		playerDAO.save(player);
+		
+		team.addPlayer(player);
+		teamDAO.save(team);
+		
+		return player;
+	}
 
 	@Override
 	public Player acceptInvite(Invitation invitation) {
 		
 		Player player = invitation.getRecipient();
-		player.setTeam(invitation.getTeam());
-		playerDAO.save(player);
+		Team team = invitation.getTeam();
+		
+		player = joinTeam(player, team);
 		
 		invitationDAO.delete(invitation);
 		
@@ -121,12 +141,10 @@ public class TeamServiceImpl implements TeamService {
 	}
 
 	@Override
-	public Team createPseudoTeam() {
-		Team t = new Team();
-		t.setCreatedAt(new Date());
-		t.setName("pseudo");
-		teamDAO.save(t);
+	public Team createInitialTeam(Player player){
+		Team team = new Team(player.getUsername());
+		teamDAO.save(team);
 		
-		return t;
+		return team;
 	}
 }

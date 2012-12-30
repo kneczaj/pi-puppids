@@ -17,7 +17,7 @@ GET     /profile                    				controllers.Application.profile()
 
 # Invite a new member
 GET		/invite/:username							controllers.TeamController.tryInvite(username)
-GET		/acceptInvitation/:token					controllers.TeamController.acceptInvitation(token)
+GET		/acceptInvitation/:token					controllers.TeamController.checkInvitationToken(token)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               				controllers.Assets.at(path="/public", file)

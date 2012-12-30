@@ -6,6 +6,7 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
+import securesocial.core.providers.utils.RoutesHelper;
 import services.api.AuthenticationService;
 import services.api.PlayerService;
 import services.api.TeamService;
@@ -37,7 +38,7 @@ public class TeamController extends Controller {
 	@SecureSocial.SecuredAction
 	public static Result tryInvite(String invitedUserOrEmail) {
 		
-		Player loggedPlayer = authenticationService.getPlayer(ctx());
+		Player loggedPlayer = authenticationService.getPlayer();
 		
 		if (invitedUserOrEmail.equals(loggedPlayer.getEmail())	|| invitedUserOrEmail.equals(loggedPlayer.getUsername()))
 			return ok("userIsYou");
@@ -51,12 +52,14 @@ public class TeamController extends Controller {
 		
 		Invitation invitation;
 		if (invitedPlayer == null) {
+			
 			if (!isEmail)
 				return ok("givenUserDoesntExist");
-		
 			invitation = teamService.iniviteStranger(loggedPlayer, invitedUserOrEmail);
+			
 		} else
 			invitation = teamService.invite(loggedPlayer, invitedPlayer);
+		
 		teamService.sendInvitation(invitation);
 		
 		return ok("ok");
@@ -64,7 +67,7 @@ public class TeamController extends Controller {
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result joinFactionAndCity(String factionId, String cityId) {
-		Player player = authenticationService.getPlayer(ctx());
+		Player player = authenticationService.getPlayer();
 		
 		Logger.debug("player tries to join " + factionId + " faction and the city " + cityId);
 		try {
@@ -80,16 +83,20 @@ public class TeamController extends Controller {
 	}
 	
 	@SecureSocial.SecuredAction
-	public static Result acceptInvitation(String token) {
+	public static Result checkInvitationToken(String token) {
 		
 		Invitation invitation = invitationDAO.findOne("token", token);
 		if (invitation == null)
 			return ok(message.render("Given invitation token is invalid"));
 		
-		Player loggedPlayer = authenticationService.getPlayer(ctx());
+		Player loggedPlayer = authenticationService.getPlayer();
 		
-//		if (!loggedPlayer.equals(invitation.getRecipient())
-			
+		if ((loggedPlayer == null) || (!loggedPlayer.getUsername().equals(invitation.getRecipient().getUsername()) ) )
+		{
+			ctx().session().put("securesocial.originalUrl", ctx().request().uri());
+			ctx().flash().put("error", "You must log in as the recipient of the invitation");
+			return redirect(RoutesHelper.login());
+		}
 		
 		teamService.acceptInvite(invitation);
 		return ok(message.render("You have successfully joined " + invitation.getTeam().getName() + " team"));
