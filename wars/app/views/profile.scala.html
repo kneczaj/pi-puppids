@@ -1,0 +1,65 @@
+@(player: Player) 
+@main(title = "Profile - " + player.getUsername() + " - ARWars") {
+
+<div class="row">
+	<div class="span7">
+		<h2>Edit profile</h2>
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="inputUsername">Username</label>
+				<div class="controls">
+					<input type="text" id="inputUsername" value="@player.getUsername()">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputFirstname">First name</label>
+				<div class="controls">
+					<input type="text" id="inputFirstname" value="@player.getFirstname()">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputLastname">Last name</label>
+				<div class="controls">
+					<input type="text" id="inputLastname" value="@player.getName()">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">Email</label>
+				<div class="controls">
+					<input type="text" id="inputEmail" value="@player.getEmail()">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputHometown">Hometown</label>
+				<div class="controls">
+					<input type="text" id="inputHometown" value="@player.getHomeTown()">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputBirthday">Date of birth</label>
+				<div class="controls">
+					<input type="text" id="inputBirthday" value="@player.getDateOfBirth()">
+				</div>
+			</div>
+		</form>
+	</div><!--/span-->
+		<div class="span5">
+			@if(player.getAvatar() != null) {
+				<img class="media-object" src="@player.getAvatar()">
+			} else {
+				<img class="media-object" src="@routes.Assets.at("images/profile_default.png")">
+			}
+		</div>
+</div><!--/row-->
+<div class="row">
+	<div class="span12">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" class="btn">Save</button>
+				</div>
+			</div>
+		</form>
+	</div><!--/span-->
+</div><!--/row-->
+}
