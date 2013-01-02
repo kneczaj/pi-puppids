@@ -2,6 +2,7 @@ package test.services;
 
 import java.util.List;
 
+import models.Place;
 import models.Player;
 import models.Unit;
 import models.UnitType;
@@ -18,6 +19,7 @@ import services.impl.PlaceServiceImpl;
 import services.impl.ResourceServiceImpl;
 import services.impl.UnitServiceImpl;
 import test.util.InjectorHelper;
+import test.util.SamplePlaces;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
@@ -101,6 +103,17 @@ public class PlaceServiceTest {
 		Assert.assertEquals(UnitType.GRUNT, loadedUnit.getType());
 	}
 	
+	@Test
+	public void persistAndRetrievePlace() {
+		Place tum = SamplePlaces.tum; 
+		placeDAO.save(tum);
+		
+		Place load = placeDAO.findOne("id", tum.getId());
+		
+		Assert.assertNotNull(load);
+		Assert.assertEquals("Technische Universität München", load.getName());
+	}
+	
 	/**
 	 * Delete all instances from the database
 	 * 
@@ -110,6 +123,8 @@ public class PlaceServiceTest {
 	public static void cleanDatabase() {
 		List<Player> players = Lists.newLinkedList();
 		players.add(playerDAO.findOne("email", "bob@bobson.de"));
+		
+		List<Place> places = placeDAO.find().asList();
 
 		for (Player player : players) {
 			List<Unit> unitList = player.getUnits();
@@ -119,6 +134,10 @@ public class PlaceServiceTest {
 			}
 
 			playerDAO.delete(player);
+		}
+		
+		for (Place place : places) {
+			placeDAO.delete(place);
 		}
 	}
 }
