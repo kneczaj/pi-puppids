@@ -2,6 +2,7 @@ package test.services;
 
 import java.util.List;
 
+import models.Place;
 import models.Player;
 import models.Unit;
 import models.UnitType;
@@ -18,6 +19,7 @@ import services.impl.PlaceServiceImpl;
 import services.impl.ResourceServiceImpl;
 import services.impl.UnitServiceImpl;
 import test.util.InjectorHelper;
+import test.util.SamplePlaces;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
@@ -101,6 +103,68 @@ public class PlaceServiceTest {
 		Assert.assertEquals(UnitType.GRUNT, loadedUnit.getType());
 	}
 	
+	@Test
+	public void persistAndRetrievePlaceWithUnits() {
+		Player player = playerDAO.findOne("email", "bob@bobson.de");
+		
+		//TUM was conquered by bob
+		Place tum = SamplePlaces.tum; 
+		tum.getConqueredBy().add(player);
+		
+		//Bob has conquered the TUM
+		player.getConquered().add(tum);
+		
+		Unit infantry = unitService.getInstance(UnitType.INFANTRY);
+		infantry.setPlayer(player);		
+		player.getUnits().add(infantry);
+		unitDAO.save(infantry);
+		
+		for (Unit unit : player.getUnits()) {
+			//All units of bob are deployed at TUM
+			unit.setDeployedAt(tum);
+			tum.getDeployedUnits().add(unit);
+			placeDAO.save(tum);
+			unitDAO.save(unit);
+		}
+		
+		playerDAO.save(player);		
+		placeDAO.save(tum);
+		
+		Place load = placeDAO.findOne("id", tum.getId());
+		
+		Assert.assertNotNull(load);
+		Assert.assertEquals("Technische Universität München", load.getName());
+		Assert.assertEquals(2, tum.getDeployedUnits().size());
+	}
+	
+	@Test
+	public void getDeployedUnitsOfPlayer() {
+		Player player = playerDAO.findOne("email", "bob@bobson.de");
+		
+		//Retriving a place by name is good for now
+		Place tum = placeDAO.findOne("name", "Technische Universität München");
+		List<Unit> deployedUnits = placeService.getDeployedUnitsOfPlayer(player, tum);
+		
+		Assert.assertNotNull(deployedUnits);
+		Assert.assertEquals(2, deployedUnits.size());
+	}
+	
+	@Test
+	public void getDeployedUnitsOfPlayerByUnitType() {
+		Player player = playerDAO.findOne("email", "bob@bobson.de");
+		
+		//Retriving a place by name is good for now
+		Place tum = placeDAO.findOne("name", "Technische Universität München");
+		
+		List<Unit> grunts = placeService.getDeployedUnitsOfPlayer(player, UnitType.GRUNT, tum);
+		List<Unit> infantry = placeService.getDeployedUnitsOfPlayer(player, UnitType.GRUNT, tum);
+		
+		Assert.assertNotNull(grunts);
+		Assert.assertNotNull(infantry);
+		Assert.assertEquals(1, grunts.size());
+		Assert.assertEquals(1, infantry.size());
+	}
+	
 	/**
 	 * Delete all instances from the database
 	 * 
@@ -110,6 +174,8 @@ public class PlaceServiceTest {
 	public static void cleanDatabase() {
 		List<Player> players = Lists.newLinkedList();
 		players.add(playerDAO.findOne("email", "bob@bobson.de"));
+		
+		List<Place> places = placeDAO.find().asList();
 
 		for (Player player : players) {
 			List<Unit> unitList = player.getUnits();
@@ -119,6 +185,10 @@ public class PlaceServiceTest {
 			}
 
 			playerDAO.delete(player);
+		}
+		
+		for (Place place : places) {
+			placeDAO.delete(place);
 		}
 	}
 }

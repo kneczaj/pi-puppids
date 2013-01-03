@@ -64,8 +64,8 @@ public class PlaceServiceImpl implements PlaceService {
 
 		Query<Unit> query = unitDAO.createQuery();
 		query.and(
-				query.criteria("deployedAt.id").equal(place.getId()),
-				query.criteria("player.id").equal(player.getId())
+				query.criteria("deployedAt").equal(place),
+				query.criteria("player").equal(player)
 				);
 		
 		List<Unit> result = unitDAO.find(query).asList();
@@ -90,8 +90,8 @@ public class PlaceServiceImpl implements PlaceService {
 
 		Query<Unit> query = unitDAO.createQuery();
 		query.and(
-				query.criteria("deployedAt.id").equal(place.getId()),
-				query.criteria("player.id").equal(player.getId()),
+				query.criteria("deployedAt").equal(place),
+				query.criteria("player").equal(player),
 				query.criteria("type").equal(unitType)
 				);
 		

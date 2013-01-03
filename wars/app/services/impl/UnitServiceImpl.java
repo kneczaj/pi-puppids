@@ -139,7 +139,7 @@ public class UnitServiceImpl implements UnitService {
 		Query<Unit> query = unitDAO.createQuery();
 		query.and(
 				query.criteria("deployedAt").equal(null),
-				query.criteria("player.id").equal(player.getId()),
+				query.criteria("player").equal(player),
 				query.criteria("type").equal(type)
 				);		
 		List<Unit> deployableUnits = unitDAO.find(query).asList();
