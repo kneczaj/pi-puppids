@@ -37,6 +37,8 @@
 					message = "You cannot invite yourself";
 				} else if (response == "givenUserDoesntExist") {
 					message = "The given user was not found";
+				} else if (response == "alreadyInTheTeam") {
+					message = "The given user is already a member of this team.";
 				}
 				
 				document.getElementById("error-message").innerHTML = message;
@@ -174,13 +176,14 @@
 								@for(member <- teammates) {
 									@member.getUsername()<br>
 								}
-	
-								<hr>
-								<input type="text" placeholder="Email or user name" id="userToInvite">
 							</div>
-							&nbsp;
-							<button type="button" class="btn" onclick="tryInvite()">Invite</button>
-							<div id="error-message" class="control-group"></div>
+							<hr>
+							<form id="invitationForm" action="javascript:tryInvite()">
+								<input type="text" placeholder="Email or user name" id="userToInvite"><br>
+								<input type="submit" value="Invite">
+							</form>
+							<div id="error-message" class="control-group">
+							</div>
 						</div> 
 					</div>
 				</div>

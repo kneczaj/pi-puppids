@@ -11,7 +11,7 @@ import models.Team;
  * 
  * @author markus
  */
-public interface TeamService {
+public interface TeamService extends Service {
 
 	/**
 	 * Create a team
@@ -29,6 +29,17 @@ public interface TeamService {
 	 * @return
 	 */
 	public Team createTeam(City city, String name);
+	
+	
+	/**
+	 * Join a player to a team.
+	 * 
+	 * @param player
+	 *            player who joins
+	 * @param team
+	 *            team player joins to
+	 */
+	public Player joinTeam(Player player, Team team);
 
 	/**
 	 * Invite a player to join an other team.
@@ -63,10 +74,10 @@ public interface TeamService {
 	public void sendInvitation(Invitation invitation);
 
 	/**
-	 * Creates a pseudo team, that consists just of one player
+	 * Creates an initial team for a new player
 	 * 
 	 * @return
 	 */
-	public Team createPseudoTeam();
+	public Team createInitialTeam(Player player);
 
 }

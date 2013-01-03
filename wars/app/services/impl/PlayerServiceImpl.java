@@ -55,10 +55,9 @@ public class PlayerServiceImpl implements PlayerService {
 
 		Player load = playerDAO.findOne("username", username);
 		if (load == null) {
-			Team pseudoTeam = teamService.createPseudoTeam();
-			p.setTeam(pseudoTeam);
-
+			Team initialTeam = teamService.createInitialTeam(p);
 			playerDAO.save(p);
+			teamService.joinTeam(p, initialTeam);
 		} else {
 			throw new PlayerServiceException(
 					"This username is already taken by an other player");

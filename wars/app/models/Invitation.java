@@ -18,12 +18,15 @@ public class Invitation {
 	@Id
 	private ObjectId id;
 	
+	// reference to sender to inform an invited player who invites them
 	@Reference
 	private Player sender;
 	
 	@Reference
 	private Player recipient;
 	
+	// additional reference to the team in case the sender will be removed
+	// from the db in the meantime - resign from playing 
 	@Reference 
 	private Team team;
 	
@@ -42,12 +45,14 @@ public class Invitation {
 	
 	public Invitation(Player sender, Player recipient) {
 		this();
+		this.team = sender.getTeam();
 		this.sender = sender;
 		this.recipient = recipient;
 	}
 	
 	public Invitation(Player sender, String email) {
 		this();
+		this.team = sender.getTeam();
 		this.sender = sender;
 		this.email = email;
 	}
@@ -57,7 +62,7 @@ public class Invitation {
 	}
 	
 	public String getEmail() {
-		if (email.isEmpty())
+		if (email == null)
 			return recipient.getEmail();
 		return email;
 	}

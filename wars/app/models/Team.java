@@ -32,6 +32,15 @@ public class Team {
 	
 	@Reference
 	private List<Player> players = Lists.newLinkedList();
+	
+	public Team() {
+		setCreatedAt(new Date());
+	}
+	
+	public Team(String name) {
+		this();
+		setName(name);
+	}
 
 	public ObjectId getId() {
 		return id;
@@ -95,6 +104,14 @@ public class Team {
 
 	public void setPlayers(List<Player> players) {
 		this.players = players;
+	}
+	
+	public Boolean addPlayer(Player player) {
+		return this.players.add(player);
+	}
+	
+	public Boolean removePlayer(Player player) {
+		return this.players.remove(player);
 	}
 
 	public String toString() {
