@@ -1,8 +1,8 @@
 package daos;
 
-import org.bson.types.ObjectId;
-
 import models.Faction;
+
+import org.bson.types.ObjectId;
 
 import com.google.code.morphia.Morphia;
 import com.google.inject.Inject;
