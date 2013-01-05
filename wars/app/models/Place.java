@@ -1,6 +1,7 @@
 package models;
 
 import java.util.List;
+import java.util.Map;
 
 import org.bson.types.ObjectId;
 
@@ -22,6 +23,7 @@ public class Place {
 	private PlaceType type;
 	private Integer amount;
 	private ResourceType resource;
+	private Map<ResourceType, Integer> resourceDemand;
 	
 	@Reference
 	private List<Player> conqueredBy = Lists.newArrayList();
@@ -99,6 +101,14 @@ public class Place {
 
 	public void setDeployedUnits(List<Unit> deployedUnits) {
 		this.deployedUnits = deployedUnits;
+	}
+	
+	public Map<ResourceType, Integer> getResourceDemand() {
+		return resourceDemand;
+	}
+
+	public void setResourceDemand(Map<ResourceType, Integer> demand) {
+		this.resourceDemand = demand;
 	}
 
 	@Override

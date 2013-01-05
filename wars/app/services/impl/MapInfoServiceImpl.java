@@ -1,5 +1,6 @@
 package services.impl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -8,9 +9,10 @@ import models.Location;
 import models.Place;
 import models.Player;
 import models.PlayerLocation;
+import models.Team;
 import services.api.MapInfoService;
-import services.api.error.MapInfoServiceException;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
@@ -31,8 +33,30 @@ public class MapInfoServiceImpl implements MapInfoService {
 	private PlayerLocationDAO playerLocationDAO;
 	
 	@Override
-	public Map<String, PlayerLocation> findPlayersNearby(Location location, Integer searchRadius, Date youngerThan)
-			throws MapInfoServiceException {
+	public List<Player> findTeamMembersNearby(Team team, Place place, Integer searchRadius) {
+		Location location =  new Location(place.getLng(), place.getLat());
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MINUTE, -15);
+		Date youngerThan = calendar.getTime();
+		
+		Map<String, PlayerLocation> playersNearby = findPlayersNearby(location, searchRadius, youngerThan);
+		List<Player> teamMembersNearby = Lists.newArrayList();
+		String teamId = team.getId().toString();
+		
+		for (PlayerLocation pl : playersNearby.values()) {
+			Player player = pl.getPlayer();
+			
+			// check if the player belongs to the requested team
+			if (player.getTeam().getId().toString().equals(teamId)) {
+				teamMembersNearby.add(pl.getPlayer());
+			}
+		}
+		
+		return teamMembersNearby;
+	}
+	
+	@Override
+	public Map<String, PlayerLocation> findPlayersNearby(Location location, Integer searchRadius, Date youngerThan) {
 		// TODO: filter players that are not nearby, consider searchRadius
 		List<Player> players = playerDAO.find().asList();
 		Map<String, PlayerLocation> mapping = Maps.newHashMap();
@@ -49,8 +73,7 @@ public class MapInfoServiceImpl implements MapInfoService {
 	}
 
 	@Override
-	public Map<Place, Location> findPlacesNearby(Location location)
-			throws MapInfoServiceException {
+	public Map<Place, Location> findPlacesNearby(Location location) {
 		// TODO Auto-generated method stub
 		return null;
 	}
