@@ -78,7 +78,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li class="' + key + '"><a href="#" rel="tooltip" title="' + key + '"> <i class="icon-gift icon-white"></i> ' + val + ' </a></li>');
+				    items.push('<li class="' + key.toLowerCase() + '"><a href="#" rel="tooltip" title="' + key + '"> <i class="icon-gift icon-white"></i> ' + val + ' </a></li>');
 				  });
 	
 				  $('<ul/>', {
@@ -98,7 +98,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<dt class="' + key + '">' + key + '</dt><dd>' + val + '</dd>');
+				    items.push('<dt class="' + key.toLowerCase() + '">' + key + '</dt><dd>' + val + '</dd>');
 				  });
 	
 				  $('<dl/>', {
