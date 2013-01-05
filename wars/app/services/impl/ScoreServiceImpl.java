@@ -6,7 +6,6 @@ import models.ResourceType;
 import models.Team;
 import services.api.ScoreService;
 import services.api.error.ScoreServiceException;
-
 import assets.constants.ScoreValues;
 
 import com.google.inject.Inject;

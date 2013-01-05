@@ -58,6 +58,7 @@ public class PlayerServiceTest {
 				"the Builder", "hahahash", "bobthebuilder");
 		Assert.assertNotNull(player);
 		Assert.assertTrue(player.getUsername().equals("bobthebuilder"));
+		Assert.assertNotNull(player.getTeam());
 
 		city = new City();
 		city.setName("testCity");
