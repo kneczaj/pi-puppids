@@ -24,6 +24,7 @@ public class Place {
 	private Integer amount;
 	private ResourceType resource;
 	private Map<ResourceType, Integer> resourceDemand;
+	private Integer numberOfConquerors;
 	
 	@Reference
 	private List<Player> conqueredBy = Lists.newArrayList();
@@ -109,6 +110,14 @@ public class Place {
 
 	public void setResourceDemand(Map<ResourceType, Integer> demand) {
 		this.resourceDemand = demand;
+	}
+	
+	public Integer getNumberOfConquerors() {
+		return numberOfConquerors;
+	}
+
+	public void setNumberOfConquerors(Integer numberOfConquerors) {
+		this.numberOfConquerors = numberOfConquerors;
 	}
 
 	@Override

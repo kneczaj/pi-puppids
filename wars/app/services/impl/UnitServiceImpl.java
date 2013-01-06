@@ -5,25 +5,21 @@ import java.util.Map;
 
 import models.Place;
 import models.Player;
-import models.ResourceDepot;
 import models.ResourceType;
 import models.Unit;
 import models.UnitType;
 import services.api.PlaceService;
 import services.api.ResourceService;
 import services.api.UnitService;
-import services.api.error.ResourceServiceException;
 import services.api.error.UnitServiceException;
 import assets.constants.UnitMappings;
 
 import com.google.code.morphia.query.Query;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import daos.PlaceDAO;
 import daos.PlayerDAO;
-import daos.ResourceDepotDAO;
 import daos.UnitDAO;
 
 public class UnitServiceImpl implements UnitService {
@@ -36,9 +32,6 @@ public class UnitServiceImpl implements UnitService {
 
 	@Inject
 	private UnitDAO unitDAO;
-
-	@Inject
-	private ResourceDepotDAO resourceDepotDAO;
 
 	@Inject
 	private ResourceService resourceService;
@@ -81,16 +74,8 @@ public class UnitServiceImpl implements UnitService {
 		}
 
 		Player load = playerDAO.findOne("username", player.getUsername());
-		List<ResourceDepot> resourceDepots = load.getResourceDepots();
-		Map<ResourceType, Integer> playerResources = Maps.newHashMap();
+		Map<ResourceType, Integer> playerResources = resourceService.getResourcesOfPlayer(load);
 		Map<ResourceType, Integer> unitCosts = units.get(0).getCosts();
-
-		try {
-			playerResources = resourceService.getResourcesOfPlayer(load);
-		} catch (ResourceServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		// Check funds
 		boolean playerHasFunds = true;
@@ -104,21 +89,18 @@ public class UnitServiceImpl implements UnitService {
 			throw new UnitServiceException("Insufficient funds!");
 
 		// Pay for the unit
-		for (ResourceDepot depot : resourceDepots) {
-			if (unitCosts.containsKey(depot.getResourceType())) {
-				Integer costs = unitCosts.get(depot.getResourceType()) * amount;
-				depot.setAmount(depot.getAmount() - costs);
-				resourceDepotDAO.save(depot);
-			}
+		for (ResourceType resourceType : unitCosts.keySet()) {
+			Integer costs = unitCosts.get(resourceType) * amount;
+			playerResources.put(resourceType, playerResources.get(resourceType) - costs);
 		}
-
+		
 		// Add the unit to the player's unit pool
 		List<Unit> newUnitList = Lists.newLinkedList();
 		newUnitList.addAll(units);
 		newUnitList.addAll(player.getUnits());
 		player.setUnits(newUnitList);
+		player.setResourceDepot(playerResources);
 		playerDAO.save(player);
-
 	}
 
 	@Override

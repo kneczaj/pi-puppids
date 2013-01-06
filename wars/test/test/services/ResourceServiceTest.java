@@ -5,7 +5,6 @@ import java.util.Map;
 
 import models.Place;
 import models.Player;
-import models.ResourceDepot;
 import models.ResourceType;
 import models.Team;
 
@@ -19,18 +18,17 @@ import services.api.error.ResourceServiceException;
 import test.util.InjectorHelper;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
 import daos.PlaceDAO;
 import daos.PlayerDAO;
-import daos.ResourceDepotDAO;
 import daos.TeamDAO;
 
 public class ResourceServiceTest {
 
 	private static PlayerDAO playerDAO;
 	private static PlaceDAO placeDAO;
-	private static ResourceDepotDAO resourceDepotDAO;
 	private static TeamDAO teamDAO;
 	private static ResourceService resourceService;
 
@@ -41,13 +39,11 @@ public class ResourceServiceTest {
 		
 	    playerDAO = injector.getInstance(PlayerDAO.class);
 	    placeDAO = injector.getInstance(PlaceDAO.class);
-	    resourceDepotDAO = injector.getInstance(ResourceDepotDAO.class);
 	    teamDAO = injector.getInstance(TeamDAO.class);
 	    resourceService = injector.getInstance(ResourceService.class);
 	    
 		Assert.assertNotNull(playerDAO);
 		Assert.assertNotNull(placeDAO);
-		Assert.assertNotNull(resourceDepotDAO);
 		Assert.assertNotNull(teamDAO);
 	    Assert.assertNotNull(resourceService);
 	}
@@ -83,22 +79,16 @@ public class ResourceServiceTest {
 	public void persistAndRetrieveResourceDepots() {
 		Player player = playerDAO.findOne("email", "bob@bobson.de");
 
-		ResourceDepot creditDepot = new ResourceDepot();
-		creditDepot.setResourceType(ResourceType.Credits);
-		creditDepot.setAmount(1000);
-		creditDepot.setPlayer(player);
-		resourceDepotDAO.save(creditDepot);
-
-		player.getResourceDepots().add(creditDepot);
+		Map<ResourceType, Integer> depot = Maps.newHashMap();
+		depot.put(ResourceType.Credits, 1000);
+		player.setResourceDepot(depot);
 		playerDAO.save(player);
 
 		player = playerDAO.findOne("email", "bob@bobson.de");
-		ResourceDepot creditLoad = player.getResourceDepots().get(0);
-
+		
 		Assert.assertNotNull(player);
-		Assert.assertNotNull(creditLoad);
-		Assert.assertEquals(ResourceType.Credits, creditLoad.getResourceType());
-		Assert.assertEquals(new Integer(1000), creditLoad.getAmount());
+		Assert.assertNotNull(player.getResourceDepot());
+		Assert.assertEquals(new Integer(1000), player.getResourceDepot(ResourceType.Credits));
 	}
 
 	/**
@@ -113,22 +103,13 @@ public class ResourceServiceTest {
 	public void getResourcesOfPlayerTest() throws ResourceServiceException {
 		Player player = playerDAO.findOne("email", "bob@bobson.de");
 
-		ResourceDepot materialDepot = new ResourceDepot();
-		materialDepot.setResourceType(ResourceType.Material);
-		materialDepot.setAmount(2000);
-		materialDepot.setPlayer(player);
-		resourceDepotDAO.save(materialDepot);
-
-		ResourceDepot foodDepot = new ResourceDepot();
-		foodDepot.setResourceType(ResourceType.Food);
-		foodDepot.setAmount(3000);
-		foodDepot.setPlayer(player);
-		resourceDepotDAO.save(foodDepot);
-
-		player.getResourceDepots().add(materialDepot);
-		player.getResourceDepots().add(foodDepot);
+		Map<ResourceType, Integer> depot = Maps.newHashMap();
+		depot.put(ResourceType.Credits, 1000);
+		depot.put(ResourceType.Material, 2000);
+		depot.put(ResourceType.Food, 3000);
+		player.setResourceDepot(depot);
+		
 		playerDAO.save(player);
-
 		player = playerDAO.findOne("email", "bob@bobson.de");
 
 		Map<ResourceType, Integer> resourceMap = resourceService.getResourcesOfPlayer(player);
@@ -194,28 +175,13 @@ public class ResourceServiceTest {
 
 		playerDAO.save(alice);
 		alice = playerDAO.findOne("email", "alice@alison.de");
-
-		ResourceDepot creditDepot = new ResourceDepot();
-		creditDepot.setResourceType(ResourceType.Credits);
-		creditDepot.setAmount(1000);
-		creditDepot.setPlayer(alice);
-		resourceDepotDAO.save(creditDepot);
-
-		ResourceDepot materialDepot = new ResourceDepot();
-		materialDepot.setResourceType(ResourceType.Material);
-		materialDepot.setAmount(2000);
-		materialDepot.setPlayer(alice);
-		resourceDepotDAO.save(materialDepot);
-
-		ResourceDepot foodDepot = new ResourceDepot();
-		foodDepot.setResourceType(ResourceType.Food);
-		foodDepot.setAmount(3000);
-		foodDepot.setPlayer(alice);
-		resourceDepotDAO.save(foodDepot);
-
-		alice.getResourceDepots().add(creditDepot);
-		alice.getResourceDepots().add(materialDepot);
-		alice.getResourceDepots().add(foodDepot);
+		
+		Map<ResourceType, Integer> depot = Maps.newHashMap();
+		depot.put(ResourceType.Credits, 1000);
+		depot.put(ResourceType.Material, 2000);
+		depot.put(ResourceType.Food, 3000);
+		
+		alice.setResourceDepot(depot);
 		playerDAO.save(alice);
 
 		Team team = new Team();
@@ -259,12 +225,7 @@ public class ResourceServiceTest {
 		teamDAO.delete(team);
 
 		for (Player player : players) {
-			List<ResourceDepot> depotList = player.getResourceDepots();
 			List<Place> places = player.getConquered();
-
-			for (ResourceDepot depot : depotList) {
-				resourceDepotDAO.delete(depot);
-			}
 
 			for (Place place : places) {
 				placeDAO.delete(place);

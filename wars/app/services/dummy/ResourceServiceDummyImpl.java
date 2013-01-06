@@ -1,24 +1,20 @@
 package services.dummy;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import models.Place;
 import models.Player;
-import models.ResourceDepot;
 import models.ResourceType;
 import models.Team;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import daos.PlaceDAO;
 import daos.PlayerDAO;
-import daos.ResourceDepotDAO;
 import daos.TeamDAO;
 
 public class ResourceServiceDummyImpl implements ResourceService {
@@ -28,9 +24,6 @@ public class ResourceServiceDummyImpl implements ResourceService {
 
 	@Inject
 	private PlaceDAO placeDAO;
-
-	@Inject
-	private ResourceDepotDAO resourceDepotDAO;
 
 	@Inject
 	private TeamDAO teamDAO;
@@ -84,12 +77,9 @@ public class ResourceServiceDummyImpl implements ResourceService {
 	 * 
 	 * @param player
 	 * @return a mapping from a resource to the amount a player possesses.
-	 * @throws ResourceServiceException
 	 */
 	@Override
-	public Map<ResourceType, Integer> getResourcesOfPlayer(Player player)
-			throws ResourceServiceException {
-
+	public Map<ResourceType, Integer> getResourcesOfPlayer(Player player) {
 		Map<ResourceType, Integer> map = Maps.newHashMap();
 		Random rnd = new Random();
 
@@ -121,26 +111,4 @@ public class ResourceServiceDummyImpl implements ResourceService {
 		return map;
 	}
 
-	@Override
-	public List<ResourceDepot> instantiateResourceDepots(Player player) throws NullPointerException {
-		Player load = playerDAO.findOne("username", player.getUsername());
-
-		if (load == null)
-			throw new NullPointerException("Could not find player with name "
-					+ player.getUsername() + ".");
-		
-		List<ResourceDepot> depotList = Lists.newLinkedList();
-		
-		for (ResourceType type : ResourceType.values()) {
-			ResourceDepot depot = new ResourceDepot();
-			depot.setAmount(0);
-			depot.setResourceType(type);
-			depot.setPlayer(player);
-			resourceDepotDAO.save(depot);
-		}
-		
-		playerDAO.save(load);
-		
-		return depotList;
-	}
 }

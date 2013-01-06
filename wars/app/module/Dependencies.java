@@ -1,7 +1,9 @@
 package module;
 
 
+import play.Play;
 import services.api.AuthenticationService;
+import services.api.ConqueringService;
 import services.api.LocationTrackingService;
 import services.api.MapInfoService;
 import services.api.PlaceService;
@@ -10,17 +12,21 @@ import services.api.ResourceService;
 import services.api.ScoreService;
 import services.api.TeamService;
 import services.api.UnitService;
+import services.api.VictoryStrategy;
 import services.dummy.ResourceServiceDummyImpl;
 import services.dummy.ScoreServiceDummyImpl;
 import services.google.places.api.GPlaceService;
 import services.google.places.impl.GPlaceServiceImpl;
 import services.impl.AuthenticationServiceImpl;
+import services.impl.ConqueringServiceImpl;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
 import services.impl.PlaceServiceImpl;
 import services.impl.PlayerServiceImpl;
+import services.impl.ResourceServiceImpl;
 import services.impl.TeamServiceImpl;
 import services.impl.UnitServiceImpl;
+import services.impl.VictoryByNumberOfUnitsStategy;
 
 import com.google.code.morphia.Morphia;
 import com.google.inject.Binder;
@@ -35,7 +41,6 @@ import daos.InvitationDAO;
 import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
-import daos.ResourceDepotDAO;
 import daos.TeamDAO;
 import daos.UnitDAO;
 
@@ -55,8 +60,16 @@ public class Dependencies implements Module {
 		binder.bind(PlaceService.class).to(PlaceServiceImpl.class).in(Singleton.class);
 		binder.bind(PlayerService.class).to(PlayerServiceImpl.class).in(Singleton.class);
 		binder.bind(GPlaceService.class).to(GPlaceServiceImpl.class).in(Singleton.class);
+		binder.bind(ConqueringService.class).to(ConqueringServiceImpl.class).in(Singleton.class);
+		binder.bind(VictoryStrategy.class).to(VictoryByNumberOfUnitsStategy.class).in(Singleton.class);
 		
-		binder.bind(ResourceService.class).to(ResourceServiceDummyImpl.class).in(Singleton.class);
+		if (Play.isTest()) {
+			binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);
+		} else {
+
+			binder.bind(ResourceService.class).to(ResourceServiceDummyImpl.class).in(Singleton.class);
+		}
+		
 		binder.bind(ScoreService.class).to(ScoreServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
 		binder.bind(UnitService.class).to(UnitServiceImpl.class).in(Singleton.class);
@@ -71,7 +84,6 @@ public class Dependencies implements Module {
 		binder.bind(PlaceDAO.class).in(Singleton.class);
 		binder.bind(PlayerDAO.class).in(Singleton.class);
 		binder.bind(PlayerLocationDAO.class).in(Singleton.class);
-		binder.bind(ResourceDepotDAO.class).in(Singleton.class);
 		binder.bind(TeamDAO.class).in(Singleton.class);
 		binder.bind(UnitDAO.class).in(Singleton.class);
 	}
