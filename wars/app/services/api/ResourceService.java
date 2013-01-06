@@ -1,11 +1,9 @@
 package services.api;
 
-import java.util.List;
 import java.util.Map;
 
 import models.Place;
 import models.Player;
-import models.ResourceDepot;
 import models.ResourceType;
 import models.Team;
 import services.api.error.ResourceServiceException;
@@ -35,8 +33,7 @@ public interface ResourceService extends Service {
 	 * @return a mapping from a resource to the amount a player possesses.
 	 * @throws ResourceServiceException
 	 */
-	public Map<ResourceType, Integer> getResourcesOfPlayer(Player player)
-			throws ResourceServiceException;
+	public Map<ResourceType, Integer> getResourcesOfPlayer(Player player);
 
 	/**
 	 * Get a listing of a teams' resources
@@ -48,11 +45,4 @@ public interface ResourceService extends Service {
 	public Map<ResourceType, Integer> getResourcesOfTeam(Team team)
 			throws ResourceServiceException;
 
-	/**
-	 * Returns a list of all possible ResourceDepots with value 0 Used to
-	 * instantiate the list of ResourceDepots in the Player
-	 * 
-	 * @return
-	 */
-	public List<ResourceDepot> instantiateResourceDepots(Player player) throws NullPointerException;
 }

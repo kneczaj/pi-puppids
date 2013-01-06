@@ -59,15 +59,9 @@ public class ResourceController extends Controller {
 	public static Result getResourcesOfPlayer() {
 		Player p = authenticationService.getPlayer();
 		
-		try {
-			Map<ResourceType, Integer> resourcePlaces = resourceService.getResourcesOfPlayer(p);
-			
-			return ok(JsonHelper.toJson(resourcePlaces));
-		} catch (ResourceServiceException e) {
-			Logger.warn("Could not find resources of player", e);
-
-			return internalServerError();
-		}
+		Map<ResourceType, Integer> resourcePlaces = resourceService.getResourcesOfPlayer(p);
+		
+		return ok(JsonHelper.toJson(resourcePlaces));
 	}
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)

@@ -26,5 +26,4 @@ public class PlayerDAO extends AbstractDAO<Player, ObjectId> {
 		super(mongo, morphia);
 	}
 	
-	
 }
