@@ -7,7 +7,7 @@ class ArWars.PlayerPositionManager
 
 	@mapOptions = 
 		center : new google.maps.LatLng 48.133, 11.566
-		zoom : 11
+		zoom : 16
 		mapTypeId : google.maps.MapTypeId.ROADMAP
 		styles : [ { "stylers": [ { "invert_lightness": true }, { "saturation": -80 } ] },{ "featureType": "road", "elementType": "geometry", "stylers": [ { "color": "#646464" } ] },{ "featureType": "road", "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi", "elementType": "labels", "stylers": [ { "color": "#faa732" }, { "weight": 0.1 } ] } ]
 
@@ -32,6 +32,7 @@ class ArWars.PlayerPositionManager
 	mapNode: null
 	selectedPlayer: null
 	infoPanel: null
+	infowindow: null
 
 	constructor: (@mapNode, @infoPanel) ->
 		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
@@ -64,9 +65,10 @@ class ArWars.PlayerPositionManager
 	loadPlacesNearby: (lat, lng) ->
 		request = 
 			location: 	new google.maps.LatLng(lat, lng)
-			radius: 	1000
+			rankBy:		google.maps.places.RankBy.DISTANCE
 			types: 		["atm", "bakery", "school", "church", "movie_theater", "pharmacy", "train_station"]
-
+			
+		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 		service = new google.maps.places.PlacesService(@map)
 		service.search(request, @callback)
 
@@ -104,6 +106,10 @@ class ArWars.PlayerPositionManager
 			icon: iconUrl
 		
 		marker = new google.maps.Marker markerOpts
+	
+		google.maps.event.addListener marker, "click", =>
+		  @infowindow.setContent place.name + "<br/>" + place.vicinity + "<br/>Type: " + place.type + "<br/>Resource: <img src=\"" + marker.icon + "\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\">Conquer</button>"
+		  @infowindow.open @map, marker
 
 	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>
