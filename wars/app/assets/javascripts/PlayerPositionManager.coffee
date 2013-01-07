@@ -84,19 +84,19 @@ class ArWars.PlayerPositionManager
 		iconUrl = undefined
 		switch place.types[0]
 		  when "atm"
-		    iconUrl = "/assets/images/credits.png"
+		    iconUrl = "/assets/images/resources/credits_marker.png"
 		  when "bakery"
-		    iconUrl = "/assets/images/food.png"
+		    iconUrl = "/assets/images/resources/food_marker.png"
 		  when "school"
-		    iconUrl = "/assets/images/knowledge.png"
+		    iconUrl = "/assets/images/resources/knowledge_marker.png"
 		  when "church"
-		    iconUrl = "/assets/images/special.png"
+		    iconUrl = "/assets/images/resources/special_marker.png"
 		  when "movie_theater"
-		    iconUrl = "/assets/images/cultural.png"
+		    iconUrl = "/assets/images/resources/cultural_marker.png"
 		  when "pharmacy"
-		    iconUrl = "/assets/images/material.png"
+		    iconUrl = "/assets/images/resources/material_marker.png"
 		  when "train_station"
-		    iconUrl = "/assets/images/transportation.png"
+		    iconUrl = "/assets/images/resources/transportation_marker.png"
 		  else
 		    iconUrl = ""
 		

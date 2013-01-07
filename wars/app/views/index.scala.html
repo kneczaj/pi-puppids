@@ -78,7 +78,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li class="' + key.toLowerCase() + '"><a href="#" rel="tooltip" title="' + key + '"> <i class="icon-gift icon-white"></i> ' + val + ' </a></li>');
+				    items.push('<li class="' + key.toLowerCase() + '"><a href="#" rel="tooltip" title="' + key + '"> <img src="@routes.Assets.at("images/resources/' + key.toLowerCase() + '_white.png")"> ' + val + ' </a></li>');
 				  });
 	
 				  $('<ul/>', {
