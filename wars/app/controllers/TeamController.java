@@ -11,6 +11,8 @@ import services.api.AuthenticationService;
 import services.api.PlayerService;
 import services.api.TeamService;
 import services.api.error.PlayerServiceException;
+import services.api.error.TeamServiceException;
+
 import views.html.message;
 
 import com.google.inject.Inject;
@@ -40,32 +42,15 @@ public class TeamController extends Controller {
 		
 		Player loggedPlayer = authenticationService.getPlayer();
 		
-		if (invitedUserOrEmail.equals(loggedPlayer.getEmail())	|| invitedUserOrEmail.equals(loggedPlayer.getUsername()))
-			return ok("userIsYou");
-		
-		Player invitedPlayer;
-		Boolean isEmail = invitedUserOrEmail.contains("@");
-		if (isEmail)
-			invitedPlayer = playerDAO.findOne("email", invitedUserOrEmail);
-		else
-			invitedPlayer = playerDAO.findOne("username", invitedUserOrEmail);
-		
 		Invitation invitation;
-		if (invitedPlayer == null) {
-			
-			if (!isEmail)
-				return ok("givenUserDoesntExist");
-			invitation = teamService.iniviteStranger(loggedPlayer, invitedUserOrEmail);
-			
-		} else if (invitedPlayer.getTeam().getId().equals(loggedPlayer.getTeam().getId()))
-			
-			return ok("alreadyInTheTeam");
 		
-		else
-			invitation = teamService.invite(loggedPlayer, invitedPlayer);
+		try {
+			invitation = teamService.prepareInvitation(invitedUserOrEmail, loggedPlayer);
+		} catch (TeamServiceException e) {
+			return ok(e.getMessage());
+		}
 		
 		teamService.sendInvitation(invitation);
-		
 		return ok("ok");
 	}
 	
@@ -87,32 +72,39 @@ public class TeamController extends Controller {
 	}
 	
 	@SecureSocial.SecuredAction
-	public static Result acceptInvitation(String token) {
+	public static Result acceptInvitation(String token) throws TeamServiceException {
 		
-		Invitation invitation = invitationDAO.findOne("token", token);
-		if (invitation == null)
+		
+		Invitation invitation;
+		try {
+			invitation = teamService.getInvitation(token);
+		} catch (TeamServiceException e) {
 			return ok(message.render("Given invitation token is invalid"));
-		
-		// invited person does not exist in db - create a new account
-		if (invitation.getRecipient() == null) 
-		{
-			ctx().flash().put("error", "You are a new player - please make an account, and try the invitation link again");
-			return redirect(RoutesHelper.startSignUp());
 		}
 		
-		// invited player is not currently logged in
 		Player loggedPlayer = authenticationService.getPlayer();
-		if ((loggedPlayer == null) || (!loggedPlayer.getUsername().equals(invitation.getRecipient().getUsername()) ) )
-		{
-			// After logging in try again this action
-			ctx().session().put("securesocial.originalUrl", ctx().request().uri());
+		try {
+			teamService.acceptInvitation(invitation, loggedPlayer);
+		} catch (TeamServiceException e) {
 			
-			// redirect to login page with the error message below.
-			ctx().flash().put("error", "You must log in as the recipient of the invitation");
-			return redirect(RoutesHelper.login());
+			if (e.getMessage().equals("playerNotRegistered")) {
+				
+				ctx().flash().put("error", "You are a new player - please make an account, and try the invitation link again");
+				return redirect(RoutesHelper.startSignUp());
+				
+			} else if (e.getMessage().equals("playerNotLogged")) {
+				
+				// After logging in try again this action
+				ctx().session().put("securesocial.originalUrl", ctx().request().uri());
+				
+				// redirect to login page with the error message below.
+				ctx().flash().put("error", "You must log in as the recipient of the invitation");
+				return redirect(RoutesHelper.login());
+				
+			} else
+				throw e;
 		}
 		
-		teamService.acceptInvite(invitation);
 		return ok(message.render("You have successfully joined " + invitation.getTeam().getName() + " team"));
 	}
 }
