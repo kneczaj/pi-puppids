@@ -65,12 +65,12 @@ class ArWars.PlayerPositionManager
 	loadPlacesNearby: (lat, lng) ->
 		request = 
 			location: 	new google.maps.LatLng(lat, lng)
-			rankBy:		google.maps.places.RankBy.DISTANCE
+			radius:		400
 			types: 		["atm", "bakery", "school", "church", "movie_theater", "pharmacy", "train_station"]
 			
 		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 		service = new google.maps.places.PlacesService(@map)
-		service.search(request, @callback)
+		service.nearbySearch(request, @callback)
 
 	callback: (results, status, pagination) =>
 		if status is google.maps.places.PlacesServiceStatus.OK
@@ -108,7 +108,7 @@ class ArWars.PlayerPositionManager
 		marker = new google.maps.Marker markerOpts
 	
 		google.maps.event.addListener marker, "click", =>
-		  @infowindow.setContent place.name + "<br/>" + place.vicinity + "<br/>Type: " + place.type + "<br/>Resource: <img src=\"" + marker.icon + "\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\">Conquer</button>"
+		  @infowindow.setContent place.name + "<br/>" + place.vicinity + "<br/>Type: " + place.types[0] + "<br/>Resource: <img src=\"" + marker.icon + "\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\">Conquer</button>"
 		  @infowindow.open @map, marker
 
 	# Called when LocationAPI detects a location change of the current player
