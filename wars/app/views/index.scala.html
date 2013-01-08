@@ -78,7 +78,7 @@
 			  } else {
 
 				  $.each(data, function(key, val) {
-				    items.push('<li class="' + key.toLowerCase() + '"><a href="#" rel="tooltip" title="' + key + '"> <i class="icon-gift icon-white"></i> ' + val + ' </a></li>');
+				    items.push('<li class="' + key.toLowerCase() + '"><a href="#" rel="tooltip" title="' + key + '"> <img src="@routes.Assets.at("images/resources/' + key.toLowerCase() + '_white.png")"> ' + val + ' </a></li>');
 				  });
 	
 				  $('<ul/>', {
@@ -181,9 +181,9 @@
 								}
 							</div>
 							<hr>
-							<form id="invitationForm" action="javascript:tryInvite()">
-								<input type="text" placeholder="Email or user name" id="userToInvite"><br>
-								<input type="submit" value="Invite">
+							<form id="invitationForm" class="form-inline" action="javascript:tryInvite()">
+								<input type="text" placeholder="Email or user name" id="userToInvite">
+								<input type="submit" class="btn btn-warning" value="Invite">
 							</form>
 							<div id="error-message" class="control-group">
 							</div>
