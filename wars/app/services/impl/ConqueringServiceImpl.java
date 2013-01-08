@@ -26,13 +26,13 @@ import daos.PlaceDAO;
 public class ConqueringServiceImpl implements ConqueringService {
 
 	@Inject
-	private static PlaceDAO placeDAO;
+	private PlaceDAO placeDAO;
 
 	@Inject
-	private static MapInfoService mapInfoService;
+	private MapInfoService mapInfoService;
 
 	@Inject
-	private static VictoryStrategy victoryStrategy;
+	private VictoryStrategy victoryStrategy;
 
 	@Override
 	public List<Player> getTeamMembersAllowedToParticipateInConquer(

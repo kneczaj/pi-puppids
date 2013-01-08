@@ -86,6 +86,10 @@ public class PlayerLocation {
 	public ObjectId getId() {
 		return id;
 	}
+	
+	public Location getLocation() {
+		return new Location(longitude, latitude);
+	}
 
 	@Override
 	public String toString() {

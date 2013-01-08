@@ -55,18 +55,27 @@ public class MapInfoServiceImpl implements MapInfoService {
 		return teamMembersNearby;
 	}
 	
+	public double calculateLocationDistance(Location location1, Location location2) {
+		return Math.acos(Math.sin(location1.getLatitudeRadians()) * Math.sin(location2.getLatitudeRadians()) +
+				Math.cos(location1.getLatitudeRadians()) * Math.cos(location2.getLatitudeRadians()) *
+				Math.cos(location1.getLongitudeRadians() - location2.getLongitudeRadians())) * 6371010;
+	}
+	
 	@Override
 	public Map<String, PlayerLocation> findPlayersNearby(Location location, Integer searchRadius, Date youngerThan) {
-		// TODO: filter players that are not nearby, consider searchRadius
 		List<Player> players = playerDAO.find().asList();
 		Map<String, PlayerLocation> mapping = Maps.newHashMap();
+		double radius = (double) searchRadius;
 		
 		for (Player p : players) {
 			PlayerLocation pl = playerLocationDAO.findLatestLocation(p);
 			if (pl == null || pl.getPlayer() == null || pl.getTimestamp().before(youngerThan)) {
 				continue;
 			}
-			mapping.put(pl.getPlayer().getId().toString(), pl);
+			
+			if (calculateLocationDistance(pl.getLocation(), location) <= radius) {
+				mapping.put(pl.getPlayer().getId().toString(), pl);
+			}
 		}
 		
 		return mapping;

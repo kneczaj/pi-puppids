@@ -13,17 +13,22 @@ public class Location {
 
 	private Double latitude;
 	
+	private Double longitudeRadians;
+	
+	private Double latitudeRadians;
+	
 	public Location() {
 		
 	}
 
 	public Location(Double longitude, Double latitude) {
-		this.longitude = longitude;
-		this.latitude = latitude;
+		setLatitude(latitude);
+		setLongitude(longitude);
 	}
 	
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+		this.longitudeRadians = Math.toRadians(longitude);
 	}
 
 	public Double getLongitude() {
@@ -32,6 +37,15 @@ public class Location {
 	
 	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
+		this.latitudeRadians = Math.toRadians(latitude);
+	}
+	
+	public Double getLatitudeRadians() {
+		return latitudeRadians;
+	}
+	
+	public Double getLongitudeRadians() {
+		return longitudeRadians;
 	}
 
 	public Double getLatitude() {
