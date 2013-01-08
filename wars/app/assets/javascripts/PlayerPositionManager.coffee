@@ -9,7 +9,29 @@ class ArWars.PlayerPositionManager
 		center : new google.maps.LatLng 48.133, 11.566
 		zoom : 16
 		mapTypeId : google.maps.MapTypeId.ROADMAP
-		styles : [ { "stylers": [ { "invert_lightness": true }, { "saturation": -80 } ] },{ "featureType": "road", "elementType": "geometry", "stylers": [ { "color": "#646464" } ] },{ "featureType": "road", "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] },{ "featureType": "poi", "elementType": "labels", "stylers": [ { "color": "#faa732" }, { "weight": 0.1 } ] } ]
+		styles: [
+			stylers: [
+				invert_lightness: true
+			,
+				saturation: -80
+			]
+		,
+			featureType: "road"
+			elementType: "geometry"
+			stylers: [color: "#646464"]
+		,
+			featureType: "road"
+			elementType: "labels.icon"
+			stylers: [visibility: "off"]
+		,
+			featureType: "poi"
+			elementType: "labels"
+			stylers: [
+				color: "#faa732"
+			,
+				weight: 0.1
+			]
+		]
 
 	@locationOptions = 
 		enableHighAccuracy : true
@@ -23,9 +45,10 @@ class ArWars.PlayerPositionManager
 		strokeWidth: 0
 		strokeOpacity: 0
 	
-	markers: []
+	playerMarkers: []
 	circles: []
 	players: []
+	placeMarkers: []
 	
 	locationWatchHandle: null
 	map: null
@@ -40,7 +63,7 @@ class ArWars.PlayerPositionManager
 
 	# Removes a player from the map (removes the circle and the marker)
 	removeFromMap: (pId) ->
-		@markers[pId] = null
+		@playerMarkers[pId] = null
 		@circles[pId] = null
 
 	loadPlayersNearby: (lat, lng) -> 
@@ -106,6 +129,7 @@ class ArWars.PlayerPositionManager
 			icon: iconUrl
 		
 		marker = new google.maps.Marker markerOpts
+		@placeMarkers[place.id] = marker
 	
 		google.maps.event.addListener marker, "click", =>
 		  @infowindow.setContent place.name + "<br/>" + place.vicinity + "<br/>Type: " + place.types[0] + "<br/>Resource: <img src=\"" + marker.icon + "\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\">Conquer</button>"
@@ -162,8 +186,8 @@ class ArWars.PlayerPositionManager
 		log "playerId: #{pId}, lat: #{latitude}, lng: #{longitude}, uncertainty: #{uncertainty}"
 
 		# Add Marker for the player
-		if @markers[pId]
-			@markers[pId].setMap null
+		if @playerMarkers[pId]
+			@playerMarkers[pId].setMap null
 
 		pos = new google.maps.LatLng latitude, longitude
 		markerOpts = 
@@ -173,7 +197,7 @@ class ArWars.PlayerPositionManager
 
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map
-		@markers[pId] = marker
+		@playerMarkers[pId] = marker
 		
 		@map.panTo pos
 
