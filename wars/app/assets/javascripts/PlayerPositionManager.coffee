@@ -7,8 +7,10 @@ class ArWars.PlayerPositionManager
 
 	@mapOptions = 
 		center : new google.maps.LatLng 48.133, 11.566
-		zoom : 16
+		zoom : 11
 		mapTypeId : google.maps.MapTypeId.ROADMAP
+		mapTypeControl: false
+		streetViewControl: false
 		styles: [
 			stylers: [
 				invert_lightness: true
@@ -88,8 +90,7 @@ class ArWars.PlayerPositionManager
 	loadPlacesNearby: (lat, lng) ->
 		request = 
 			location: 	new google.maps.LatLng(lat, lng)
-			radius:		400
-			types: 		["atm", "bakery", "school", "church", "movie_theater", "pharmacy", "train_station"]
+			radius:		100
 			
 		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 		service = new google.maps.places.PlacesService(@map)
@@ -98,34 +99,40 @@ class ArWars.PlayerPositionManager
 	callback: (results, status, pagination) =>
 		if status is google.maps.places.PlacesServiceStatus.OK
 			@createMarker(i) for i in results
-			
+		
 		if pagination.hasNextPage
     		pagination.nextPage()
+    		
+		bounds = new google.maps.LatLngBounds()
+		for k,v of @placeMarkers
+			bounds.extend v.position
+		@map.fitBounds bounds
 
 	createMarker: (place) ->
 		placeLoc = place.geometry.location
 		iconUrl = undefined
 		switch place.types[0]
-		  when "atm"
+		  when "atm", "bank", "casino", "dentist", "doctor", "electrician", "establishment", "finance", "florist", "insurance_agency", "jewelry_store", "lawyer"
 		    iconUrl = "/assets/images/resources/credits_marker.png"
-		  when "bakery"
+		  when "bakery", "bar", "cafe", "food", "liquor_store", "meal_delivery", "meal_takeaway", "restaurant", "shopping_mall", "store"
 		    iconUrl = "/assets/images/resources/food_marker.png"
-		  when "school"
+		  when "book_store", "library", "school", "university"
 		    iconUrl = "/assets/images/resources/knowledge_marker.png"
-		  when "church"
+		  when "campground", "cemetery", "church", "city_hall", "courthouse", "embassy", "fire_station", "hindu_temple", "local_government_office", "mosque", "place_of_worship", "police", "stadium", "synagogue", "zoo"
 		    iconUrl = "/assets/images/resources/special_marker.png"
-		  when "movie_theater"
+		  when "amusement_park", "aquarium", "art_gallery", "beauty_salon", "bowling_alley", "movie_rental", "movie_theater", "moving_company", "museum", "night_club", "park"
 		    iconUrl = "/assets/images/resources/cultural_marker.png"
-		  when "pharmacy"
+		  when "bicycle_store", "clothing_store", "convenience_store", "department_store", "electronics_store", "funeral_home", "furniture_store", "gas_station", "general_contractor", "grocery_or_supermarket", "gym", "hair_care", "hardware_store", "health", "home_goods_store", "hospital", "laundry", "locksmith", "lodging", "painter", "pet_store", "pharmacy", "physiotherapist", "plumber", "post_office", "real_estate_agency", "roofing_contractor", "rv_park", "shoe_store", "spa", "storage"
 		    iconUrl = "/assets/images/resources/material_marker.png"
-		  when "train_station"
+		  when "bus_station", "car_dealer", "car_rental", "car_repair", "car_wash", "parking", "subway_station", "taxi_stand", "train_station", "travel_agency", "veterinary_care"
 		    iconUrl = "/assets/images/resources/transportation_marker.png"
 		  else
-		    iconUrl = ""
+		    return
 		
 		markerOpts = 
 			map: @map
 			position: place.geometry.location
+			animation: google.maps.Animation.DROP
 			icon: iconUrl
 		
 		marker = new google.maps.Marker markerOpts
@@ -167,8 +174,8 @@ class ArWars.PlayerPositionManager
 			error : (jqXHR, textStatus, errorThrown) -> 
 				log textStatus
 		
-		@loadPlayersNearby coords.latitude, coords.longitude
 		@loadPlacesNearby coords.latitude, coords.longitude
+		@loadPlayersNearby coords.latitude, coords.longitude
 
 	# Called when the LocationAPI threw an error
 	onPositionError: (error) ->
