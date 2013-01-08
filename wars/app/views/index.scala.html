@@ -1,0 +1,259 @@
+@(player: Player)(location: PlayerLocation)(teammates: List[Player])(factions: List[Faction])(cities: List[City])
+
+@scripts = {
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&libraries=places&sensor=false"></script>
+<script type="text/javascript">
+	/*
+	 * Setting globals
+	 */
+	var playerId = "@player.getId().toString()";
+	var factionHasToBeChosen = false;
+	
+	@if(player.getTeam().getFaction() == null) {
+		factionHasToBeChosen = true;
+	}
+	
+	window.ArWars = { 
+		playerId: playerId,
+		mapSelector: '#map_canvas',
+		factionHasToBeChosen: factionHasToBeChosen, 
+		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)"
+	};
+	
+	function tryInvite() {
+
+		var checkEmailRequest = new XMLHttpRequest();
+		var username = document.getElementById("userToInvite").value;
+		
+		checkEmailRequest.onreadystatechange = function() {
+	
+	  		if (checkEmailRequest.readyState == 4 && checkEmailRequest.status == 200) {
+	  		
+				var response = checkEmailRequest.responseText;
+				var message;
+				if (response == "ok") {
+					message = username + " has been succesfully invited";
+				} else if (response == "userIsYou") {
+					message = "You cannot invite yourself";
+				} else if (response == "givenUserDoesntExist") {
+					message = "The given user was not found";
+				} else if (response == "alreadyInTheTeam") {
+					message = "The given user is already a member of this team.";
+				}
+				
+				document.getElementById("error-message").innerHTML = message;
+				document.getElementById("userToInvite").value = "";
+			}
+  		}
+  	
+		checkEmailRequest.open("GET","invite/"+username, true);
+		checkEmailRequest.send();
+	};
+	
+	$(document).ready(function() {
+		$('#accordion2 div:visible:first > .accordion-body').addClass('in');
+		
+		$.getJSON('/resource/getResourceSourcesOfPlayer', function(data) {
+			  var items = [];
+			  
+			  if ($.isEmptyObject(data)) {
+				  $('#resourceSources').append('<p>Currently there are no sources for resources available</p>')
+			  } else {
+
+				  $.each(data, function(key, val) {
+				    items.push('<li class="' + val.resource + ' ">' + val.name + ' yields <b>' + val.amount + '</b> of ' + val.resource + '</li>');
+				  });
+	
+				  $('<ul/>', {
+				    html: items.join('')
+				  }).appendTo('#resourceSources');
+			  }
+			});
+		
+			$.getJSON('/resource/getResourcesOfPlayer', function(data) {
+			  var items = [];
+			  
+			  if ($.isEmptyObject(data)) {
+				  $('#resourcesPlayer').append('<p>Currently there are no resources available</p>')
+			  } else {
+
+				  $.each(data, function(key, val) {
+				    items.push('<li class="' + key.toLowerCase() + '"><a href="#" rel="tooltip" title="' + key + '"> <i class="icon-gift icon-white"></i> ' + val + ' </a></li>');
+				  });
+	
+				  $('<ul/>', {
+					'class': 'inline',
+				    html: items.join('')
+				  }).appendTo('#resourcesPlayer');
+				  
+	                $("a").tooltip();
+			  }
+			});
+		
+		$.getJSON('/resource/getResourcesOfTeam', function(data) {
+			  var items = [];
+			  
+			  if ($.isEmptyObject(data)) {
+				  $('#resourcesTeam').append('<p>Currently there are no resources available</p>')
+			  } else {
+
+				  $.each(data, function(key, val) {
+				    items.push('<dt class="' + key.toLowerCase() + '">' + key + '</dt><dd>' + val + '</dd>');
+				  });
+	
+				  $('<dl/>', {
+					'class': 'dl-horizontal',
+				    html: items.join('')
+				  }).appendTo('#resourcesTeam');
+			  }
+			});
+	});
+</script>
+<script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/PlayerPositionManager.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/LayoutResizer.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/WebSocketManager.js")" type="text/javascript"></script>
+
+}
+
+@main(title = player.getUsername() + " - ARWars", scripts) {
+
+<div class="row-fluid">
+	<div class="span4">
+		<div class="well well-small sidebar-nav">
+
+			<div class="accordion" id="accordion2">
+				<div class="accordion-group visible-phone">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#map"><i class="icon-globe icon-white"></i> Map </a>
+					</div>
+					<div id="map" class="accordion-body collapse">
+						<div id="map_container_mobile" class="accordion-inner">
+							<div id="map_canvas"></div>
+							<div id="playerDetails">
+								<h4>Player</h4>
+							    <p>Team: <span class="team"></span> / Faction: <span class="faction"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#places"><i class="icon-map-marker icon-white"></i> Places </a>
+					</div>
+					<div id="places" class="accordion-body collapse">
+						<div class="accordion-inner">
+							<div id="resourceSources">
+								<h5>Resource Sources:</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#units"><i class="icon-plane icon-white"></i> Units </a>
+					</div>
+					<div id="units" class="accordion-body collapse">
+						<div class="accordion-inner">Lorem ipsum dolor sit amet,
+							consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+							labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+							nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+							commodo consequat. Duis aute irure dolor in reprehenderit in
+							voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+							Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+							officia deserunt mollit anim id est laborum.
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#team"><i class="icon-user icon-white"></i> Team </a>
+					</div>
+					<div id="team" class="accordion-body collapse">
+						<div class="accordion-inner">
+							<div id="resourcesTeam">
+								<h5>Resources Team:</h5>
+							</div>
+							<div id="teamMembers">
+								<h5>Team members:</h5>
+								@for(member <- teammates) {
+									@member.getUsername()<br>
+								}
+							</div>
+							<hr>
+							<form id="invitationForm" action="javascript:tryInvite()">
+								<input type="text" placeholder="Email or user name" id="userToInvite"><br>
+								<input type="submit" value="Invite">
+							</form>
+							<div id="error-message" class="control-group">
+							</div>
+						</div> 
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#statistics"><i class="icon-tasks icon-white"></i> Statistics </a>
+					</div>
+					<div id="statistics" class="accordion-body collapse">
+						<div class="accordion-inner">Lorem ipsum dolor sit amet,
+							consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+							labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+							nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+							commodo consequat. Duis aute irure dolor in reprehenderit in
+							voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+							Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+							officia deserunt mollit anim id est laborum.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--/sidebar-nav -->
+	</div>
+	<!--/span-->
+	<div class="span8">
+		<div id="resourcesPlayer" class="well well-small"></div>
+		<div id="map_container_desktop" class="hidden-phone"></div>
+	</div>
+	<!--/span-->
+</div>
+<!--/row-->
+
+<!--modal-->
+<div id="chooseFactionModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="chooseFactionModalLabel" aria-hidden="false">
+  <div class="modal-header">
+    <h3 id="chooseFactionModalLabel">Choose a faction and a city</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+	  <div class="control-group">
+	    <label class="control-label" for="factionId">Faction</label>
+	    <div class="controls">
+	    	@for(faction <- factions) {
+	    		<label class="radio">
+				  <input type="radio" name="factionId" value="@faction.getId().toString()" checked>
+				  @faction.getName()
+				</label>
+			}
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <label class="control-label" for="city">City</label>
+	    <div class="controls">
+	    	<select class="span2" name="cityId">
+	    		@for(city <- cities) {
+	    			<option value="@city.getId().toString()">@city.getName()</option>
+				}
+	    	</select>
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <div class="controls">
+	    	<button name="save" class="btn">Save</button>
+	    </div>
+	  </div>
+	</form>
+  </div>
+</div>
+<!--/modal-->
+}
