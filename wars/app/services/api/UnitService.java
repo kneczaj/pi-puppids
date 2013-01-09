@@ -1,5 +1,7 @@
 package services.api;
 
+import java.util.List;
+
 import models.Place;
 import models.Player;
 import models.Unit;
@@ -22,6 +24,42 @@ public interface UnitService extends Service {
 	 */
 	public Unit getInstance(UnitType type);
 
+	/**
+	 * Get a list of undeployed Units of a certain type
+	 * @param player
+	 * @param unitType
+	 * @return
+	 */
+	public List<Unit> getUndeployedUnits(Player player, UnitType unitType);
+	
+	/**
+	 * Get the total number of all undeployed units of a player
+	 * @param player
+	 * @return
+	 */
+	public Integer getNumberOfUndeployedUnits(Player player);
+	
+	/**
+	 * Get the number of all undeployed units of a player of a certain type
+	 * @param player
+	 * @return
+	 */
+	public Integer getNumberOfUndeployedUnits(Player player, UnitType unitType);
+	
+	/**
+	 * Get the total number of all deployed units of a player
+	 * @param player
+	 * @return
+	 */
+	public Integer getNumberOfDeployedUnits(Player player);
+	
+	/**
+	 * Get the number of all deployed units of a player of a certain type
+	 * @param player
+	 * @return
+	 */
+	public Integer getNumberOfDeployedUnits(Player player, UnitType unitType);
+	
 	/**
 	 * Build a unit of a certain type and add it to the player's unit pool
 	 * 
