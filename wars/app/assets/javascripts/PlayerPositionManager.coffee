@@ -5,6 +5,8 @@ log = (args...) ->
 # keeps track of position of the players nearby
 class ArWars.PlayerPositionManager
 
+	MAX_UNCERTAINTY: 200
+
 	@mapOptions = 
 		center : new google.maps.LatLng 48.133, 11.566
 		zoom : 11
@@ -59,6 +61,8 @@ class ArWars.PlayerPositionManager
 	infoPanel: null
 	infowindow: null
 	bounds: null
+
+	lastUnprecisePositionNotification: null
 
 	constructor: (@mapNode, @infoPanel) ->
 		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
@@ -154,6 +158,9 @@ class ArWars.PlayerPositionManager
 		if not coords.latitude?
 			return
 
+		@loadPlacesNearby coords.latitude, coords.longitude
+		@loadPlayersNearby coords.latitude, coords.longitude
+
 		currentDate = new Date
 		currentTimestamp = currentDate.getTime()
 		timestamp = location.timestamp
@@ -177,9 +184,6 @@ class ArWars.PlayerPositionManager
 			
 			error : (jqXHR, textStatus, errorThrown) -> 
 				log textStatus
-		
-		@loadPlacesNearby coords.latitude, coords.longitude
-		@loadPlayersNearby coords.latitude, coords.longitude
 
 	# Called when the LocationAPI threw an error
 	onPositionError: (error) ->
@@ -239,13 +243,26 @@ class ArWars.PlayerPositionManager
 		if @circles[pId]
 			@circles[pId].setMap null
 
-		u = if uncertainty then uncertainty else 1000
+		if uncertainty >= @MAX_UNCERTAINTY and pId is window.ArWars.playerId
+			# was there a notification in the last 30 seconds? then don't show it again
+			if @lastUnprecisePositionNotification?
+				timeDifference = new Date()-@lastUnprecisePositionNotification
+				if (timeDifference)/1000 <= 30
+					return
+
+			@lastUnprecisePositionNotification = new Date()
+			$.pnotify
+			    title: 'Unprecise location'
+			    text: 'The precision of your location could not be determined in a precise manner. You could try to activate GPS or go outside.'
+			    type: 'error'
+	
+			return
 
 		currentOpts = {}
 		for key of ArWars.PlayerPositionManager.circleOpts
     		currentOpts[key] = ArWars.PlayerPositionManager.circleOpts[key]
 
-    	currentOpts.radius = u
+    	currentOpts.radius = uncertainty
     	currentOpts.center = pos
 
 		circle = new google.maps.Circle currentOpts
