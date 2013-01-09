@@ -36,7 +36,7 @@ public class MapInfoController extends Controller {
 		Date youngerThan = calendar.getTime();
 
 		Map<String, PlayerLocation> playerLocations = mapInfoService
-				.findPlayersNearby(location, null, youngerThan);
+				.findPlayersNearby(location, 100, youngerThan);
 
 		return ok(JsonHelper.toJson(playerLocations));
 	}
