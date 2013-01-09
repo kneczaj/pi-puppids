@@ -89,4 +89,5 @@ public interface UnitService extends Service {
 	public void retrieveUnit(Player player, UnitType type, Integer amount,
 			Place from) throws UnitServiceException;
 
+
 }
