@@ -1,4 +1,4 @@
-@(player: Player)(location: PlayerLocation)(teammates: List[Player])(factions: List[Faction])(cities: List[City])
+@(player: Player)(location: PlayerLocation)(teammates: List[Player])(factions: List[Faction])(cities: List[City])(teamMaster: Boolean)
 
 @scripts = {
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&libraries=places&sensor=false"></script>
@@ -180,6 +180,7 @@
 									@member.getUsername()<br>
 								}
 							</div>
+							@if(teamMaster) {
 							<hr>
 							<form id="invitationForm" class="form-inline" action="javascript:tryInvite()">
 								<input type="text" placeholder="Email or user name" id="userToInvite">
@@ -187,6 +188,7 @@
 							</form>
 							<div id="error-message" class="control-group">
 							</div>
+							}
 						</div> 
 					</div>
 				</div>

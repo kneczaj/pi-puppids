@@ -12,6 +12,8 @@ import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
+import play.Logger;
+
 @Entity("teams")
 public class Team {
 
@@ -32,6 +34,9 @@ public class Team {
 	
 	@Reference
 	private List<Player> players = Lists.newLinkedList();
+	
+	@Reference
+	private Player teamMaster;
 	
 	public Team() {
 		setCreatedAt(new Date());
@@ -107,11 +112,42 @@ public class Team {
 	}
 	
 	public Boolean addPlayer(Player player) {
+		if (this.players.isEmpty())
+			setTeamMaster(player);
 		return this.players.add(player);
 	}
 	
 	public Boolean removePlayer(Player player) {
 		return this.players.remove(player);
+	}
+	
+	public void setTeamMaster(Player player) {
+		this.teamMaster = player;
+	}
+	
+	public Player getTeamMaster() {
+		if (this.teamMaster == null) {
+			Logger.warn("The team master of " + getName() + " is not set, but should be - setting now.");
+			refindTeamMaster();
+		}
+		return this.teamMaster;
+	}
+	
+	public Player refindTeamMaster() {
+		
+		Player minPlayer = null;
+		Date minDate = null;
+		for (Player player : players) {
+			Date date = player.getJoinTeamDate();
+		    if (minPlayer == null || minDate.compareTo(date) > 0 ) {
+		        minPlayer = player;
+		        minDate = date;
+		    }
+		}
+		
+		setTeamMaster(minPlayer);
+		
+		return this.teamMaster;
 	}
 
 	public String toString() {

@@ -45,7 +45,9 @@ public class Application extends Controller {
 		
 		PlayerLocation playerLocation = playerLocationDAO.findLatestLocation(player);
 		
-		return ok(index.render(player, playerLocation, teammates, factions, cities));
+		Boolean teamMaster = player.getId().equals(team.getTeamMaster().getId());
+		
+		return ok(index.render(player, playerLocation, teammates, factions, cities, teamMaster));
 	}
 	
 	@SecureSocial.SecuredAction

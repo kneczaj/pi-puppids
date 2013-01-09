@@ -46,9 +46,14 @@ public class Player {
 
 	@Reference
 	private Team team;
+	private Date joinTeamDate;
 	
 	@Reference
 	private List<Unit> units = Lists.newLinkedList();
+	
+	public Date getJoinTeamDate() {
+		return joinTeamDate;
+	}
 
 	public ObjectId getId() {
 		return id;
@@ -168,6 +173,7 @@ public class Player {
 
 	public void setTeam(Team team) {
 		this.team = team;
+		this.joinTeamDate = new Date();
 	}
 	
 	

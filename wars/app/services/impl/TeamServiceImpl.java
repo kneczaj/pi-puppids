@@ -74,8 +74,10 @@ public class TeamServiceImpl implements TeamService {
 			oldTeam.removePlayer(player);
 			if (oldTeam.getPlayers().isEmpty())
 				teamDAO.delete(oldTeam);
-			else
+			else {
+				oldTeam.refindTeamMaster();
 				teamDAO.save(oldTeam);
+			}
 		}
 		
 		player.setTeam(team);
@@ -86,6 +88,8 @@ public class TeamServiceImpl implements TeamService {
 		
 		return player;
 	}
+	
+	
 
 	@Override
 	public Player acceptInvite(Invitation invitation) {
