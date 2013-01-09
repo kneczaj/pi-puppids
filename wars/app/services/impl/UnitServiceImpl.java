@@ -266,28 +266,21 @@ public class UnitServiceImpl implements UnitService {
 			unit.setDeployedAt(null);
 			retrievalMap.put(unit.getId().toStringMongod(), unit);
 			unitDAO.save(unit);
-			System.out.println("I just put " + unit.getId().toStringMongod() + " in the map.");
 		}
 		
 		List<Unit> retrieveThisUnits = Lists.newLinkedList();
 		
 		//prepare units for retrieval
 		for (Unit unit : loadedPlace.getDeployedUnits()) {
-			System.out.println("Looking at " + unit.getId().toStringMongod() + ".");
 			if (retrievalMap.containsKey(unit.getId().toStringMongod()))
 				retrieveThisUnits.add(unit);
 		}
-		
-		System.out.println("The retrievalList contains " + retrieveThisUnits.size() + " units.");
-		
+
 		//retrieve the units
 		for (Unit unit : retrieveThisUnits) {
 			loadedPlace.getDeployedUnits().remove(unit);
 		}
 		
-		System.out.println("The place has now " + loadedPlace.getDeployedUnits().size() + " units deployed.");
-				
-
 		placeDAO.save(loadedPlace);
 	}
 }
