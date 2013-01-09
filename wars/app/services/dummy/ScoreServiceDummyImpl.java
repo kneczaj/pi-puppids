@@ -2,6 +2,7 @@ package services.dummy;
 
 import java.util.Random;
 
+import models.Faction;
 import models.Player;
 import models.Team;
 import services.api.ScoreService;
@@ -25,6 +26,13 @@ public class ScoreServiceDummyImpl implements ScoreService {
 	public Integer getTeamScore(Team team) throws ScoreServiceException {
 		Random rnd = new Random();
 		return (rnd.nextInt(8192)+4096);
+	}
+
+	@Override
+	public Integer getFactionScore(Faction faction)
+			throws ScoreServiceException {
+		Random rnd = new Random();
+		return (rnd.nextInt(100000)+40096);
 	}
 
 }
