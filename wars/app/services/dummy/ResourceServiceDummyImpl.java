@@ -1,5 +1,6 @@
 package services.dummy;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -39,31 +40,43 @@ public class ResourceServiceDummyImpl implements ResourceService {
 	@Override
 	public Map<Place, ResourceType> getResourceSourcesOfPlayer(Player player)
 			throws ResourceServiceException {
-
 		Map<Place, ResourceType> map = Maps.newHashMap();
-
-		String[] placeNames = {"TU München", 
-							"Augustinerkeller", 
-							"Deutsche Bank", 
-							"Hornbach", 
-							"Garching-Forschungszentrum",
-							"Flughafen Franz Josef Strauß",
-							"Alte Pinakothek"};
-		ResourceType[] resourceTypes = {ResourceType.Knowledge, 
-										ResourceType.Food, 
-										ResourceType.Credits, 
-										ResourceType.Material, 
-										ResourceType.Transportation,
-										ResourceType.Special,
-										ResourceType.Cultural};
 		
+		String[] placeNames = {"TU München", 
+				"Augustinerkeller", 
+				"Deutsche Bank", 
+				"Hornbach", 
+				"Garching-Forschungszentrum",
+				"Flughafen Franz Josef Strauß",
+				"Alte Pinakothek"};
+
+		ResourceType[] resourceTypes = {ResourceType.Knowledge, 
+							ResourceType.Food, 
+							ResourceType.Credits, 
+							ResourceType.Material, 
+							ResourceType.Transportation,
+							ResourceType.Special,
+							ResourceType.Cultural};
+
 		Integer[] amounts = {100, 200, 300, 400, 500, 600, 700};
 		
+		List<Place> places = placeDAO.find().asList();
+		if (!places.isEmpty()) {
+			for (int i = 0; i < places.size(); i++) {
+				map.put(places.get(i), resourceTypes[i%7]);
+			}
+			
+			return map;
+		}
+
 		for (int i=0; i<7; i++) {
 			Place place = new Place();
 			place.setName(placeNames[i]);
 			place.setResource(resourceTypes[i]);
 			place.setAmount(amounts[i]);
+			place.setLat(48.136944);
+			place.setLng(11.575278);
+			placeDAO.save(place);
 			
 			map.put(place, resourceTypes[i]);
 		}
