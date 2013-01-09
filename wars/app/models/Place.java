@@ -36,6 +36,10 @@ public class Place {
 		return id;
 	}
 	
+	public String getIdString() {
+		return this.id.toString();
+	}
+	
 	public void setId(ObjectId id) {
 		this.id = id;
 	}

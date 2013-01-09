@@ -1,5 +1,6 @@
 package services.api;
 
+import models.Faction;
 import models.Player;
 import models.Team;
 import services.api.error.ScoreServiceException;
@@ -26,5 +27,13 @@ public interface ScoreService extends Service {
 	 * @throws ScoreServiceException
 	 */
 	public Integer getTeamScore(Team team) throws ScoreServiceException;
+
+	/**
+	 * Calculates the score for a faction
+	 * @param faction
+	 * @return
+	 * @throws ScoreServiceException
+	 */
+	public Integer getFactionScore(Faction faction) throws ScoreServiceException;
 	
 }
