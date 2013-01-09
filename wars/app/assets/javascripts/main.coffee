@@ -43,5 +43,7 @@ $(document).ready ->
 
 	layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
 	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails')
+	sidebar = new window.ArWars.SideBar playerPositionManager
+	sidebar.loadResourceSourcesOfPlayer()
 	webSocket = new window.ArWars.WebSocketManager playerPositionManager
 	webSocket.establishWebSocket window.ArWars.webSocketURL
