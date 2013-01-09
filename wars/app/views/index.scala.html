@@ -1,4 +1,4 @@
-@(player: Player)(location: PlayerLocation)(teammates: List[Player])(factions: List[Faction])(cities: List[City])
+@(player: Player)(location: PlayerLocation)(teammates: List[Player])(factions: List[Faction])(cities: List[City])(teamMaster: Boolean)
 
 @scripts = {
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&libraries=places&sensor=false"></script>
@@ -71,40 +71,23 @@
 			});
 		
 			$.getJSON('/resource/getResourcesOfPlayer', function(data) {
-			  var items = [];
-			  
 			  if ($.isEmptyObject(data)) {
-				  $('#resourcesPlayer').append('<p>Currently there are no resources available</p>')
+				  /*TODO: Show notification*/
 			  } else {
-
 				  $.each(data, function(key, val) {
-				    items.push('<li class="' + key.toLowerCase() + '"><a href="#" rel="tooltip" title="' + key + '"> <img src="@routes.Assets.at("images/resources/' + key.toLowerCase() + '_white.png")"> ' + val + ' </a></li>');
-				  });
-	
-				  $('<ul/>', {
-					'class': 'inline',
-				    html: items.join('')
-				  }).appendTo('#resourcesPlayer');
-				  
-	                $("a").tooltip();
+				    $('#p' + key).text(val);
+				  });				  
+				  $('a').tooltip();
 			  }
 			});
 		
-		$.getJSON('/resource/getResourcesOfTeam', function(data) {
-			  var items = [];
-			  
+			$.getJSON('/resource/getResourcesOfTeam', function(data) {
 			  if ($.isEmptyObject(data)) {
-				  $('#resourcesTeam').append('<p>Currently there are no resources available</p>')
+				  /*TODO: Show notification*/
 			  } else {
-
 				  $.each(data, function(key, val) {
-				    items.push('<dt class="' + key.toLowerCase() + '">' + key + '</dt><dd>' + val + '</dd>');
+					  $('#t' + key).text(val);
 				  });
-	
-				  $('<dl/>', {
-					'class': 'dl-horizontal',
-				    html: items.join('')
-				  }).appendTo('#resourcesTeam');
 			  }
 			});
 	});
@@ -180,6 +163,7 @@
 									@member.getUsername()<br>
 								}
 							</div>
+							@if(teamMaster) {
 							<hr>
 							<form id="invitationForm" class="form-inline" action="javascript:tryInvite()">
 								<input type="text" placeholder="Email or user name" id="userToInvite">
@@ -187,6 +171,7 @@
 							</form>
 							<div id="error-message" class="control-group">
 							</div>
+							}
 						</div> 
 					</div>
 				</div>
@@ -212,7 +197,17 @@
 	</div>
 	<!--/span-->
 	<div class="span8">
-		<div id="resourcesPlayer" class="well well-small"></div>
+		<div id="resourcesPlayer" class="well well-small">
+			<ul class="inline">
+				<li><a href="#" rel="tooltip" title="Credits"> <img src="@routes.Assets.at("images/resources/credits_white.png")"> <strong id="pCredits">-</strong> (<span id="tCredits">-</span>) </a></li>
+				<li><a href="#" rel="tooltip" title="Cultural"> <img src="@routes.Assets.at("images/resources/cultural_white.png")"> <strong id="pCultural">-</strong> (<span id="tCultural">-</span>) </a></li>
+				<li><a href="#" rel="tooltip" title="Food"> <img src="@routes.Assets.at("images/resources/food_white.png")"> <strong id="pFood">-</strong> (<span id="tFood">-</span>) </a></li>
+				<li><a href="#" rel="tooltip" title="Knowledge"> <img src="@routes.Assets.at("images/resources/knowledge_white.png")"> <strong id="pKnowledge">-</strong> (<span id="tKnowledge">-</span>) </a></li>
+				<li><a href="#" rel="tooltip" title="Material"> <img src="@routes.Assets.at("images/resources/material_white.png")"> <strong id="pMaterial">-</strong> (<span id="tMaterial">-</span>) </a></li>
+				<li><a href="#" rel="tooltip" title="Special"> <img src="@routes.Assets.at("images/resources/special_white.png")"> <strong id="pSpecial">-</strong> (<span id="tSpecial">-</span>) </a></li>
+				<li><a href="#" rel="tooltip" title="Transportation"> <img src="@routes.Assets.at("images/resources/transportation_white.png")"> <strong id="pTransportation">-</strong> (<span id="tTransportation">-</span>) </a></li>
+			</ul>		
+		</div>
 		<div id="map_container_desktop" class="hidden-phone"></div>
 	</div>
 	<!--/span-->
