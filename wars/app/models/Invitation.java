@@ -44,6 +44,7 @@ public class Invitation {
 	public Invitation(Player sender, Player recipient) {
 		this();
 		this.team = sender.getTeam();
+		this.email = recipient.getEmail();
 		this.sender = sender;
 		this.recipient = recipient;
 	}

@@ -7,10 +7,13 @@ import models.Faction;
 import models.Player;
 import models.PlayerLocation;
 import models.Team;
+import models.Invitation;
+
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import services.api.AuthenticationService;
+import services.api.TeamService;
 import views.html.index;
 import views.html.profile;
 
@@ -26,6 +29,9 @@ public class Application extends Controller {
 	private static AuthenticationService authenticationService;
 	
 	@Inject
+	private static TeamService teamService;
+	
+	@Inject
 	private static PlayerLocationDAO playerLocationDAO;
 	
 	@Inject
@@ -33,6 +39,9 @@ public class Application extends Controller {
 	
 	@Inject
 	private static CityDAO cityDAO;
+	
+	@Inject
+	private static CityDAO invitationDAO;
 	
 	@SecureSocial.SecuredAction
 	public static Result index() {
@@ -45,9 +54,9 @@ public class Application extends Controller {
 		
 		PlayerLocation playerLocation = playerLocationDAO.findLatestLocation(player);
 		
-		Boolean teamMaster = player.getId().equals(team.getTeamMaster().getId());
+		List<Invitation> sentInvitations = teamService.getPlayerInvitations(player);
 		
-		return ok(index.render(player, playerLocation, teammates, factions, cities, teamMaster));
+		return ok(index.render(player, playerLocation, teammates, factions, cities, sentInvitations));
 	}
 	
 	@SecureSocial.SecuredAction

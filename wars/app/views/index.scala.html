@@ -1,4 +1,4 @@
-@(player: Player)(location: PlayerLocation)(teammates: List[Player])(factions: List[Faction])(cities: List[City])(teamMaster: Boolean)
+@(player: Player)(location: PlayerLocation)(teammates: List[Player])(factions: List[Faction])(cities: List[City])(invitationsList: List[Invitation])
 
 @scripts = {
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&libraries=places&sensor=false"></script>
@@ -8,15 +8,22 @@
 	 */
 	var playerId = "@player.getId().toString()";
 	var factionHasToBeChosen = false;
+	var showSentInvitations = false;
 	
-	@if(player.getTeam().getFaction() == null) {
-		factionHasToBeChosen = true;
+	if(player.getTeam().getFaction() == null) {
+		if (!@invitationsList.isEmpty()) {
+			showSentInvitations = true;
+		}
+		else {
+			factionHasToBeChosen = true;
+		}
 	}
 	
 	window.ArWars = { 
 		playerId: playerId,
 		mapSelector: '#map_canvas',
-		factionHasToBeChosen: factionHasToBeChosen, 
+		factionHasToBeChosen: factionHasToBeChosen,
+		showSentInvitations: showSentInvitations, 
 		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)"
 	};
 	
@@ -154,16 +161,14 @@
 					</div>
 					<div id="team" class="accordion-body collapse">
 						<div class="accordion-inner">
-							<div id="resourcesTeam">
-								<h5>Resources Team:</h5>
-							</div>
+							
 							<div id="teamMembers">
 								<h5>Team members:</h5>
 								@for(member <- teammates) {
 									@member.getUsername()<br>
 								}
 							</div>
-							@if(teamMaster) {
+							@if(player.isTeamMaster()) {
 							<hr>
 							<form id="invitationForm" class="form-inline" action="javascript:tryInvite()">
 								<input type="text" placeholder="Email or user name" id="userToInvite">
@@ -244,11 +249,43 @@
 	  </div>
 	  <div class="control-group">
 	    <div class="controls">
+	    	<button name="back" class="btn @if(invitationsList.isEmpty()) { hide }">Back</button>
 	    	<button name="save" class="btn">Save</button>
+	    	<button name="logout" class="btn" onClick="parent.location='logout'">Cancel and logout</button>
 	    </div>
 	  </div>
 	</form>
   </div>
 </div>
 <!--/modal-->
+
+<!--invitationsModal-->
+
+<div id="sentInvitationsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="invitationsModalLabel" aria-hidden="false">
+  <div class="modal-header">
+    <h4 id="invitationsModalLabel">You have some invitations waiting for acceptance</h4>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+	  <div class="control-group">
+	    <div class="controls">
+	    	@for(invitation <- invitationsList) {
+	    		<label class="radio">
+				  <input type="radio" name="invitationId" value="@invitation.getToken()" checked>
+				  Team @invitation.getTeam().getName() - @invitation.getTeam().getFaction().getName() faction
+				</label>
+			}
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <div class="controls">
+	    	<button name="accept" class="btn">Accept</button>
+	    	<button name="reject" class="btn">Create clear profile</button>
+	    </div>
+	  </div>
+	</form>
+  </div>
+</div>
+
+<!--/invitationsModal-->
 }

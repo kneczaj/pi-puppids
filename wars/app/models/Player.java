@@ -208,6 +208,10 @@ public class Player {
 	public void setResourceDepot(Map<ResourceType, Integer> resourceDepot) {
 		this.resourceDepot = resourceDepot;
 	}
+	
+	public Boolean isTeamMaster() {
+		return getId().equals(getTeam().getTeamMaster().getId());
+	}
 
 	public SocialUser toSocialUser() {
 		SocialUser su = new SocialUser();

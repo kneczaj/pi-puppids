@@ -3,6 +3,24 @@ log = (args...) ->
     console.log.apply console, args if console.log?
 
 $(document).ready ->
+
+	rejectInvitationClickHandler = ->
+		$("#sentInvitationsModal").modal 'hide'
+		$("#chooseFactionModal").modal 'show'
+		return false
+		
+	acceptInvitationClickHandler = ->
+		token = $("input[name=invitationId]:checked").val()
+		parent.location="/acceptInvitation/" + token
+		return false
+	
+	$("button[name=accept]", "#sentInvitationsModal").bind 'click', acceptInvitationClickHandler
+	$("button[name=reject]", "#sentInvitationsModal").bind 'click', rejectInvitationClickHandler	
+	if window.ArWars.showSentInvitations is true 
+		$("#sentInvitationsModal").modal 'show'
+		
+		
+
 	showError = (message) ->
 		hideError()
 		$("#chooseFactionModal .modal-body").prepend "<div class='alert alert-error'>#{message}</div>"
@@ -12,7 +30,7 @@ $(document).ready ->
 		if alertNode?
 			alertNode.remove()
 
-	clickHandler = ->
+	factionClickHandler = ->
 		factionId = $("input[name=factionId]:checked").val()
 		cityId = $("select[name=cityId]").val()
 
@@ -34,9 +52,15 @@ $(document).ready ->
 				showError "There was an server error, please try again later"
 
 		return false
-
-	$("button[name=save]", "#chooseFactionModal").bind 'click', clickHandler
-	$("#chooseFactionModal form").submit clickHandler	
+		
+	factionBackToInvitationsClickHandler = ->
+		$("#sentInvitationsModal").modal 'show'
+		$("#chooseFactionModal").modal 'hide'
+		return false
+		
+	$("button[name=save]", "#chooseFactionModal").bind 'click', factionClickHandler
+	$("button[name=back]", "#chooseFactionModal").bind 'click', factionBackToInvitationsClickHandler
+	$("#chooseFactionModal form").submit factionClickHandler	
 
 	if window.ArWars.factionHasToBeChosen is true 
 		$("#chooseFactionModal").modal 'show'

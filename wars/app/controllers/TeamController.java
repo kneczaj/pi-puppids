@@ -83,16 +83,23 @@ public class TeamController extends Controller {
 		}
 		
 		Player loggedPlayer = authenticationService.getPlayer();
+		
 		try {
 			teamService.acceptInvitation(invitation, loggedPlayer);
 		} catch (TeamServiceException e) {
 			
-			if (e.getMessage().equals("playerNotRegistered")) {
+			switch (e.getMessage()) {
+			
+			case "validationFailed":
+				return ok(message.render("Your city or faction don't match the invitation's ones.<br>" +
+						"You can change them in our shop ;)"));
+				
+			case "playerNotRegistered":
 				
 				ctx().flash().put("error", "You are a new player - please make an account, and try the invitation link again");
 				return redirect(RoutesHelper.startSignUp());
 				
-			} else if (e.getMessage().equals("playerNotLogged")) {
+			case "playerNotLogged":
 				
 				// After logging in try again this action
 				ctx().session().put("securesocial.originalUrl", ctx().request().uri());
@@ -101,8 +108,9 @@ public class TeamController extends Controller {
 				ctx().flash().put("error", "You must log in as the recipient of the invitation");
 				return redirect(RoutesHelper.login());
 				
-			} else
+			default:
 				throw e;
+			}
 		}
 		
 		return ok(message.render("You have successfully joined " + invitation.getTeam().getName() + " team"));

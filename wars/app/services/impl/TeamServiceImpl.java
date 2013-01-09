@@ -1,5 +1,6 @@
 package services.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import models.City;
@@ -11,6 +12,7 @@ import models.Team;
 import services.api.TeamService;
 import services.api.error.TeamServiceException;
 
+import com.google.code.morphia.query.Query;
 import com.google.inject.Inject;
 import com.typesafe.plugin.MailerAPI;
 import com.typesafe.plugin.MailerPlugin;
@@ -113,6 +115,9 @@ public class TeamServiceImpl implements TeamService {
 		if ((loggedPlayer == null) || (!loggedPlayer.getUsername().equals(invitation.getRecipient().getUsername()) ) )
 			throw new TeamServiceException("playerNotLogged");
 		
+		if (!validateInvitation(invitation, loggedPlayer))
+			throw new TeamServiceException("validationFailed");
+		
 		Player player = joinTeam(invitation.getRecipient(), invitation.getTeam());
 		
 		invitationDAO.delete(invitation);
@@ -201,5 +206,40 @@ public class TeamServiceImpl implements TeamService {
 		teamDAO.save(team);
 		
 		return team;
+	}
+	
+	public List<Invitation> getPlayerInvitations(Player player) {
+		
+		Query<Invitation> q = invitationDAO.createQuery();
+		q.or(
+		        q.criteria("email").equal(player.getEmail()),
+		        q.criteria("recipient").equal(player)
+		);
+		
+		return invitationDAO.find(q).asList();
+	}
+	
+//	public void rejectAllInvitations(Player player) {
+//		
+//		Query<Invitation> q = invitationDAO.createQuery();
+//		q.or(
+//		        q.criteria("email").equal(player.getEmail()),
+//		        q.criteria("recipient").equal(player)
+//		);
+//		
+//		invitationDAO.deleteByQuery(q);
+//	}
+	
+	public Boolean validateInvitation(Invitation invitation, Player player)  {
+		
+		Team pTeam = player.getTeam();
+		if (pTeam == null)
+			return true;
+		Team iTeam = invitation.getTeam();
+		if (pTeam.getFaction() == iTeam.getFaction() 
+				&& pTeam.getCity() == iTeam.getCity())
+			return true;
+		
+		return false;
 	}
 }

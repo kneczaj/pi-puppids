@@ -7,6 +7,8 @@ import models.Invitation;
 import models.Player;
 import models.Team;
 
+import java.util.List;
+
 /**
  * Manage Teams
  * 
@@ -114,5 +116,30 @@ public interface TeamService extends Service {
 	 * @return
 	 */
 	public Team createInitialTeam(Player player);
+	
+	/**
+	 * returns invitation from db sent to the given player
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public List<Invitation> getPlayerInvitations(Player player);
+	
+	/**
+	 * Rejects all invitations sent to given player
+	 * 
+	 * @param player
+	 */
+//	public void rejectAllInvitations(Player player);
+	
+	/**
+	 * Checks if given player can use the invitation considering his actual 
+	 * city and faction 
+	 * 
+	 * @param invitation
+	 * @param player
+	 * @return
+	 */
+	public Boolean validateInvitation(Invitation invitation, Player player);
 
 }
