@@ -58,10 +58,12 @@ class ArWars.PlayerPositionManager
 	selectedPlayer: null
 	infoPanel: null
 	infowindow: null
+	bounds: null
 
 	constructor: (@mapNode, @infoPanel) ->
 		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
 		@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
+		@bounds = new google.maps.LatLngBounds()
 
 	# Removes a player from the map (removes the circle and the marker)
 	removeFromMap: (pId) ->
@@ -103,10 +105,9 @@ class ArWars.PlayerPositionManager
 		if pagination.hasNextPage
     		pagination.nextPage()
     		
-		bounds = new google.maps.LatLngBounds()
 		for k,v of @placeMarkers
-			bounds.extend v.position
-		@map.fitBounds bounds
+			@bounds.extend v.position
+		@map.fitBounds @bounds
 
 	createMarker: (place) ->
 		placeLoc = place.geometry.location
@@ -205,6 +206,8 @@ class ArWars.PlayerPositionManager
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map
 		@playerMarkers[pId] = marker
+		@bounds.extend pos
+		@map.fitBounds @bounds
 		
 		@map.panTo pos
 
