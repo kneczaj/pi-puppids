@@ -1,20 +1,24 @@
 package controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import models.Place;
 import models.Player;
 import models.ResourceType;
 import models.Team;
+import models.Unit;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import services.api.AuthenticationService;
+import services.api.PlaceService;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
 import util.JsonHelper;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import daos.PlayerDAO;
@@ -35,6 +39,9 @@ public class ResourceController extends Controller {
 	private static ResourceService resourceService;
 	
 	@Inject
+	private static PlaceService placeService;
+	
+	@Inject
 	private static PlayerDAO playerDAO;
 	
 	@Inject
@@ -45,9 +52,22 @@ public class ResourceController extends Controller {
 		Player p = authenticationService.getPlayer();
 		
 		try {
-			Map<Place, ResourceType> resourcePlaces = resourceService.getResourceSourcesOfPlayer(p);
+			Map<Place, ResourceType> map = resourceService.getResourceSourcesOfPlayer(p);
+			Map<String, Place> resourceSources = Maps.newHashMap();
+			Map<String, Integer> unitDeployments = Maps.newHashMap();
 			
-			return ok(JsonHelper.toJson(resourcePlaces.keySet()));
+			for (Place place : map.keySet()) {
+				resourceSources.put(place.getIdString(), place);
+				
+				List<Unit> units = placeService.getDeployedUnitsOfPlayer(p, place);
+				unitDeployments.put(place.getIdString(), units.size());
+			}
+			
+			Map<String, Object> ret = Maps.newHashMap();
+			ret.put("resourceSources", resourceSources);
+			ret.put("unitDeployments", unitDeployments);
+			
+			return ok(JsonHelper.toJson(ret));
 		} catch (ResourceServiceException e) {
 			Logger.warn("Could not find resource sources of player", e);
 

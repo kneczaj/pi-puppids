@@ -64,12 +64,11 @@ public class Dependencies implements Module {
 		binder.bind(VictoryStrategy.class).to(VictoryByNumberOfUnitsStategy.class).in(Singleton.class);
 		
 		if (Play.isTest()) {
-			binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);
+			binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);	
 		} else {
-
 			binder.bind(ResourceService.class).to(ResourceServiceDummyImpl.class).in(Singleton.class);
 		}
-		
+
 		binder.bind(ScoreService.class).to(ScoreServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
 		binder.bind(UnitService.class).to(UnitServiceImpl.class).in(Singleton.class);
