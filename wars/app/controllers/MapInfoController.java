@@ -79,7 +79,7 @@ public class MapInfoController extends Controller {
 			obj.put(entry.getKey(), element);
 		}
 
-		return ok(JsonHelper.toJson(obj));
+		return ok(obj.toString());
 	}
 
 	@SecureSocial.SecuredAction(ajaxCall=true)
