@@ -1,5 +1,6 @@
 package services.api;
 
+import services.api.error.TeamServiceException;
 import models.City;
 import models.Faction;
 import models.Invitation;
@@ -54,12 +55,25 @@ public interface TeamService extends Service {
 	/**
 	 * A Player may accept an invite to a team
 	 * 
-	 * @param player
-	 * @param team
-	 *            the team he was invited to
-	 * @return the refreshed player entity
+	 * @param token
+	 * @param loggedPlayer
+	 * @returns 
+	 * 		logged player instance after accepting the invitaiton  
+	 * @throws TeamServiceException
+	 * 		with problems encountered in the exception message
 	 */
-	public Player acceptInvite(Invitation invitation);
+	public Player acceptInvitation(Invitation invitation, Player loggedPlayer) 
+			throws TeamServiceException;
+	
+	/**
+	 * Finds invitation with given token in the db
+	 * 
+	 * @param token
+	 * @return
+	 * @throws TeamServiceException
+	 * 		if invitation was not found
+	 */
+	public Invitation getInvitation(String token) throws TeamServiceException;
 
 	/**
 	 * Invite strangers (people that are not already registered at ARWars) via
@@ -70,7 +84,28 @@ public interface TeamService extends Service {
 	 * @param emailAdress
 	 */
 	public Invitation iniviteStranger(Player sender, String emailAddress);
+	
+	/**
+	 * makes invitation from given data
+	 * 
+	 * @param invitedUserOrEmail
+	 * 		a string of a user name of an email to invite
+	 * @param loggedPlayer
+	 * @return Invitation
+	 * 		the invitation - already stored in the db
+	 * 
+	 * @throws TeamServiceException
+	 * 		with problems encountered in the exception message 
+	 * 
+	 */
+	public Invitation prepareInvitation(String invitedUserOrEmail, Player loggedPlayer) 
+			throws TeamServiceException;
 
+	/**
+	 * Sends invitation email
+	 * 
+	 * @param invitation
+	 */
 	public void sendInvitation(Invitation invitation);
 
 	/**
