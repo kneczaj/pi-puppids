@@ -8,9 +8,7 @@
 
 
 @main(Messages("securesocial.login.title")) {
-    <div class="page-header">
-        <h1>@Messages("securesocial.login.title")</h1>
-    </div>
+    <h2>@Messages("securesocial.login.title")</h2>
 
     @errorMsg.map { msg =>
         <div class="alert alert-error">
@@ -19,7 +17,7 @@
     }
 
     @request.flash.get("success").map { msg =>
-        <div class="alert alert-info">
+        <div class="alert alert-success">
             @msg
         </div>
     }
