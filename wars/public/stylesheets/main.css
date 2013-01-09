@@ -25,6 +25,16 @@ a:hover {
   color: #2f2f2f;
 }
 
+.popover {
+	background-color: #444;
+}
+
+.popover-title {
+	background-color: #444;
+    box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgb(18, 18, 18);	
+}
+
 #playerDetails {
     /* Place the div off the bottom right of the map */
     position: absolute;
