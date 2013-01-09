@@ -65,6 +65,9 @@ class ArWars.PlayerPositionManager
 		@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
 		@bounds = new google.maps.LatLngBounds()
 
+	getMap: () ->
+		@map
+
 	# Removes a player from the map (removes the circle and the marker)
 	removeFromMap: (pId) ->
 		@playerMarkers[pId] = null
