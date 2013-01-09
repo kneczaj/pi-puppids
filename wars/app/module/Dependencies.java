@@ -6,6 +6,7 @@ import services.api.AuthenticationService;
 import services.api.ConqueringService;
 import services.api.LocationTrackingService;
 import services.api.MapInfoService;
+import services.api.NotificationService;
 import services.api.PlaceService;
 import services.api.PlayerService;
 import services.api.ResourceService;
@@ -21,6 +22,7 @@ import services.impl.AuthenticationServiceImpl;
 import services.impl.ConqueringServiceImpl;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
+import services.impl.NotificationServiceImpl;
 import services.impl.PlaceServiceImpl;
 import services.impl.PlayerServiceImpl;
 import services.impl.ResourceServiceImpl;
@@ -36,8 +38,10 @@ import com.mongodb.Mongo;
 
 import daos.AccessTokenDAO;
 import daos.CityDAO;
+import daos.ConqueringAttemptDAO;
 import daos.FactionDAO;
 import daos.InvitationDAO;
+import daos.NotificationDAO;
 import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
@@ -72,6 +76,7 @@ public class Dependencies implements Module {
 		binder.bind(ScoreService.class).to(ScoreServiceDummyImpl.class).in(Singleton.class);
 		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
 		binder.bind(UnitService.class).to(UnitServiceImpl.class).in(Singleton.class);
+		binder.bind(NotificationService.class).to(NotificationServiceImpl.class).in(Singleton.class);
 		
 		binder.bind(Morphia.class);
 		binder.bind(Mongo.class);
@@ -85,6 +90,8 @@ public class Dependencies implements Module {
 		binder.bind(PlayerLocationDAO.class).in(Singleton.class);
 		binder.bind(TeamDAO.class).in(Singleton.class);
 		binder.bind(UnitDAO.class).in(Singleton.class);
+		binder.bind(ConqueringAttemptDAO.class).in(Singleton.class);
+		binder.bind(NotificationDAO.class).in(Singleton.class);
 	}
 
 }
