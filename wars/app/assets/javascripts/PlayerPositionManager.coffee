@@ -208,8 +208,6 @@ class ArWars.PlayerPositionManager
 		@playerMarkers[pId] = marker
 		@bounds.extend pos
 		@map.fitBounds @bounds
-		
-		@map.panTo pos
 
 		# Register ClickHandler for this marker
 		google.maps.event.addListener marker, 'click', () =>
