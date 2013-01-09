@@ -7,7 +7,9 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
+
 import services.api.TeamService;
+import services.api.error.TeamServiceException;
 
 import com.google.inject.Inject;
 import com.typesafe.plugin.MailerAPI;
@@ -27,19 +29,19 @@ import daos.TeamDAO;
 public class TeamServiceImpl implements TeamService {
 	
 	@Inject
-	private TeamDAO teamDAO;
+	private static TeamDAO teamDAO;
 	
 	@Inject
-	private PlayerDAO playerDAO;
+	private static PlayerDAO playerDAO;
 	
 	@Inject
-	private CityDAO cityDAO;
+	private static CityDAO cityDAO;
 	
 	@Inject
-	private InvitationDAO invitationDAO;
+	private static InvitationDAO invitationDAO;
 	
 	@Inject
-	private FactionDAO factionDAO;
+	private static FactionDAO factionDAO;
 	
 	@Override
 	public Team createTeam(City city, String name) {
@@ -56,6 +58,68 @@ public class TeamServiceImpl implements TeamService {
 		
 		return team;
 	}
+	
+	@Override
+	public Invitation prepareInvitation(String invitedUserOrEmail, Player loggedPlayer) 
+			throws TeamServiceException {
+		
+		if (invitedUserOrEmail.equals(loggedPlayer.getEmail()) 
+				|| invitedUserOrEmail.equals(loggedPlayer.getUsername()))
+			throw new TeamServiceException("userIsYou");
+		
+		Player invitedPlayer;
+		Boolean isEmail = invitedUserOrEmail.contains("@");
+		if (isEmail)
+			invitedPlayer = playerDAO.findOne("email", invitedUserOrEmail);
+		else
+			invitedPlayer = playerDAO.findOne("username", invitedUserOrEmail);
+		
+		Invitation invitation;
+		if (invitedPlayer == null) {
+			
+			if (!isEmail)
+				throw new TeamServiceException("givenUserDoesntExist");
+			invitation = new Invitation(loggedPlayer, invitedUserOrEmail);
+			
+		} else if (invitedPlayer.getTeam().getId().equals(loggedPlayer.getTeam().getId()))
+			
+			throw new TeamServiceException("alreadyInTheTeam");
+		
+		else {
+			invitation = new Invitation(loggedPlayer, invitedPlayer);
+		}
+		
+		invitationDAO.save(invitation);
+		return invitation;
+	}
+	
+	@Override
+	public Invitation getInvitation(String token) throws TeamServiceException {
+		Invitation invitation = invitationDAO.findOne("token", token);
+		if (invitation == null)
+			throw new TeamServiceException("invitationNotFound");
+		return invitation;
+	}
+	
+	@Override
+	public Player acceptInvitation(Invitation invitation, Player loggedPlayer) 
+			throws TeamServiceException {
+		
+		// invited person does not exist in db - create a new account
+		if (invitation.getRecipient() == null) 
+			throw new TeamServiceException("playerNotRegistered");
+		
+		// invited player is not currently logged in
+		if ((loggedPlayer == null) || (!loggedPlayer.getUsername().equals(invitation.getRecipient().getUsername()) ) )
+			throw new TeamServiceException("playerNotLogged");
+		
+		Player player = joinTeam(invitation.getRecipient(), invitation.getTeam());
+		
+		invitationDAO.delete(invitation);
+		
+		return player;
+	}
+
 	
 	@Override
 	public Invitation invite(Player sender, Player receiver) {
@@ -90,19 +154,6 @@ public class TeamServiceImpl implements TeamService {
 	}
 	
 	
-
-	@Override
-	public Player acceptInvite(Invitation invitation) {
-		
-		Player player = invitation.getRecipient();
-		Team team = invitation.getTeam();
-		
-		player = joinTeam(player, team);
-		
-		invitationDAO.delete(invitation);
-		
-		return player;
-	}
 	
 	@Override
 	public Invitation iniviteStranger(Player sender, String emailAddress) {
