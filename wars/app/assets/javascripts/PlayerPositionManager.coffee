@@ -191,6 +191,7 @@ class ArWars.PlayerPositionManager
 
 	# Pushes the location of a player to the Google Map
 	push2Map: (pId, latitude, longitude, uncertainty) ->
+		if not pId? then return
 		log "playerId: #{pId}, lat: #{latitude}, lng: #{longitude}, uncertainty: #{uncertainty}"
 
 		# Add Marker for the player
@@ -208,7 +209,7 @@ class ArWars.PlayerPositionManager
 		@playerMarkers[pId] = marker
 		@bounds.extend pos
 		@map.fitBounds @bounds
-
+	
 		# Register ClickHandler for this marker
 		google.maps.event.addListener marker, 'click', () =>
 			player = @players[pId]
@@ -216,7 +217,7 @@ class ArWars.PlayerPositionManager
 
 			username = if player.username then player.username else ""
 			team = if player.team.name is "pseudo" then "loner" else player.team.name
-			faction = player.team.faction.name
+			faction = player.faction.name
 
 			$("h4", @infoPanel).text "Player #{username}"
 			$(".team", @infoPanel).text team
