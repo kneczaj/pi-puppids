@@ -5,6 +5,7 @@ import java.util.List;
 
 import models.Place;
 import models.Player;
+import services.api.error.ConqueringServiceException;
 
 /**
  * Service for calculating the outcome of conquering attempts (conquer). The
@@ -20,9 +21,52 @@ public interface ConqueringService {
 	public enum ConqueringResult {
 		SUCCESSFUL, LOST, PLAYER_NOT_NEARBY, PLACE_ALREADY_BELONGS_TO_FACTION, RESOURCES_DO_NOT_SUFFICE, NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE, PLAYER_HAS_INSUFFICIENT_RESOURCES;
 	}
+	
+	public enum InitiateConquerResult {
+		SUCCESSFUL, PLAYER_NOT_NEARBY, PLACE_ALREADY_BELONGS_TO_FACTION
+	}
+	
+	public enum JoinConquerResult {
+		SUCCESSFUL, UNALLOWED_TO_JOIN, 
+	}
 
 	/**
-	 * Start a conquering attempt. Using all players of a given player's team
+	 * Initiate a new Conquering-Attempt. Sends out notifications to all members
+	 * of the player's team that are nearby.
+	 * 
+	 * @param player the player which initiates the conquering attempt
+	 * @param place the place to conquer
+	 * @return
+	 */
+	public InitiateConquerResult initiateConquer(Player player, Place place);
+	
+	public void sendOutInvitations(String conqueringAttemptId) throws ConqueringServiceException;
+
+	/**
+	 * Allows other players to join a conquering attempt.
+	 * 
+	 * @param conqueringAttemptId the conquering attempt to join
+	 * @param player the player who wants to join
+	 * @return
+	 */
+	public JoinConquerResult joinConquer(String conqueringAttemptId,
+			Player player);
+	
+	public void declineJoinRequest(String conqueringAttemptId, Player player);
+
+	/**
+	 * Cancels an Conquering-Attempt
+	 * 
+	 * @param conqueringAttemptId
+	 *            the ID of the conquering attempt to cancel
+	 * @param player
+	 *            the player that wants to cancel the conquer
+	 * @return
+	 */
+	public boolean cancelConquer(String conqueringAttemptId, Player player);
+
+	/**
+	 * Do the actual conquer. Using all players of a given player's team
 	 * that are currently around the requested place.
 	 * 
 	 * @param player
@@ -30,7 +74,7 @@ public interface ConqueringService {
 	 * @param place
 	 *            the place the player wants to conquer
 	 */
-	public ConqueringResult conquer(Player player, Place place);
+	public ConqueringResult conquer(String conqueringAttemptId, Player player);
 
 	/**
 	 * Find the team members of a given player that are nearby a place.
