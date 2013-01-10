@@ -7,10 +7,10 @@ import java.util.Map.Entry;
 import models.Place;
 import models.Player;
 import models.ResourceType;
-import models.Team;
 import services.api.ConqueringService;
 import services.api.MapInfoService;
 import services.api.VictoryStrategy;
+import services.api.error.ConqueringServiceException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -81,63 +81,101 @@ public class ConqueringServiceImpl implements ConqueringService {
 	}
 
 	@Override
-	public ConqueringResult conquer(Player player, Place place) {
-		List<Player> teamMembersNearby = getTeamMembersAllowedToParticipateInConquer(player, place);
-		
-		boolean playerIsNearby = false;
-
-		// Check whether player is near the place
-		for (Player p : teamMembersNearby) {
-			if (p.getId().toString().equals(player.getId().toString())) {
-				playerIsNearby = true;
-			}
-		}
-
-		if (!playerIsNearby) {
-			return ConqueringResult.PLAYER_NOT_NEARBY;
-		}
-		
-		// Check if team members are wealthy enough
-		HashSet<Player> wealthyMembersNearby = getTeamMembersWithSufficientResources(place, teamMembersNearby);
-		if (!wealthyMembersNearby.contains(player)) {
-			return ConqueringResult.PLAYER_HAS_INSUFFICIENT_RESOURCES;
-		}
-		
-		if (wealthyMembersNearby.isEmpty()) {
-			return ConqueringResult.RESOURCES_DO_NOT_SUFFICE;
-		}
-
-		// check if the place already belongs to someone
-		if (!place.getConqueredBy().isEmpty()) {
-			Team playersTeam = player.getTeam();
-			Team placesTeam = place.getConqueredBy().get(0).getTeam();
-
-			// ensure that the place does not already belong to the player's
-			// faction
-			if (placesTeam.getFaction().equals(playersTeam.getFaction())) {
-				return ConqueringResult.PLACE_ALREADY_BELONGS_TO_FACTION;
-			}
-
-			// check if the players nearby overcome the defending units of the
-			// current owner of the place
-			if (!victoryStrategy.doAttackersWin(teamMembersNearby,
-					place.getDeployedUnits())) {
-				return ConqueringResult.LOST;
-			}
-
-			int conquerors = place.getNumberOfConquerors();
-			int attackers = teamMembersNearby.size();
-
-			if (attackers <= conquerors) {
-				return ConqueringResult.NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE;
-			}
-		}
-
-		// Conquering Attempt was successful => assign place to the conquerors
-		place.setConqueredBy(teamMembersNearby);
-		placeDAO.updateConquerors(place, teamMembersNearby);
-
-		return ConqueringResult.SUCCESSFUL;
+	public JoinConquerResult joinConquer(String conqueringAttemptId,
+			Player player) {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+	@Override
+	public void declineJoinRequest(String conqueringAttemptId, Player player) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean cancelConquer(String conqueringAttemptId, Player player) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ConqueringResult conquer(String conqueringAttemptId, Player player) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InitiateConquerResult initiateConquer(Player player, Place place) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void sendOutInvitations(String conqueringAttemptId)
+			throws ConqueringServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+//	@Override
+//	public ConqueringResult conquer(Player player, Place place) {
+//		List<Player> teamMembersNearby = getTeamMembersAllowedToParticipateInConquer(player, place);
+//		
+//		boolean playerIsNearby = false;
+//
+//		// Check whether player is near the place
+//		for (Player p : teamMembersNearby) {
+//			if (p.getId().toString().equals(player.getId().toString())) {
+//				playerIsNearby = true;
+//			}
+//		}
+//
+//		if (!playerIsNearby) {
+//			return ConqueringResult.PLAYER_NOT_NEARBY;
+//		}
+//		
+//		// Check if team members are wealthy enough
+//		HashSet<Player> wealthyMembersNearby = getTeamMembersWithSufficientResources(place, teamMembersNearby);
+//		if (!wealthyMembersNearby.contains(player)) {
+//			return ConqueringResult.PLAYER_HAS_INSUFFICIENT_RESOURCES;
+//		}
+//		
+//		if (wealthyMembersNearby.isEmpty()) {
+//			return ConqueringResult.RESOURCES_DO_NOT_SUFFICE;
+//		}
+//
+//		// check if the place already belongs to someone
+//		if (!place.getConqueredBy().isEmpty()) {
+//			Team playersTeam = player.getTeam();
+//			Team placesTeam = place.getConqueredBy().get(0).getTeam();
+//
+//			// ensure that the place does not already belong to the player's
+//			// faction
+//			if (placesTeam.getFaction().equals(playersTeam.getFaction())) {
+//				return ConqueringResult.PLACE_ALREADY_BELONGS_TO_FACTION;
+//			}
+//
+//			// check if the players nearby overcome the defending units of the
+//			// current owner of the place
+//			if (!victoryStrategy.doAttackersWin(teamMembersNearby,
+//					place.getDeployedUnits())) {
+//				return ConqueringResult.LOST;
+//			}
+//
+//			int conquerors = place.getNumberOfConquerors();
+//			int attackers = teamMembersNearby.size();
+//
+//			if (attackers <= conquerors) {
+//				return ConqueringResult.NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE;
+//			}
+//		}
+//
+//		// Conquering Attempt was successful => assign place to the conquerors
+//		place.setConqueredBy(teamMembersNearby);
+//		placeDAO.updateConquerors(place, teamMembersNearby);
+//
+//		return ConqueringResult.SUCCESSFUL;
+//	}
 
 }
