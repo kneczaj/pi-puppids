@@ -10,7 +10,7 @@
 	var factionHasToBeChosen = false;
 	var showSentInvitations = false;
 	
-	if(player.getTeam().getFaction() == null) {
+	@if(player.getTeam() == null || player.getTeam().getFaction == null) {
 		if (!@invitationsList.isEmpty()) {
 			showSentInvitations = true;
 		}
@@ -155,7 +155,7 @@
 					</div>
 					<div id="team" class="accordion-body collapse">
 						<div class="accordion-inner">
-							
+							<h4>@player.getTeam().getName()</h4>
 							<div id="teamMembers">
 								<h5>Team members:</h5>
 								@for(member <- teammates) {
