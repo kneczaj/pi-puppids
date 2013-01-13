@@ -62,6 +62,7 @@ public class TeamController extends Controller {
 		try {
 			playerService.joinFaction(player, factionId);
 			playerService.joinCity(player, cityId);
+			playerDAO.save(player);
 			
 			return ok("ok");
 		} catch (PlayerServiceException e) {
@@ -91,12 +92,12 @@ public class TeamController extends Controller {
 			switch (e.getMessage()) {
 			
 			case "validationFailed":
-				return ok(message.render("Your city or faction don't match the invitation's ones.<br>" +
+				return ok(message.render("Your city or faction doesn't match the invitation's one." +
 						"You can change them in our shop ;)"));
 				
 			case "playerNotRegistered":
 				
-				ctx().flash().put("error", "You are a new player - please make an account, and try the invitation link again");
+				ctx().flash().put("error", "You are a new player - please make an account");
 				return redirect(RoutesHelper.startSignUp());
 				
 			case "playerNotLogged":
