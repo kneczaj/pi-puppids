@@ -107,18 +107,23 @@ public class TeamServiceImpl implements TeamService {
 	public Player acceptInvitation(Invitation invitation, Player loggedPlayer) 
 			throws TeamServiceException {
 		
+		Player recipient = invitation.getRecipient();
+		if (recipient == null)
+			recipient = playerDAO.findOne("email", invitation.getEmail());
+		
 		// invited person does not exist in db - create a new account
-		if (invitation.getRecipient() == null) 
+		if (recipient == null) 
 			throw new TeamServiceException("playerNotRegistered");
 		
 		// invited player is not currently logged in
-		if ((loggedPlayer == null) || (!loggedPlayer.getUsername().equals(invitation.getRecipient().getUsername()) ) )
+		if ((loggedPlayer == null) || (!loggedPlayer.getUsername().equals(recipient.getUsername()) ) )
 			throw new TeamServiceException("playerNotLogged");
 		
+		// current Faction or City doesn't match
 		if (!validateInvitation(invitation, loggedPlayer))
 			throw new TeamServiceException("validationFailed");
 		
-		Player player = joinTeam(invitation.getRecipient(), invitation.getTeam());
+		Player player = joinTeam(recipient, invitation.getTeam());
 		
 		invitationDAO.delete(invitation);
 		
@@ -236,8 +241,8 @@ public class TeamServiceImpl implements TeamService {
 		if (pTeam == null)
 			return true;
 		Team iTeam = invitation.getTeam();
-		if (pTeam.getFaction() == iTeam.getFaction() 
-				&& pTeam.getCity() == iTeam.getCity())
+		if ((pTeam.getFaction() == iTeam.getFaction() || pTeam.getFaction() == null) 
+				&& (pTeam.getCity() == iTeam.getCity() || pTeam.getCity() == null))
 			return true;
 		
 		return false;
