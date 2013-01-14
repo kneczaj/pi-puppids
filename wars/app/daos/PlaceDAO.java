@@ -1,6 +1,6 @@
 package daos;
 
-import java.util.Set;
+import java.util.List;
 
 import models.Place;
 import models.Player;
@@ -29,12 +29,12 @@ public class PlaceDAO extends AbstractDAO<Place, ObjectId> {
 		super(mongo, morphia);
 	}
 
-	public void updateConquerors(Place place, Set<Player> conquerors) {
+	public void updateConquerors(Place place, List<Player> participants) {
 		Query<Place> selection = this.createQuery().field("_id")
 				.equal(place.getId());
 		UpdateOperations<Place> update = this.createUpdateOperations()
-				.set("conqueredBy", conquerors)
-				.set("numberOfConquerors", conquerors.size());
+				.set("conqueredBy", participants)
+				.set("numberOfConquerors", participants.size());
 		this.update(selection, update);
 	}
 

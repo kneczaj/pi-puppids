@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import models.CheckConquerConditionsResult;
 import models.ConqueringAttempt;
 import models.Faction;
 import models.InitiateConquerResult;
@@ -106,35 +107,52 @@ public class ConqueringServiceImpl implements ConqueringService {
 		if (player == null) {
 			throw new NullPointerException("Player has to be specified");
 		}
-		
+
 		ConqueringAttempt ca = conqueringAttemptDAO.get(new ObjectId(
 				conqueringAttemptId));
-		
+
 		if (ca == null) {
 			throw new IllegalArgumentException(
 					"Could not find conquering attempt");
 		}
-		
+
 		if (ca.getEndDate() != null) {
 			return JoinConquerResult.CONQUER_ALREADY_ENDED;
 		}
-		
+
 		if (ca.isCanceled()) {
 			return JoinConquerResult.CONQUER_CANCELED;
 		}
-		
+
 		Team teamOfPlayer = player.getTeam();
 		Team teamOfInitiator = ca.getInitiator().getTeam();
-		
+
 		if (!teamOfPlayer.getId().equals(teamOfInitiator)) {
 			return JoinConquerResult.UNALLOWED_TO_JOIN;
 		}
-		
+
+		// only add the player to the joining members if it isn't already
+		// participating
 		if (!ca.getJoiningMembers().contains(player)) {
-			ca.getJoiningMembers().add(player);	
+			ca.getJoiningMembers().add(player);
 			conqueringAttemptDAO.save(ca);
+
+			// inform the conquer initiator that a team member joined
+			// successfully the conquering attempt
+			ClientPushActor.conquerParticipantJoined(player, ca);
+
+			// Recheck the conquering conditions
+			CheckConquerConditionsResult result = checkConquerConditions(
+					conqueringAttemptId, player);
+
+			// If the conditions are met by all participating members than the
+			// initiator is informed that the conquer is now possible
+			if (result.getConqueringStatus().equals(
+					ConqueringStatus.CONQUER_POSSIBLE)) {
+				ClientPushActor.sendConquerPossible(ca);
+			}
 		}
-		
+
 		return JoinConquerResult.SUCCESSFUL;
 	}
 
@@ -143,10 +161,10 @@ public class ConqueringServiceImpl implements ConqueringService {
 		if (player == null) {
 			throw new NullPointerException("Player has to be specified");
 		}
-		
+
 		ConqueringAttempt ca = conqueringAttemptDAO.get(new ObjectId(
 				conqueringAttemptId));
-		
+
 		if (ca == null) {
 			throw new IllegalArgumentException(
 					"Could not find conquering attempt");
@@ -157,44 +175,51 @@ public class ConqueringServiceImpl implements ConqueringService {
 		if (!ca.getInitiator().getId().equals(player.getId())) {
 			return false;
 		}
-		
+
 		ca.setCanceled(true);
 		conqueringAttemptDAO.save(ca);
-		
+
 		return true;
 	}
 
 	@Override
-	public ConqueringResult conquer(String conqueringAttemptId, Player player) {
+	public CheckConquerConditionsResult checkConquerConditions(
+			String conqueringAttemptId, Player player) {
 		if (player == null) {
 			throw new NullPointerException("Player has to be specified");
 		}
-		
+
 		ConqueringAttempt ca = conqueringAttemptDAO.get(new ObjectId(
 				conqueringAttemptId));
-		
+
 		if (ca == null) {
 			throw new IllegalArgumentException(
 					"Could not find conquering attempt");
 		}
-		
+
 		Place place = ca.getPlace();
-		Set<Player> teamMembersNearby = getTeamMembersNearby(
-				player, place);
+		Set<Player> teamMembersNearby = getTeamMembersNearby(player, place);
+		CheckConquerConditionsResult result = new CheckConquerConditionsResult(
+				ca);
 
 		if (!teamMembersNearby.contains(player)) {
-			return ConqueringResult.PLAYER_NOT_NEARBY;
+			result.setConqueringStatus(ConqueringStatus.PLAYER_NOT_NEARBY);
+			return result;
 		}
 
 		// Check if team members are wealthy enough
 		Set<Player> wealthyMembersNearby = getTeamMembersWithSufficientResources(
 				place, teamMembersNearby);
+		result.setParticipants(Lists.newArrayList(wealthyMembersNearby));
+
 		if (!wealthyMembersNearby.contains(player)) {
-			return ConqueringResult.PLAYER_HAS_INSUFFICIENT_RESOURCES;
+			result.setConqueringStatus(ConqueringStatus.PLAYER_HAS_INSUFFICIENT_RESOURCES);
+			return result;
 		}
 
 		if (wealthyMembersNearby.isEmpty()) {
-			return ConqueringResult.RESOURCES_DO_NOT_SUFFICE;
+			result.setConqueringStatus(ConqueringStatus.RESOURCES_DO_NOT_SUFFICE);
+			return result;
 		}
 
 		// check if the place already belongs to someone
@@ -205,29 +230,52 @@ public class ConqueringServiceImpl implements ConqueringService {
 			// ensure that the place does not already belong to the player's
 			// faction
 			if (placesTeam.getFaction().equals(playersTeam.getFaction())) {
-				return ConqueringResult.PLACE_ALREADY_BELONGS_TO_FACTION;
-			}
-
-			// check if the players nearby overcome the defending units of the
-			// current owner of the place
-			if (!victoryStrategy.doAttackersWin(teamMembersNearby,
-					place.getDeployedUnits())) {
-				return ConqueringResult.LOST;
+				result.setConqueringStatus(ConqueringStatus.PLACE_ALREADY_BELONGS_TO_FACTION);
+				return result;
 			}
 
 			int conquerors = place.getNumberOfConquerors();
 			int attackers = teamMembersNearby.size();
 
 			if (attackers <= conquerors) {
-				return ConqueringResult.NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE;
+				result.setConqueringStatus(ConqueringStatus.NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE);
+				return result;
+			}
+		}
+
+		result.setConqueringStatus(ConqueringStatus.CONQUER_POSSIBLE);
+
+		return result;
+	}
+
+	@Override
+	public ConqueringStatus conquer(String conqueringAttemptId, Player player) {
+		CheckConquerConditionsResult result = checkConquerConditions(
+				conqueringAttemptId, player);
+
+		ConqueringStatus status = result.getConqueringStatus();
+		if (!status.equals(ConqueringStatus.CONQUER_POSSIBLE)) {
+			return status;
+		}
+
+		Place place = result.getConqueringAttempt().getPlace();
+		List<Player> participants = result.getParticipants();
+
+		// check if the place already belongs to someone
+		if (!place.getConqueredBy().isEmpty()) {
+			// check if the players nearby overcome the defending units of the
+			// current owner of the place
+			if (!victoryStrategy.doAttackersWin(participants,
+					place.getDeployedUnits())) {
+				return ConqueringStatus.LOST;
 			}
 		}
 
 		// Conquering Attempt was successful => assign place to the conquerors
-		place.setConqueredBy(Lists.newArrayList(teamMembersNearby));
-		placeDAO.updateConquerors(place, teamMembersNearby);
+		place.setConqueredBy(participants);
+		placeDAO.updateConquerors(place, participants);
 
-		return ConqueringResult.SUCCESSFUL;
+		return ConqueringStatus.SUCCESSFUL;
 	}
 
 	@Override

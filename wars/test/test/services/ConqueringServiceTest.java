@@ -115,7 +115,7 @@ public class ConqueringServiceTest {
 	 * @throws LocationTrackingServiceException
 	 */
 	@Test
-	public void getTeamMembersAllowedToParticipateInConquerTest()
+	public void getTeamMembersNearbyTest()
 			throws LocationTrackingServiceException {
 		Location munich = SampleLocations.MUNICH;
 		Place munichsCenter = new Place();
