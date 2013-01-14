@@ -1,7 +1,10 @@
 package communication;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
+import models.ConqueringAttempt;
+import models.Player;
 import models.PlayerLocation;
 
 import org.codehaus.jackson.JsonNode;
@@ -16,7 +19,9 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import communication.messages.ConqueringInvitationMessage;
 import communication.messages.PlayerLocationChangedMessage;
 import communication.messages.RegistrationMessage;
 import communication.messages.UnregistrationMessage;
@@ -38,9 +43,26 @@ public class ClientPushActor extends UntypedActor {
 	/**
 	 * Map that holds the registrations. Maps player IDs to a WebSocket channel.
 	 */
-	private ConcurrentMap<String, WebSocket.Out<JsonNode>> registrered = Maps
+	private static ConcurrentMap<String, WebSocket.Out<JsonNode>> registered = Maps
 			.newConcurrentMap();
 
+	/**
+	 * Returns the set of playerId which are currently having a web socket open.
+	 */
+	public static List<String> getReachablePlayers() {
+		return Lists.newArrayList(registered.keySet());
+	}
+	
+	public static void sendConqueringInvitation(ConqueringAttempt ca,
+			List<Player> onlinePlayersOfTeam) {
+		
+		ConqueringInvitationMessage ci = new ConqueringInvitationMessage();
+		ci.conqueringAttempt = ca;
+		ci.playersToInvite = onlinePlayersOfTeam;
+		
+		actor.tell(ci);
+	}
+	
 	/**
 	 * Static method to register a players' WebSocket channels
 	 * 
@@ -83,7 +105,7 @@ public class ClientPushActor extends UntypedActor {
 			RegistrationMessage registration = (RegistrationMessage) message;
 			Logger.info("Registering " + registration.getId());
 
-			registrered.putIfAbsent(registration.getId(),
+			registered.putIfAbsent(registration.getId(),
 					registration.getChannel());
 
 		} else if (message instanceof PlayerLocationChangedMessage) {
@@ -92,7 +114,7 @@ public class ClientPushActor extends UntypedActor {
 			PlayerLocation location = msg.getPlayerLocation();
 
 			// push location change to all other players over websocket
-			for (WebSocket.Out<JsonNode> channel : registrered.values()) {
+			for (WebSocket.Out<JsonNode> channel : registered.values()) {
 				ObjectNode event = Json.newObject();
 
 				event.put("id", location.getPlayer().getId().toString());
@@ -109,8 +131,27 @@ public class ClientPushActor extends UntypedActor {
 			UnregistrationMessage quit = (UnregistrationMessage) message;
 
 			Logger.info("Unregistering " + quit.getId());
-			registrered.remove(quit.getId());
+			registered.remove(quit.getId());
 
+		} else if (message instanceof ConqueringInvitationMessage) {
+			ConqueringInvitationMessage ci = (ConqueringInvitationMessage) message;
+			ConqueringAttempt ca = ci.conqueringAttempt;
+			
+			// Push out the invitation
+			for (WebSocket.Out<JsonNode> channel : registered.values()) {
+				ObjectNode event = Json.newObject();
+
+				event.put("conqueringAttemptId", ca.getId().toString());
+				event.put("start", ca.getStartDate().toString());
+				event.put("initiatorId", ca.getInitiator().getId().toString());
+				event.put("placeId", ca.getPlace().getIdString());
+				event.put("placeName", ca.getPlace().getName());
+				event.put("placeLat", ca.getPlace().getLat());
+				event.put("placeLng", ca.getPlace().getLng());
+				Logger.info(event.toString());
+				
+				channel.write(event);
+			}
 		} else {
 			unhandled(message);
 		}

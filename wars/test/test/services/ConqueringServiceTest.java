@@ -1,7 +1,7 @@
 package test.services;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import models.City;
 import models.Faction;
@@ -134,14 +134,14 @@ public class ConqueringServiceTest {
 		locationTrackingService.updatePlayerLocation(player3, location,
 				new Date(), 5, 0);
 
-		List<Player> allowedParticipants = conqueringService
-				.getTeamMembersAllowedToParticipateInConquer(player1,
+		Set<Player> allowedParticipants = conqueringService
+				.getTeamMembersNearby(player1,
 						munichsCenter);
 		Assert.assertNotNull(allowedParticipants);
 		Assert.assertEquals(2, allowedParticipants.size());
 
 		allowedParticipants = conqueringService
-				.getTeamMembersAllowedToParticipateInConquer(player3,
+				.getTeamMembersNearby(player3,
 						munichsCenter);
 		Assert.assertNotNull(allowedParticipants);
 		Assert.assertEquals(1, allowedParticipants.size());
