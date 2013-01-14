@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 import models.ConqueringAttempt;
+import models.Place;
 import models.Player;
 import models.PlayerLocation;
 
@@ -13,7 +14,6 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.Logger;
 import play.libs.Akka;
 import play.libs.F.Callback0;
-import play.libs.Json;
 import play.mvc.WebSocket;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -21,7 +21,9 @@ import akka.actor.UntypedActor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import communication.messages.ConquerPossibleMessage;
 import communication.messages.ConqueringInvitationMessage;
+import communication.messages.ParticipantJoinedConquerMessage;
 import communication.messages.PlayerLocationChangedMessage;
 import communication.messages.RegistrationMessage;
 import communication.messages.UnregistrationMessage;
@@ -61,6 +63,21 @@ public class ClientPushActor extends UntypedActor {
 		ci.playersToInvite = onlinePlayersOfTeam;
 		
 		actor.tell(ci);
+	}
+	
+	public static void conquerParticipantJoined(Player participant, ConqueringAttempt conqueringAttempt) {
+		ParticipantJoinedConquerMessage pm = new ParticipantJoinedConquerMessage();
+		pm.participant = participant;
+		pm.conqueringAttempt = conqueringAttempt;
+		
+		actor.tell(pm);
+	}
+
+	public static void sendConquerPossible(ConqueringAttempt conqueringAttempt) {
+		ConquerPossibleMessage cpm = new ConquerPossibleMessage();
+		cpm.conqueringAttempt = conqueringAttempt;
+		
+		actor.tell(cpm);
 	}
 	
 	/**
@@ -111,21 +128,11 @@ public class ClientPushActor extends UntypedActor {
 		} else if (message instanceof PlayerLocationChangedMessage) {
 			Logger.info("pushing out player location change");
 			PlayerLocationChangedMessage msg = (PlayerLocationChangedMessage) message;
-			PlayerLocation location = msg.getPlayerLocation();
-
+			ObjectNode json = msg.toJson();
+			
 			// push location change to all other players over websocket
 			for (WebSocket.Out<JsonNode> channel : registered.values()) {
-				ObjectNode event = Json.newObject();
-
-				event.put("id", location.getPlayer().getId().toString());
-				event.put("timestamp", location.getTimestamp().getTime());
-				event.put("longitude", location.getLongitude().toString());
-				event.put("latitude", location.getLatitude().toString());
-				event.put("speed", location.getSpeed());
-				event.put("accuracy", location.getUncertainty());
-				Logger.info(event.toString());
-				
-				channel.write(event);
+				channel.write(json);
 			}
 		} else if (message instanceof UnregistrationMessage) {
 			UnregistrationMessage quit = (UnregistrationMessage) message;
@@ -135,23 +142,39 @@ public class ClientPushActor extends UntypedActor {
 
 		} else if (message instanceof ConqueringInvitationMessage) {
 			ConqueringInvitationMessage ci = (ConqueringInvitationMessage) message;
-			ConqueringAttempt ca = ci.conqueringAttempt;
+			ObjectNode json = ci.toJson();
+			Logger.info("Sending invitations to (" + ci.playersToInvite.size() + " players): " + json.toString());
 			
 			// Push out the invitation
-			for (WebSocket.Out<JsonNode> channel : registered.values()) {
-				ObjectNode event = Json.newObject();
-
-				event.put("conqueringAttemptId", ca.getId().toString());
-				event.put("start", ca.getStartDate().toString());
-				event.put("initiatorId", ca.getInitiator().getId().toString());
-				event.put("placeId", ca.getPlace().getIdString());
-				event.put("placeName", ca.getPlace().getName());
-				event.put("placeLat", ca.getPlace().getLat());
-				event.put("placeLng", ca.getPlace().getLng());
-				Logger.info(event.toString());
-				
-				channel.write(event);
+			for (Player invitedPlayer : ci.playersToInvite) {
+				String playerId = invitedPlayer.getId().toString();
+				registered.get(playerId).write(json);
 			}
+		} else if (message instanceof ParticipantJoinedConquerMessage) {
+			ParticipantJoinedConquerMessage m = (ParticipantJoinedConquerMessage) message;
+			ObjectNode json = m.toJson();
+			
+			ConqueringAttempt ca = m.conqueringAttempt;
+			Player initiator = ca.getInitiator();
+			
+			String initiatorName = initiator.getUsername();
+			String initiatorId = initiator.getId().toString();
+			String joiner = m.participant.getUsername();
+			Place place = ca.getPlace();
+			
+			Logger.info(joiner + " joined " + initiatorName + "'s conquering attempt for " + place.getName());
+			Logger.info("informing the conquer initiator with a message: " + json.toString());
+			
+			registered.get(initiatorId).write(json);
+		} else if (message instanceof ConquerPossibleMessage) {
+			ConquerPossibleMessage m = (ConquerPossibleMessage) message;
+			ObjectNode json = m.toJson();
+			
+			Player initiator = m.conqueringAttempt.getInitiator();
+			String initiatorId = initiator.getId().toString();
+			
+			Logger.info("conquer is no possible " + json.toString());
+			registered.get(initiatorId).write(json);
 		} else {
 			unhandled(message);
 		}

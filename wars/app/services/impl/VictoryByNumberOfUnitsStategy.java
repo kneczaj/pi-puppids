@@ -1,7 +1,6 @@
 package services.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import models.Player;
 import models.Unit;
@@ -18,7 +17,7 @@ import com.google.common.collect.Lists;
 public class VictoryByNumberOfUnitsStategy implements VictoryStrategy {
 
 	@Override
-	public boolean doAttackersWin(Set<Player> attackers,
+	public boolean doAttackersWin(List<Player> attackers,
 			List<Unit> defendingUnits) {
 
 		List<Unit> undeployedUnits = Lists.newArrayList();

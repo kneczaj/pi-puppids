@@ -1,5 +1,8 @@
 package communication.messages;
 
+import org.codehaus.jackson.node.ObjectNode;
+
+import play.libs.Json;
 import models.PlayerLocation;
 
 /**
@@ -17,6 +20,20 @@ public class PlayerLocationChangedMessage {
 
 	public PlayerLocation getPlayerLocation() {
 		return playerLocation;
+	}
+	
+	public ObjectNode toJson() {
+		ObjectNode positionChange = Json.newObject();
+
+		positionChange.put("messageType", "PlayerLocationChange");
+		positionChange.put("id", playerLocation.getPlayer().getId().toString());
+		positionChange.put("timestamp", playerLocation.getTimestamp().getTime());
+		positionChange.put("longitude", playerLocation.getLongitude().toString());
+		positionChange.put("latitude", playerLocation.getLatitude().toString());
+		positionChange.put("speed", playerLocation.getSpeed());
+		positionChange.put("accuracy", playerLocation.getUncertainty());
+		
+		return positionChange;
 	}
 
 }

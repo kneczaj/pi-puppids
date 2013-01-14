@@ -21,7 +21,7 @@ public interface VictoryStrategy {
 	 * @param defendingUnits
 	 * @return
 	 */
-	public boolean doAttackersWin(Set<Player> attackers,
+	public boolean doAttackersWin(List<Player> attackers,
 			List<Unit> defendingUnits);
 
 }

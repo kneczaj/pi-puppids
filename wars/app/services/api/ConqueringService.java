@@ -2,6 +2,7 @@ package services.api;
 
 import java.util.Set;
 
+import models.CheckConquerConditionsResult;
 import models.InitiateConquerResult;
 import models.Place;
 import models.Player;
@@ -18,8 +19,8 @@ import services.api.error.ConqueringServiceException;
  */
 public interface ConqueringService {
 
-	public enum ConqueringResult {
-		SUCCESSFUL, LOST, PLAYER_NOT_NEARBY, PLACE_ALREADY_BELONGS_TO_FACTION, RESOURCES_DO_NOT_SUFFICE, NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE, PLAYER_HAS_INSUFFICIENT_RESOURCES;
+	public enum ConqueringStatus {
+		SUCCESSFUL, LOST, PLAYER_NOT_NEARBY, PLACE_ALREADY_BELONGS_TO_FACTION, RESOURCES_DO_NOT_SUFFICE, NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE, PLAYER_HAS_INSUFFICIENT_RESOURCES, CONQUER_POSSIBLE;
 	}
 
 	public enum JoinConquerResult {
@@ -73,7 +74,7 @@ public interface ConqueringService {
 	 * @param place
 	 *            the place the player wants to conquer
 	 */
-	public ConqueringResult conquer(String conqueringAttemptId, Player player);
+	public ConqueringStatus conquer(String conqueringAttemptId, Player player);
 
 	/**
 	 * Find the team members of a given player that are nearby a place.
@@ -98,5 +99,8 @@ public interface ConqueringService {
 	 */
 	public Set<Player> getTeamMembersWithSufficientResources(Place place,
 			Set<Player> players);
+
+	CheckConquerConditionsResult checkConquerConditions(
+			String conqueringAttemptId, Player player);
 
 }
