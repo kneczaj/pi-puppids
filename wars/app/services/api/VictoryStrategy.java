@@ -1,6 +1,7 @@
 package services.api;
 
 import java.util.List;
+import java.util.Set;
 
 import models.Player;
 import models.Unit;
@@ -20,7 +21,7 @@ public interface VictoryStrategy {
 	 * @param defendingUnits
 	 * @return
 	 */
-	public boolean doAttackersWin(List<Player> attackers,
+	public boolean doAttackersWin(Set<Player> attackers,
 			List<Unit> defendingUnits);
 
 }

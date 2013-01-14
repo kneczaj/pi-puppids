@@ -1,11 +1,12 @@
 package models;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import org.bson.types.ObjectId;
 
 import com.google.code.morphia.annotations.Id;
+import com.google.common.collect.Sets;
 
 public class ConqueringAttempt {
 	
@@ -20,7 +21,9 @@ public class ConqueringAttempt {
 	
 	private Date endDate;
 	
-	private List<Player> joiningMembers;
+	private boolean canceled = false;
+	
+	private Set<Player> joiningMembers = Sets.newHashSet();
 
 	public ObjectId getId() {
 		return id;
@@ -62,12 +65,20 @@ public class ConqueringAttempt {
 		this.endDate = endDate;
 	}
 
-	public List<Player> getJoiningMembers() {
+	public Set<Player> getJoiningMembers() {
 		return joiningMembers;
 	}
 
-	public void setJoiningMembers(List<Player> joiningMembers) {
+	public void setJoiningMembers(Set<Player> joiningMembers) {
 		this.joiningMembers = joiningMembers;
+	}
+
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
 	}
 	
 }

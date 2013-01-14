@@ -1,8 +1,8 @@
 package services.api;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 
+import models.InitiateConquerResult;
 import models.Place;
 import models.Player;
 import services.api.error.ConqueringServiceException;
@@ -21,38 +21,37 @@ public interface ConqueringService {
 	public enum ConqueringResult {
 		SUCCESSFUL, LOST, PLAYER_NOT_NEARBY, PLACE_ALREADY_BELONGS_TO_FACTION, RESOURCES_DO_NOT_SUFFICE, NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE, PLAYER_HAS_INSUFFICIENT_RESOURCES;
 	}
-	
-	public enum InitiateConquerResult {
-		SUCCESSFUL, PLAYER_NOT_NEARBY, PLACE_ALREADY_BELONGS_TO_FACTION
-	}
-	
+
 	public enum JoinConquerResult {
-		SUCCESSFUL, UNALLOWED_TO_JOIN, 
+		SUCCESSFUL, UNALLOWED_TO_JOIN, CONQUER_CANCELED, CONQUER_ALREADY_ENDED
 	}
 
 	/**
 	 * Initiate a new Conquering-Attempt. Sends out notifications to all members
 	 * of the player's team that are nearby.
 	 * 
-	 * @param player the player which initiates the conquering attempt
-	 * @param place the place to conquer
+	 * @param player
+	 *            the player which initiates the conquering attempt
+	 * @param place
+	 *            the place to conquer
 	 * @return
 	 */
 	public InitiateConquerResult initiateConquer(Player player, Place place);
-	
-	public void sendOutInvitations(String conqueringAttemptId) throws ConqueringServiceException;
+
+	public void sendOutInvitations(String conqueringAttemptId)
+			throws ConqueringServiceException;
 
 	/**
 	 * Allows other players to join a conquering attempt.
 	 * 
-	 * @param conqueringAttemptId the conquering attempt to join
-	 * @param player the player who wants to join
+	 * @param conqueringAttemptId
+	 *            the conquering attempt to join
+	 * @param player
+	 *            the player who wants to join
 	 * @return
 	 */
 	public JoinConquerResult joinConquer(String conqueringAttemptId,
 			Player player);
-	
-	public void declineJoinRequest(String conqueringAttemptId, Player player);
 
 	/**
 	 * Cancels an Conquering-Attempt
@@ -66,8 +65,8 @@ public interface ConqueringService {
 	public boolean cancelConquer(String conqueringAttemptId, Player player);
 
 	/**
-	 * Do the actual conquer. Using all players of a given player's team
-	 * that are currently around the requested place.
+	 * Do the actual conquer. Using all players of a given player's team that
+	 * are currently around the requested place.
 	 * 
 	 * @param player
 	 *            the initiator of the conquering attempt
@@ -83,8 +82,7 @@ public interface ConqueringService {
 	 * @param place
 	 * @return
 	 */
-	public List<Player> getTeamMembersAllowedToParticipateInConquer(
-			Player player, Place place);
+	public Set<Player> getTeamMembersNearby(Player player, Place place);
 
 	/**
 	 * Filter out the players that are not allowed to take part into a
@@ -98,7 +96,7 @@ public interface ConqueringService {
 	 *            a list of players that are nearby the place
 	 * @return
 	 */
-	public HashSet<Player> getTeamMembersWithSufficientResources(Place place,
-			List<Player> players);
+	public Set<Player> getTeamMembersWithSufficientResources(Place place,
+			Set<Player> players);
 
 }
