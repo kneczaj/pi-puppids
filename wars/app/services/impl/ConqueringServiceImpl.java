@@ -351,7 +351,12 @@ public class ConqueringServiceImpl implements ConqueringService {
 		}
 
 		Set<Player> membersNearby = getTeamMembersNearby(player, reference);
-		if (!membersNearby.contains(player)) {
+		boolean playerNearby = false;
+		for (Player p : membersNearby) {
+			if (p.getId().equals(player.getId()))
+				playerNearby = true;
+		}
+		if (!playerNearby) {
 			return new InitiateConquerResult(
 					InitiateConquerResult.Type.PLAYER_NOT_NEARBY);
 		}

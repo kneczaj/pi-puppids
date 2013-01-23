@@ -6,6 +6,7 @@ import java.util.Set;
 import models.City;
 import models.Faction;
 import models.GPlace;
+import models.InitiateConquerResult;
 import models.Location;
 import models.Player;
 
@@ -118,10 +119,10 @@ public class ConqueringServiceTest {
 	@Test
 	public void getTeamMembersNearbyTest()
 			throws LocationTrackingServiceException {
-		
+
 		GPlace townHall = SamplePlaces.newTownHall;
 
-		// check in all the three players near the center of munich
+		// check in all the three players near the new town hall in munich
 		Location location = new Location();
 		location.setLatitude(townHall.getLatitude() - 0.00001);
 		location.setLongitude(townHall.getLongitude() - 0.00001);
@@ -133,11 +134,10 @@ public class ConqueringServiceTest {
 		locationTrackingService.updatePlayerLocation(player3, location,
 				new Date(), 5, 0);
 
-		Set<Player> allowedParticipants; 
+		Set<Player> allowedParticipants;
 		try {
-			allowedParticipants = conqueringService
-					.getTeamMembersNearby(player1,
-							townHall.getReference());
+			allowedParticipants = conqueringService.getTeamMembersNearby(
+					player1, townHall.getReference());
 			Assert.assertNotNull(allowedParticipants);
 			Assert.assertEquals(2, allowedParticipants.size());
 		} catch (GPlaceServiceException e) {
@@ -146,17 +146,41 @@ public class ConqueringServiceTest {
 		}
 
 		try {
-			allowedParticipants = conqueringService
-					.getTeamMembersNearby(player3,
-							townHall.getReference());
+			allowedParticipants = conqueringService.getTeamMembersNearby(
+					player3, townHall.getReference());
 			Assert.assertNotNull(allowedParticipants);
 			Assert.assertEquals(1, allowedParticipants.size());
 		} catch (GPlaceServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+	}
+
+	@Test
+	public void initiateConquerTest() throws LocationTrackingServiceException,
+			GPlaceServiceException {
+		GPlace townHall = SamplePlaces.newTownHall;
+
+		// check in all the three players near the new town hall in munich
+		Location location = new Location();
+		location.setLatitude(townHall.getLatitude() - 0.00001);
+		location.setLongitude(townHall.getLongitude() - 0.00001);
+
+		locationTrackingService.updatePlayerLocation(player1, location,
+				new Date(), 5, 0);
+		locationTrackingService.updatePlayerLocation(player2, location,
+				new Date(), 5, 0);
+		locationTrackingService.updatePlayerLocation(player3, location,
+				new Date(), 5, 0);
 		
+		InitiateConquerResult result = conqueringService.initiateConquer(
+				player1, townHall.getUuid(), townHall.getReference());
 		
+		Assert.assertNotNull(result);
+		Assert.assertEquals(InitiateConquerResult.Type.SUCCESSFUL,
+				result.getType());
+		Assert.assertNotNull(result.getConqueringAttempt());
 	}
 
 	@After
