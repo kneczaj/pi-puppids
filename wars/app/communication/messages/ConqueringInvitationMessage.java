@@ -3,7 +3,6 @@ package communication.messages;
 import java.util.List;
 
 import models.ConqueringAttempt;
-import models.Place;
 import models.Player;
 
 import org.codehaus.jackson.node.ObjectNode;
@@ -19,16 +18,13 @@ public class ConqueringInvitationMessage {
 		ObjectNode invitation = Json.newObject();
 		
 		Player initiator = conqueringAttempt.getInitiator();
-		Place place = conqueringAttempt.getPlace();
+		String uuid = conqueringAttempt.getUuid();
 		
 		invitation.put("messageType", "ConqueringInvitation");
 		invitation.put("conqueringAttemptId", conqueringAttempt.getId().toString());
 		invitation.put("start", conqueringAttempt.getStartDate().toString());
 		invitation.put("initiatorId", initiator.getId().toString());
-		invitation.put("placeId", place.getIdString());
-		invitation.put("placeName", place.getName());
-		invitation.put("placeLat", place.getLat());
-		invitation.put("placeLng", place.getLng());
+		invitation.put("placeId", uuid);
 		
 		return invitation;
 	}

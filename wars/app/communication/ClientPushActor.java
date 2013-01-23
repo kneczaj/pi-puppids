@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 import models.ConqueringAttempt;
-import models.Place;
 import models.Player;
 import models.PlayerLocation;
 
@@ -160,9 +159,8 @@ public class ClientPushActor extends UntypedActor {
 			String initiatorName = initiator.getUsername();
 			String initiatorId = initiator.getId().toString();
 			String joiner = m.participant.getUsername();
-			Place place = ca.getPlace();
 			
-			Logger.info(joiner + " joined " + initiatorName + "'s conquering attempt for " + place.getName());
+			Logger.info(joiner + " joined " + initiatorName + "'s conquering attempt for " + ca.getUuid());
 			Logger.info("informing the conquer initiator with a message: " + json.toString());
 			
 			registered.get(initiatorId).write(json);

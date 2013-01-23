@@ -4,7 +4,6 @@ import java.util.Set;
 
 import models.CheckConquerConditionsResult;
 import models.InitiateConquerResult;
-import models.Place;
 import models.Player;
 import services.api.error.ConqueringServiceException;
 import services.google.places.api.GPlaceServiceException;
