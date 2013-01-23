@@ -7,6 +7,7 @@ import models.InitiateConquerResult;
 import models.Place;
 import models.Player;
 import services.api.error.ConqueringServiceException;
+import services.google.places.api.GPlaceServiceException;
 
 /**
  * Service for calculating the outcome of conquering attempts (conquer). The
@@ -74,7 +75,7 @@ public interface ConqueringService {
 	 * @param place
 	 *            the place the player wants to conquer
 	 */
-	public ConqueringStatus conquer(String conqueringAttemptId, Player player);
+	public ConqueringStatus conquer(String conqueringAttemptId, Player player) throws GPlaceServiceException;
 
 	/**
 	 * Find the team members of a given player that are nearby a place.
