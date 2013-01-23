@@ -25,6 +25,11 @@ public class PlaceMappings {
 	 */
 	public final static Map<PlaceType, AmountType> PLACE_TO_AMOUNT_MAP = generatePlaceToAmountMap();
 	
+	/**
+	 * Map of PlaceTypes to their resource demand
+	 */
+	public final static Map<PlaceType, Map<ResourceType, Integer>> PLACE_TO_RESOURCE_DEMAND_MAP = generatePlaceToResourceDemandMap();
+	
 	private static Map<PlaceType, ResourceType> generatePlaceToResourceMap() {
 		Map<PlaceType, ResourceType> map = Maps.newHashMap();
 		
@@ -240,6 +245,35 @@ public class PlaceMappings {
 		map.put(PlaceType.university, AmountType.EXTREME);
 		map.put(PlaceType.veterinary_care, AmountType.MIDDLE);
 		map.put(PlaceType.zoo, AmountType.MIDDLE);
+		
+		return map;
+	}
+	
+	private static Map<PlaceType, Map<ResourceType, Integer>> generatePlaceToResourceDemandMap() {
+		Map<PlaceType, Map<ResourceType, Integer>> map = Maps.newHashMap();
+		
+		Map<ResourceType, Integer> noResourceNeededMap = Maps.newHashMap();
+		noResourceNeededMap.put(ResourceType.Credits, 0);
+		noResourceNeededMap.put(ResourceType.Material, 0);
+		
+		//generate the map
+		for (PlaceType type : PlaceType.values()) {
+			
+			//special places need resources
+			if (PLACE_TO_RESOURCE_MAP.get(type) == ResourceType.Special) {
+				Map<ResourceType, Integer> resourceMap = Maps.newHashMap();
+				
+				AmountType amountType = PLACE_TO_AMOUNT_MAP.get(type);
+				Integer amount = AMOUNT_TYPE_TO_VALUE_MAP.get(amountType);
+				
+				resourceMap.put(ResourceType.Credits, amount);
+				resourceMap.put(ResourceType.Material, amount);
+				
+				map.put(type, resourceMap);
+			} else {
+				map.put(type, noResourceNeededMap);
+			}
+		}
 		
 		return map;
 	}

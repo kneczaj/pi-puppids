@@ -30,7 +30,6 @@ import services.google.places.api.GPlaceServiceException;
 import assets.constants.PlaceMappings;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import communication.ClientPushActor;
@@ -57,7 +56,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 	@Inject
 	private GPlaceService gPlaceService;
-	
+
 	@Inject
 	private MapInfoService mapInfoService;
 
@@ -65,17 +64,19 @@ public class ConqueringServiceImpl implements ConqueringService {
 	private VictoryStrategy victoryStrategy;
 
 	@Override
-	public Set<Player> getTeamMembersNearby(Player player, String uuid) {
+	public Set<Player> getTeamMembersNearby(Player player, String reference)
+			throws GPlaceServiceException {
 		Set<Player> teamMembersNearby = new HashSet<Player>(
-				mapInfoService.findTeamMembersNearby(player.getTeam(), uuid,
-						100));
+				mapInfoService.findTeamMembersNearby(player.getTeam(),
+						reference, 100));
 
 		return teamMembersNearby;
 	}
 
 	@Override
 	public Set<Player> getTeamMembersWithSufficientResources(String uuid,
-			Set<Player> players) {
+			String reference, Set<Player> players)
+			throws GPlaceServiceException {
 
 		if (players.isEmpty()) {
 			return Sets.newHashSet();
@@ -83,10 +84,14 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 		Set<Player> filteredList = Sets.newHashSet();
 		HashSet<String> ignoreList = Sets.newHashSet();
-		Place place = placeDAO.findOne("uuid", uuid);
 
-		for (Entry<ResourceType, Integer> resourceDemand : place
-				.getResourceDemand().entrySet()) {
+		GPlace gPlace = gPlaceService.details(reference);
+		PlaceType type = PlaceType.valueOf(gPlace.getTypes().get(0));
+		Map<ResourceType, Integer> resourceDemands = PlaceMappings.PLACE_TO_RESOURCE_DEMAND_MAP
+				.get(type);
+
+		for (Entry<ResourceType, Integer> resourceDemand : resourceDemands
+				.entrySet()) {
 
 			float resourceDemandPerPlayer = resourceDemand.getValue()
 					/ players.size();
@@ -109,13 +114,14 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 			// number of players that are allowed to participate decreased => so
 			// the rest of the team has to carry their share
-			return getTeamMembersWithSufficientResources(uuid, filteredList);
+			return getTeamMembersWithSufficientResources(uuid, reference,
+					filteredList);
 		}
 	}
 
 	@Override
 	public JoinConquerResult joinConquer(String conqueringAttemptId,
-			Player player) {
+			Player player) throws GPlaceServiceException {
 		if (player == null) {
 			throw new NullPointerException("Player has to be specified");
 		}
@@ -196,7 +202,8 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 	@Override
 	public CheckConquerConditionsResult checkConquerConditions(
-			String conqueringAttemptId, Player player) {
+			String conqueringAttemptId, Player player)
+			throws GPlaceServiceException {
 		if (player == null) {
 			throw new NullPointerException("Player has to be specified");
 		}
@@ -209,7 +216,8 @@ public class ConqueringServiceImpl implements ConqueringService {
 					"Could not find conquering attempt");
 		}
 
-		Set<Player> teamMembersNearby = getTeamMembersNearby(player, ca.getUuid());
+		Set<Player> teamMembersNearby = getTeamMembersNearby(player,
+				ca.getReference());
 		CheckConquerConditionsResult result = new CheckConquerConditionsResult(
 				ca);
 
@@ -220,7 +228,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 		// Check if team members are wealthy enough
 		Set<Player> wealthyMembersNearby = getTeamMembersWithSufficientResources(
-				ca.getUuid(), teamMembersNearby);
+				ca.getUuid(), ca.getReference(), teamMembersNearby);
 		result.setParticipants(Lists.newArrayList(wealthyMembersNearby));
 
 		if (!wealthyMembersNearby.contains(player)) {
@@ -232,7 +240,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			result.setConqueringStatus(ConqueringStatus.RESOURCES_DO_NOT_SUFFICE);
 			return result;
 		}
-		
+
 		Place place = placeDAO.findOne("uuid", ca.getUuid());
 
 		// check if the place already belongs to someone
@@ -262,7 +270,8 @@ public class ConqueringServiceImpl implements ConqueringService {
 	}
 
 	@Override
-	public ConqueringStatus conquer(String conqueringAttemptId, Player player) throws GPlaceServiceException {
+	public ConqueringStatus conquer(String conqueringAttemptId, Player player)
+			throws GPlaceServiceException {
 		CheckConquerConditionsResult result = checkConquerConditions(
 				conqueringAttemptId, player);
 
@@ -270,8 +279,9 @@ public class ConqueringServiceImpl implements ConqueringService {
 		if (!status.equals(ConqueringStatus.CONQUER_POSSIBLE)) {
 			return status;
 		}
-		
-		ConqueringAttempt ca = conqueringAttemptDAO.findOne("id", conqueringAttemptId);
+
+		ConqueringAttempt ca = conqueringAttemptDAO.findOne("id",
+				conqueringAttemptId);
 
 		Place place = placeDAO.findOne("uuid", ca.getUuid());
 		List<Player> participants = result.getParticipants();
@@ -297,18 +307,19 @@ public class ConqueringServiceImpl implements ConqueringService {
 			newPlace.setName(gPlace.getName());
 			newPlace.setLat(gPlace.getLatitude());
 			newPlace.setLng(gPlace.getLongitude());
-			
+
 			PlaceType type = PlaceType.valueOf(gPlace.getTypes().get(0));
 			newPlace.setType(type);
-			
+
 			AmountType amount = PlaceMappings.PLACE_TO_AMOUNT_MAP.get(type);
-			newPlace.setAmount(PlaceMappings.AMOUNT_TYPE_TO_VALUE_MAP.get(amount));
+			newPlace.setAmount(PlaceMappings.AMOUNT_TYPE_TO_VALUE_MAP
+					.get(amount));
 			newPlace.setResource(PlaceMappings.PLACE_TO_RESOURCE_MAP.get(type));
-			
-			//TODO: Set Resource Demand correct
-			Map<ResourceType, Integer> resourceDemands = Maps.newHashMap();
+
+			// TODO: Set Resource Demand correct
+			Map<ResourceType, Integer> resourceDemands = PlaceMappings.PLACE_TO_RESOURCE_DEMAND_MAP.get(type);
 			newPlace.setResourceDemand(resourceDemands);
-			
+
 			placeDAO.save(newPlace);
 			newPlace.setConqueredBy(participants);
 			placeDAO.updateConquerors(newPlace, participants);
@@ -318,14 +329,16 @@ public class ConqueringServiceImpl implements ConqueringService {
 	}
 
 	@Override
-	public InitiateConquerResult initiateConquer(Player player, String uuid) {
-		if (player == null || uuid == null) {
-			throw new NullPointerException("Player and place must not be null");
+	public InitiateConquerResult initiateConquer(Player player, String uuid,
+			String reference) throws GPlaceServiceException {
+		if (player == null || uuid == null || reference == null) {
+			throw new NullPointerException(
+					"Player, id and reference must not be null");
 		}
 
 		// check if place belongs already to the faction of the player
 		Place place = placeDAO.findOne("uuid", uuid);
-		
+
 		if (place != null && place.getConqueredBy().size() > 0) {
 			Faction factionOfPlayer = player.getTeam().getFaction();
 			Player conqueror = place.getConqueredBy().get(0);
@@ -337,7 +350,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			}
 		}
 
-		Set<Player> membersNearby = getTeamMembersNearby(player, uuid);
+		Set<Player> membersNearby = getTeamMembersNearby(player, reference);
 		if (!membersNearby.contains(player)) {
 			return new InitiateConquerResult(
 					InitiateConquerResult.Type.PLAYER_NOT_NEARBY);
@@ -347,6 +360,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 		ca.setStartDate(new Date());
 		ca.setInitiator(player);
 		ca.setUuid(uuid);
+		ca.setReference(reference);
 
 		conqueringAttemptDAO.save(ca);
 		return new InitiateConquerResult(InitiateConquerResult.Type.SUCCESSFUL,
