@@ -1,7 +1,13 @@
 package models.notifications;
 
-public class ConqueringInvitation extends NotificationPayload {
+import models.notifications.Notification;
+
+public class ConqueringInvitation extends Notification {
 	
 	public int numberOfConquerors;
 	
+//	public ConqueringInvitation() {
+//		super();
+//		payload = Payload.ConqeringInvitation;
+//	}
 }

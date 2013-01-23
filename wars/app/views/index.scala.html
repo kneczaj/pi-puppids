@@ -29,14 +29,14 @@
 	
 	function tryInvite() {
 
-		var checkEmailRequest = new XMLHttpRequest();
+		var invitationRequest = new XMLHttpRequest();
 		var username = document.getElementById("userToInvite").value;
 		
-		checkEmailRequest.onreadystatechange = function() {
+		invitationRequest.onreadystatechange = function() {
 	
-	  		if (checkEmailRequest.readyState == 4 && checkEmailRequest.status == 200) {
+	  		if (invitationRequest.readyState == 4 && invitationRequest.status == 200) {
 	  		
-				var response = checkEmailRequest.responseText;
+				var response = invitationRequest.responseText;
 				var message;
 				if (response == "ok") {
 					message = username + " has been succesfully invited";
@@ -53,8 +53,8 @@
 			}
   		}
   	
-		checkEmailRequest.open("GET","invite/"+username, true);
-		checkEmailRequest.send();
+		invitationRequest.open("GET","invite/"+username, true);
+		invitationRequest.send();
 	};
 	
 	$(document).ready(function() {

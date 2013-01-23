@@ -1,21 +1,15 @@
 package models;
 
-import org.bson.types.ObjectId;
-
 import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
 
 @Entity("invitations")
-public class Invitation {
+public class Invitation extends TimeStampedModel {
 	
 	public enum State {
 		CREATED, SENT, CONFIRMED
 	}
 
-	@Id
-	private ObjectId id;
-	
 	// reference to sender to inform an invited player who invites them
 	@Reference
 	private Player sender;
@@ -29,7 +23,6 @@ public class Invitation {
 	private Team team;
 	
 	private State state;
-	private long creationDate;
 	private long expirationDate;
 	private String token;
 	private String email;
@@ -37,8 +30,8 @@ public class Invitation {
 	// ---------------------------------------
 	
 	public Invitation() {
+		super();
 		state = State.CREATED;
-		this.creationDate = System.currentTimeMillis();
 	}
 	
 	public Invitation(Player sender, Player recipient) {
@@ -54,10 +47,6 @@ public class Invitation {
 		this.team = sender.getTeam();
 		this.sender = sender;
 		this.email = email;
-	}
-
-	public ObjectId getId() {
-		return id;
 	}
 	
 	public String getEmail() {
@@ -84,10 +73,6 @@ public class Invitation {
 	
 	public Team getTeam() {
 		return sender.getTeam();
-	}
-	
-	public long getCreationDate() {
-		return creationDate;
 	}
 	
 	public long getExpirationDate() {
