@@ -10,7 +10,11 @@ GET     /mapinfo/playersNearby						controllers.MapInfoController.playersNearby(
 GET     /resource/getResourceSourcesOfPlayer		controllers.ResourceController.getResourceSourcesOfPlayer()
 GET     /resource/getResourcesOfPlayer				controllers.ResourceController.getResourcesOfPlayer()
 GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResourcesOfTeam()
+GET     /unit/getUnitsOfPlayer						controllers.UnitController.getUnitsOfPlayer()
 GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(factionId, cityId)
+
+# testing
+GET		/sendHi										controllers.TeamController.sendHi()
 
 # Player profile
 GET     /profile                    				controllers.Application.profile()

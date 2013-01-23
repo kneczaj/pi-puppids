@@ -1,66 +1,74 @@
 package models.notifications;
 
-import java.util.Date;
+import java.util.List;
 
-import org.bson.types.ObjectId;
+import org.codehaus.jackson.node.ObjectNode;
 
-import com.google.code.morphia.annotations.Embedded;
+import models.TimeStampedModel;
+import models.Player;
+
+import play.Logger;
+import play.libs.Json;
+
 import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
+import com.google.code.morphia.annotations.Reference;
+import com.google.common.collect.Lists;
 
 @Entity("notification")
-public class Notification<T extends NotificationPayload> {
+public class Notification extends TimeStampedModel {
 	
-	@Id
-	private ObjectId id;
+	private boolean sent;
 	
-	private String name;
-	
+	// cache for notification message - generated at sent event
+	// guarantees that message will be readable without gathering
+	// needed information from the db again.
 	private String message;
 	
-	private Date sendDate;
+	@Reference
+	private List<Player> players = Lists.newLinkedList();
 	
-	@Embedded
-	public T payload;
-
-	public ObjectId getId() {
-		return id;
+	public Notification() {
+		super();
+		sent = false;
 	}
-
-	public void setId(ObjectId id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	
 	public String getMessage() {
+		if (message.isEmpty())
+			generateMessage();
 		return message;
 	}
-
-	public void setMessage(String message) {
-		this.message = message;
+	
+	// derived classes should override this method and return string message depending 
+	// on the content of appropriate variables
+	// The function should write message to this.message 
+	private void generateMessage() {
+		Logger.error("generateMessage() function is not implemented in " + this.getClass().getName() + " class");
 	}
 
-	public Date getSendDate() {
-		return sendDate;
+	public void setPlayers(List<Player> players) {
+		this.players = players;
 	}
-
-	public void setSendDate(Date sendDate) {
-		this.sendDate = sendDate;
+	
+	public List<Player> getPlayers() {
+		return this.players;
 	}
-
-	public T getPayload() {
-		return payload;
+	
+	public boolean isSent() {
+		return sent;
 	}
-
-	public void setPayload(T payload) {
-		this.payload = payload;
+	
+	public ObjectNode toJson() {
+		
+		// Set sent to true only if this function is run from
+		// derived class toJson() function.
+		// Only then this message will be treated as a notification message
+		// when received.
+		sent = true;
+		
+		ObjectNode notification = Json.newObject();
+		notification.put("notificationMessage", getMessage());
+		
+		return notification;
 	}
 	
 }

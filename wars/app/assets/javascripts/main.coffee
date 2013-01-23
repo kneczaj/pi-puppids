@@ -69,5 +69,6 @@ $(document).ready ->
 	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails')
 	sidebar = new window.ArWars.SideBar playerPositionManager
 	sidebar.loadResourceSourcesOfPlayer()
+	sidebar.loadUnitsOfPlayer()
 	webSocket = new window.ArWars.WebSocketManager playerPositionManager
 	webSocket.establishWebSocket window.ArWars.webSocketURL
