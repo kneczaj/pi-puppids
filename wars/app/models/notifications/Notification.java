@@ -57,7 +57,7 @@ public class Notification extends TimeStampedModel {
 		return sent;
 	}
 	
-	protected ObjectNode toJson() {
+	public ObjectNode toJson() {
 		
 		// Set sent to true only if this function is run from
 		// derived class toJson() function.

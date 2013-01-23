@@ -184,7 +184,7 @@ public class Player {
 	
 	public List<Player> getTeammates() {
 		
-		LinkedList<Player> teamPlayers = new LinkedList<>();
+		LinkedList<Player> teamPlayers = new LinkedList<Player>();
 		
 		if (team == null)
 			return teamPlayers;

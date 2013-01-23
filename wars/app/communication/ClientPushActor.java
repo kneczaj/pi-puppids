@@ -194,6 +194,17 @@ public class ClientPushActor extends UntypedActor {
 			
 			Logger.info("conquer is no possible " + json.toString());
 			registered.get(initiatorId).write(json);
+			
+		} else if (message instanceof Notification) {
+			
+			Notification notification = (Notification) message;
+			ObjectNode json = notification.toJson();
+			
+			for (Player recipient : notification.getPlayers()) {
+				String playerId = recipient.getId().toString();
+				registered.get(playerId).write(json);
+			}
+			
 		} else {
 			unhandled(message);
 		}
