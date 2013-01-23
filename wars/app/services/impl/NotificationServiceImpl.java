@@ -10,22 +10,22 @@ import com.google.inject.Inject;
 
 import daos.NotificationDAO;
 
-@SuppressWarnings("rawtypes")
 public class NotificationServiceImpl implements NotificationService {
 	
 	@Inject
 	private static NotificationDAO notificationDAO;
 
 	@Override
-	public void saveNotifications(Notification notification,
-			List<Player> players) {
-		// TODO Auto-generated method stub
+	public void saveNotifications(Notification notification) {
 		
+		for (Player p: notification.getPlayers())
+			p.addNotification(notification);
+		
+		notificationDAO.save(notification);
 	}
 
 	@Override
-	public void pushOutNotifications(Notification notification,
-			List<Player> players) {
+	public void pushOutNotifications(Notification notification) {
 		
 		// use ClientPushActor
 	}
@@ -33,8 +33,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public List<Notification> getNotificationHistoryOfPlayer(Player player,
 			int offset, int count) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return player.getNotificationsList().subList(offset, offset+count);
 	}
-
 }

@@ -2,13 +2,11 @@ package models;
 
 import java.util.Date;
 
-import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 
 import securesocial.core.java.Token;
 
 import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
 
@@ -18,10 +16,7 @@ import com.google.common.base.Objects;
  * @author markus
  */
 @Entity("access_tokens")
-public class AccessToken {
-
-	@Id
-	private ObjectId id;
+public class AccessToken extends BaseModel {
 
 	@Reference
 	private Player player;
@@ -43,14 +38,6 @@ public class AccessToken {
 		this.signUp = signUp;
 		this.uuid = uuid;
 		this.email = email;
-	}
-
-	public ObjectId getId() {
-		return id;
-	}
-
-	public void setId(ObjectId id) {
-		this.id = id;
 	}
 
 	public Player getPlayer() {

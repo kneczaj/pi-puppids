@@ -5,7 +5,6 @@ import java.util.List;
 import models.Player;
 import models.notifications.Notification;
 
-@SuppressWarnings("rawtypes")
 public interface NotificationService {
 
 	/**
@@ -15,7 +14,7 @@ public interface NotificationService {
 	 * @param notification
 	 * @param players
 	 */
-	public void saveNotifications(Notification notification, List<Player> players);
+	public void saveNotifications(Notification notification);
 	
 	/**
 	 * Push a notification to the list of players mentioned.
@@ -24,7 +23,7 @@ public interface NotificationService {
 	 * @param notification
 	 * @param players
 	 */
-	public void pushOutNotifications(Notification notification, List<Player> players);
+	public void pushOutNotifications(Notification notification);
 	
 	/**
 	 * Get the history of notifications for a given player.

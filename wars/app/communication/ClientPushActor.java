@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentMap;
 import models.ConqueringAttempt;
 import models.Player;
 import models.PlayerLocation;
+import models.notifications.Notification;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -14,6 +15,7 @@ import play.Logger;
 import play.libs.Akka;
 import play.libs.F.Callback0;
 import play.mvc.WebSocket;
+import services.api.NotificationService;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
@@ -25,6 +27,7 @@ import communication.messages.ConqueringInvitationMessage;
 import communication.messages.ParticipantJoinedConquerMessage;
 import communication.messages.PlayerLocationChangedMessage;
 import communication.messages.RegistrationMessage;
+import communication.messages.SimpleNotificationMessage;
 import communication.messages.UnregistrationMessage;
 
 /**
@@ -34,6 +37,8 @@ import communication.messages.UnregistrationMessage;
  * @author markus
  */
 public class ClientPushActor extends UntypedActor {
+	
+	private static NotificationService notificationService;
 
 	/**
 	 * Create a static actor instance
@@ -54,12 +59,28 @@ public class ClientPushActor extends UntypedActor {
 		return Lists.newArrayList(registered.keySet());
 	}
 	
+//	public static void sendNotification(Notification notification) {
+//		
+//	}
+	
+	/*
+	 * Sends "Hi!" message to the teammates
+	 * for testing purposes
+	 */
+	public static void sendHi(Player player) {
+		SimpleNotificationMessage testNotification = new SimpleNotificationMessage();
+		testNotification.setMessageContent("Hi!");
+		testNotification.setPlayers(player.getTeammates());
+		
+		actor.tell(testNotification);
+	}
+	
 	public static void sendConqueringInvitation(ConqueringAttempt ca,
 			List<Player> onlinePlayersOfTeam) {
 		
 		ConqueringInvitationMessage ci = new ConqueringInvitationMessage();
 		ci.conqueringAttempt = ca;
-		ci.playersToInvite = onlinePlayersOfTeam;
+		ci.setPlayers(onlinePlayersOfTeam);
 		
 		actor.tell(ci);
 	}
@@ -142,10 +163,10 @@ public class ClientPushActor extends UntypedActor {
 		} else if (message instanceof ConqueringInvitationMessage) {
 			ConqueringInvitationMessage ci = (ConqueringInvitationMessage) message;
 			ObjectNode json = ci.toJson();
-			Logger.info("Sending invitations to (" + ci.playersToInvite.size() + " players): " + json.toString());
+			Logger.info("Sending invitations to (" + ci.getPlayers().size() + " players): " + json.toString());
 			
 			// Push out the invitation
-			for (Player invitedPlayer : ci.playersToInvite) {
+			for (Player invitedPlayer : ci.getPlayers()) {
 				String playerId = invitedPlayer.getId().toString();
 				registered.get(playerId).write(json);
 			}
@@ -175,6 +196,16 @@ public class ClientPushActor extends UntypedActor {
 			registered.get(initiatorId).write(json);
 		} else {
 			unhandled(message);
+		}
+		
+		if (message instanceof Notification) {
+			Notification notification = (Notification) message;
+//			notificationService.pushOutNotifications(notification);
+			if (notification.isSent())
+				notificationService.saveNotifications(notification);
+			else
+				Logger.error("Notification not sent because of wrong implementation - " +
+						"toJson() should retrive the initial message from Notification class");
 		}
 	}
 
