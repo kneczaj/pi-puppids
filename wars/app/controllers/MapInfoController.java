@@ -8,6 +8,7 @@ import models.Faction;
 import models.Location;
 import models.Place;
 import models.PlayerLocation;
+import models.Team;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,15 +57,18 @@ public class MapInfoController extends Controller {
 			
 			JSONObject team = new JSONObject();
 			
-			team.put("name", pl.getPlayer().getTeam().getName());
-			team.put("id", pl.getPlayer().getTeam().getId().toString());
+			Team t = pl.getPlayer().getTeam();
+			team.put("name", t.getName());
+			team.put("id", t.getId().toString());
+			team.put("lat", t.getCity().getLatitude());
+			team.put("lng", t.getCity().getLongitude());
 			element.put("team", team);
 			
 			JSONObject faction = new JSONObject();
 			Faction f = pl.getPlayer().getTeam().getFaction();
 			if (f != null) {
-				faction.put("name", pl.getPlayer().getTeam().getFaction().getName());
-				faction.put("id", pl.getPlayer().getTeam().getFaction().getId().toString());
+				faction.put("name", f.getName());
+				faction.put("id", f.getId().toString());
 				element.put("faction", faction);
 			}
 
