@@ -37,7 +37,7 @@ public interface ConqueringService {
 	 *            the place to conquer
 	 * @return
 	 */
-	public InitiateConquerResult initiateConquer(Player player, Place place);
+	public InitiateConquerResult initiateConquer(Player player, String uuid);
 
 	public void sendOutInvitations(String conqueringAttemptId)
 			throws ConqueringServiceException;
@@ -83,7 +83,7 @@ public interface ConqueringService {
 	 * @param place
 	 * @return
 	 */
-	public Set<Player> getTeamMembersNearby(Player player, Place place);
+	public Set<Player> getTeamMembersNearby(Player player, String uuid);
 
 	/**
 	 * Filter out the players that are not allowed to take part into a
@@ -97,7 +97,7 @@ public interface ConqueringService {
 	 *            a list of players that are nearby the place
 	 * @return
 	 */
-	public Set<Player> getTeamMembersWithSufficientResources(Place place,
+	public Set<Player> getTeamMembersWithSufficientResources(String uuid,
 			Set<Player> players);
 
 	CheckConquerConditionsResult checkConquerConditions(
