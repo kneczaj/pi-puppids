@@ -12,6 +12,11 @@ GET     /resource/getResourcesOfPlayer				controllers.ResourceController.getReso
 GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResourcesOfTeam()
 GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(factionId, cityId)
 
+# ConquerController
+GET		/conquer/joinConquer						controllers.ConquerController.joinConquer(conqueringAttemptId)
+GET		/conquer/cancelConquer						controllers.ConquerController.cancelConquer(conqueringAttemptId)
+GET		/conquer/conquer							controllers.ConquerController.conquer(conqueringAttemptId)
+
 # testing
 GET		/sendHi										controllers.TeamController.sendHi()
 
