@@ -215,4 +215,10 @@ public class GPlaceServiceImpl implements GPlaceService {
 		}
 	}
 
+	@Override
+	public GPlace getPlace(String uuid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
