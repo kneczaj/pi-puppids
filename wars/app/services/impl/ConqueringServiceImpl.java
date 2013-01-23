@@ -221,7 +221,13 @@ public class ConqueringServiceImpl implements ConqueringService {
 		CheckConquerConditionsResult result = new CheckConquerConditionsResult(
 				ca);
 
-		if (!teamMembersNearby.contains(player)) {
+		boolean playerNearby = false;
+		for (Player p : teamMembersNearby) {
+			if (p.getId().equals(player.getId()))
+				playerNearby = true;
+		}
+		
+		if (!playerNearby) {
 			result.setConqueringStatus(ConqueringStatus.PLAYER_NOT_NEARBY);
 			return result;
 		}
@@ -231,7 +237,14 @@ public class ConqueringServiceImpl implements ConqueringService {
 				ca.getUuid(), ca.getReference(), teamMembersNearby);
 		result.setParticipants(Lists.newArrayList(wealthyMembersNearby));
 
-		if (!wealthyMembersNearby.contains(player)) {
+		boolean playerIsWealthy = false;
+		for (Player p : wealthyMembersNearby) {
+			if (p.getId().equals(player.getId()))
+				playerIsWealthy = true;
+		}
+		
+		
+		if (!playerIsWealthy) {
 			result.setConqueringStatus(ConqueringStatus.PLAYER_HAS_INSUFFICIENT_RESOURCES);
 			return result;
 		}
