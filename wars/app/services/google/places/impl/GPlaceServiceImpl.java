@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import models.GPlace;
 import models.Location;
 import models.PlaceType;
 
@@ -19,7 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import play.Logger;
-import services.google.places.api.GPlace;
 import services.google.places.api.GPlaceService;
 import services.google.places.api.GPlaceServiceException;
 import services.google.places.api.RequestURL;

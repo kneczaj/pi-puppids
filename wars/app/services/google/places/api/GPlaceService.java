@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import models.GPlace;
 import models.Location;
 import models.PlaceType;
 
