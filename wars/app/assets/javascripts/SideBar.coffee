@@ -45,7 +45,7 @@ class ArWars.SideBar
 				$.each data.undeployedUnits, (key, val) =>
 					unitName = key[0].toUpperCase() + key[1..-1].toLowerCase()
 					overallNumber = data.overallUnits[key]
-					items.push "<tr><td>#{unitName}</td><td>#{val}</td><td>#{overallNumber}</td><td><input type="text" id="#{unitName}BuildQuantity"></td></tr>"
+					items.push "<tr><td>#{unitName}</td><td>#{val}</td><td>#{overallNumber}</td><td><input class=\"input-mini\" type=\"text\" id=\"#{unitName}BuildQuantity\"></td></tr>"
 
 				$(items.join('')).appendTo '#playerUnits tbody'
 				$('#playerUnits').dataTable
