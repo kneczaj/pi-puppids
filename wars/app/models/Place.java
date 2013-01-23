@@ -17,6 +17,7 @@ public class Place {
 
 	@Id
 	private ObjectId id;
+	private String uuid;
 	private String name;
 	private Double lat;
 	private Double lng;
@@ -135,6 +136,14 @@ public class Place {
 				.add("amount", amount)
 				.add("conqueredBy", joiner.join(conqueredBy))
 				.toString();
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 }
