@@ -1,6 +1,7 @@
 package models;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -179,6 +180,19 @@ public class Player {
 	public void setTeam(Team team) {
 		this.team = team;
 		this.joinTeamDate = new Date();
+	}
+	
+	public List<Player> getTeammates() {
+		
+		LinkedList<Player> teamPlayers = new LinkedList<>();
+		
+		if (team == null)
+			return teamPlayers;
+		
+		teamPlayers.addAll(team.getPlayers());
+		teamPlayers.remove(this);
+		return teamPlayers;
+		
 	}
 	
 	public void addNotification(Notification n) {
