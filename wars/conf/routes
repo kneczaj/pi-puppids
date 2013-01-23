@@ -12,6 +12,9 @@ GET     /resource/getResourcesOfPlayer				controllers.ResourceController.getReso
 GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResourcesOfTeam()
 GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(factionId, cityId)
 
+# testing
+GET		/sendHi										controllers.TeamController.sendHi()
+
 # Player profile
 GET     /profile                    				controllers.Application.profile()
 
