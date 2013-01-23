@@ -29,11 +29,15 @@ public class ConquerController extends Controller {
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result joinConquer(String conqueringAttemptId) {
 		Player p = authenticationService.getPlayer();
-
-		JoinConquerResult joinResult = conqueringService.joinConquer(
-				conqueringAttemptId, p);
-
-		return ok(JsonHelper.toJson(joinResult));
+		
+		try {
+			JoinConquerResult joinResult = conqueringService.joinConquer(
+					conqueringAttemptId, p);
+	
+			return ok(JsonHelper.toJson(joinResult));
+		} catch (GPlaceServiceException e) {
+			return ok("error");
+		}
 	}
 
 	@SecureSocial.SecuredAction(ajaxCall = true)
