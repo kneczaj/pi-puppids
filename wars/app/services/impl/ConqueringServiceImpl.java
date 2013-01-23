@@ -26,6 +26,7 @@ import services.api.MapInfoService;
 import services.api.VictoryStrategy;
 import services.api.error.ConqueringServiceException;
 import services.google.places.api.GPlaceService;
+import services.google.places.api.GPlaceServiceException;
 import assets.constants.PlaceMappings;
 
 import com.google.common.collect.Lists;
@@ -261,7 +262,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 	}
 
 	@Override
-	public ConqueringStatus conquer(String conqueringAttemptId, Player player) {
+	public ConqueringStatus conquer(String conqueringAttemptId, Player player) throws GPlaceServiceException {
 		CheckConquerConditionsResult result = checkConquerConditions(
 				conqueringAttemptId, player);
 
@@ -291,7 +292,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			place.setConqueredBy(participants);
 			placeDAO.updateConquerors(place, participants);
 		} else {
-			GPlace gPlace = gPlaceService.getPlace(ca.getUuid());
+			GPlace gPlace = gPlaceService.details(ca.getUuid());
 			Place newPlace = new Place();
 			newPlace.setName(gPlace.getName());
 			newPlace.setLat(gPlace.getLatitude());
