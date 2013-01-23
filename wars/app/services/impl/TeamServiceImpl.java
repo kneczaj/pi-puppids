@@ -207,7 +207,7 @@ public class TeamServiceImpl implements TeamService {
 
 	@Override
 	public Team createInitialTeam(Player player){
-		Team team = new Team(player.getUsername());
+		Team team = new Team(player.getUsername() + "'s team");
 		teamDAO.save(team);
 		
 		return team;

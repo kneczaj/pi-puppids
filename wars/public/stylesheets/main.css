@@ -83,10 +83,9 @@ a:hover {
 	margin-top: 0;
 }
 
--webkit-input-placeholder { color:#f00; }
--moz-placeholder { color:#f00; } /* firefox 19+ */
-input:-moz-placeholder { color:#f00; }
-
+-webkit-input-placeholder { color: rgb(89, 89, 89); }
+-moz-placeholder { color: rgb(89, 89, 89); } /* firefox 19+ */
+input:-moz-placeholder { color: rgb(89, 89, 89); }
 
 
 tfoot {

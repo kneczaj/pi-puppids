@@ -161,22 +161,43 @@
 					</div>
 					<div id="team" class="accordion-body collapse">
 						<div class="accordion-inner">
-							<h4>@player.getTeam().getName()</h4>
+							<div id="teamInfo">
+								<h5>Team information:</h5>
+								Team name: @player.getTeam().getName()
+								<br>
+								Team master: @player.getTeam().getTeamMaster().getUsername()
+							</div>
+							<hr>
 							<div id="teamMembers">
 								<h5>Team members:</h5>
 								@for(member <- teammates) {
 									@member.getUsername()<br>
 								}
+								<br>
+								@if(player.isTeamMaster()) {
+									<form id="invitationForm" class="form-inline" action="javascript:tryInvite()">
+										<input type="text" placeholder="Email or user name" id="userToInvite">
+										<input type="submit" class="btn btn-warning" value="Invite">
+									</form>
+									<div id="error-message" class="control-group">
+									</div>
+								}
 							</div>
-							@if(player.isTeamMaster()) {
 							<hr>
-							<form id="invitationForm" class="form-inline" action="javascript:tryInvite()">
-								<input type="text" placeholder="Email or user name" id="userToInvite">
-								<input type="submit" class="btn btn-warning" value="Invite">
-							</form>
-							<div id="error-message" class="control-group">
+							<div id="teamResources">
+								<h5>Team resources:</h5>
+								<div id="resourcesTeam">
+									<ul class="inline">
+										<li><img src="@routes.Assets.at("images/resources/credits_white.png")"> <span id="tCredits">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/cultural_white.png")"> <span id="tCultural">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/food_white.png")"> <span id="tFood">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/knowledge_white.png")"> <span id="tKnowledge">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/material_white.png")"> <span id="tMaterial">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/special_white.png")"> <span id="tSpecial">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/transportation_white.png")"> <span id="tTransportation">-</span> </li>
+									</ul>		
+								</div>
 							</div>
-							}
 						</div> 
 					</div>
 				</div>
@@ -204,13 +225,13 @@
 	<div class="span8">
 		<div id="resourcesPlayer" class="well well-small">
 			<ul class="inline">
-				<li><a href="#" rel="tooltip" title="Credits" data-content="The currency in ARWars, needed to built units"> <img src="@routes.Assets.at("images/resources/credits_white.png")"> <strong id="pCredits">-</strong> (<span id="tCredits">-</span>) </a></li>
-				<li><a href="#" rel="tooltip" title="Cultural" data-content="Influences the strength of units in conquering attempts"> <img src="@routes.Assets.at("images/resources/cultural_white.png")"> <strong id="pCultural">-</strong> (<span id="tCultural">-</span>) </a></li>
-				<li><a href="#" rel="tooltip" title="Food" data-content="Limits the number of units a player can have at a given time"> <img src="@routes.Assets.at("images/resources/food_white.png")"> <strong id="pFood">-</strong> (<span id="tFood">-</span>) </a></li>
-				<li><a href="#" rel="tooltip" title="Knowledge" data-content="Influences how fast players can research new technologies"> <img src="@routes.Assets.at("images/resources/knowledge_white.png")"> <strong id="pKnowledge">-</strong> (<span id="tKnowledge">-</span>) </a></li>
-				<li><a href="#" rel="tooltip" title="Material" data-content="The basic material in ARWars, needed to built units"> <img src="@routes.Assets.at("images/resources/material_white.png")"> <strong id="pMaterial">-</strong> (<span id="tMaterial">-</span>) </a></li>
-				<li><a href="#" rel="tooltip" title="Special" data-content="Directly increases your game score"> <img src="@routes.Assets.at("images/resources/special_white.png")"> <strong id="pSpecial">-</strong> (<span id="tSpecial">-</span>) </a></li>
-				<li><a href="#" rel="tooltip" title="Transportation" data-content="Influences how fast units can be deployed to places"> <img src="@routes.Assets.at("images/resources/transportation_white.png")"> <strong id="pTransportation">-</strong> (<span id="tTransportation">-</span>) </a></li>
+				<li><a href="#" rel="tooltip" title="Credits" data-content="The currency in ARWars, needed to built units"> <img src="@routes.Assets.at("images/resources/credits_white.png")"> <span id="pCredits">-</span> </a></li>
+				<li><a href="#" rel="tooltip" title="Cultural" data-content="Influences the strength of units in conquering attempts"> <img src="@routes.Assets.at("images/resources/cultural_white.png")"> <span id="pCultural">-</span> </a></li>
+				<li><a href="#" rel="tooltip" title="Food" data-content="Limits the number of units a player can have at a given time"> <img src="@routes.Assets.at("images/resources/food_white.png")"> <span id="pFood">-</span> </a></li>
+				<li><a href="#" rel="tooltip" title="Knowledge" data-content="Influences how fast players can research new technologies"> <img src="@routes.Assets.at("images/resources/knowledge_white.png")"> <span id="pKnowledge">-</span> </a></li>
+				<li><a href="#" rel="tooltip" title="Material" data-content="The basic material in ARWars, needed to built units"> <img src="@routes.Assets.at("images/resources/material_white.png")"> <span id="pMaterial">-</span> </a></li>
+				<li><a href="#" rel="tooltip" title="Special" data-content="Directly increases your game score"> <img src="@routes.Assets.at("images/resources/special_white.png")"> <span id="pSpecial">-</span> </a></li>
+				<li><a href="#" rel="tooltip" title="Transportation" data-content="Influences how fast units can be deployed to places"> <img src="@routes.Assets.at("images/resources/transportation_white.png")"> <span id="pTransportation">-</span> </a></li>
 			</ul>		
 		</div>
 		<div id="map_container_desktop" class="hidden-phone"></div>
