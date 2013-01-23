@@ -2,32 +2,40 @@ package models;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
+import com.google.code.morphia.annotations.Entity;
+import com.google.code.morphia.annotations.Id;
+
 /**
  * All information of a place coming from the Google Places API should be
  * reflected here.
  * 
  * @author markus
  */
+@Entity("gplaces")
 public class GPlace {
 
+	
+	@Id
+	private ObjectId id;
+	public ObjectId getId() {
+		return id;
+	}
+
+	public void setId(ObjectId id) {
+		this.id = id;
+	}
+
 	private Double latitude;
-
 	private Double longitude;
-
 	private String icon;
-
 	private String uuid;
-
 	private String name;
-
 	private Float rating;
-
 	private String reference;
-
 	private List<String> types;
-
 	private String vicinity;
-
 	private String address;
 
 	public Double getLatitude() {
