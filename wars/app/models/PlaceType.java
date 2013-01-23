@@ -96,5 +96,4 @@ public enum PlaceType {
 	university,
 	veterinary_care,
 	zoo
-
 }

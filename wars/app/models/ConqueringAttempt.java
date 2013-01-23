@@ -15,7 +15,7 @@ public class ConqueringAttempt {
 	
 	private Player initiator;
 	
-	private Place place;
+	private String uuid;
 	
 	private Date startDate;
 	
@@ -39,14 +39,6 @@ public class ConqueringAttempt {
 
 	public void setInitiator(Player initiator) {
 		this.initiator = initiator;
-	}
-
-	public Place getPlace() {
-		return place;
-	}
-
-	public void setPlace(Place place) {
-		this.place = place;
 	}
 
 	public Date getStartDate() {
@@ -79,6 +71,14 @@ public class ConqueringAttempt {
 
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 }

@@ -56,4 +56,12 @@ public interface GPlaceService {
 	public ArrayList<GPlace> search(String keyword, Location location,
 			int radius) throws GPlaceServiceException;
 	
+	/**
+	 * Fetch a place from google maps by its uuid
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public GPlace getPlace(String uuid);
+	
 }
