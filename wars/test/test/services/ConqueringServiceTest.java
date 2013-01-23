@@ -136,13 +136,13 @@ public class ConqueringServiceTest {
 
 		Set<Player> allowedParticipants = conqueringService
 				.getTeamMembersNearby(player1,
-						munichsCenter);
+						munichsCenter.getUuid());
 		Assert.assertNotNull(allowedParticipants);
 		Assert.assertEquals(2, allowedParticipants.size());
 
 		allowedParticipants = conqueringService
 				.getTeamMembersNearby(player3,
-						munichsCenter);
+						munichsCenter.getUuid());
 		Assert.assertNotNull(allowedParticipants);
 		Assert.assertEquals(1, allowedParticipants.size());
 	}
