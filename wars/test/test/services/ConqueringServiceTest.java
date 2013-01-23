@@ -5,8 +5,8 @@ import java.util.Set;
 
 import models.City;
 import models.Faction;
+import models.GPlace;
 import models.Location;
-import models.Place;
 import models.Player;
 
 import org.junit.After;
@@ -22,7 +22,7 @@ import services.api.error.LocationTrackingServiceException;
 import services.api.error.PlayerServiceException;
 import services.google.places.api.GPlaceServiceException;
 import test.util.InjectorHelper;
-import test.util.SampleLocations;
+import test.util.SamplePlaces;
 
 import com.google.inject.Injector;
 
@@ -118,15 +118,13 @@ public class ConqueringServiceTest {
 	@Test
 	public void getTeamMembersNearbyTest()
 			throws LocationTrackingServiceException {
-		Location munich = SampleLocations.MUNICH;
-		Place munichsCenter = new Place();
-		munichsCenter.setLat(munich.getLatitude());
-		munichsCenter.setLng(munich.getLongitude());
+		
+		GPlace townHall = SamplePlaces.newTownHall;
 
 		// check in all the three players near the center of munich
 		Location location = new Location();
-		location.setLatitude(munich.getLatitude() - 0.00001);
-		location.setLongitude(munich.getLongitude() - 0.00001);
+		location.setLatitude(townHall.getLatitude() - 0.00001);
+		location.setLongitude(townHall.getLongitude() - 0.00001);
 
 		locationTrackingService.updatePlayerLocation(player1, location,
 				new Date(), 5, 0);
@@ -139,7 +137,7 @@ public class ConqueringServiceTest {
 		try {
 			allowedParticipants = conqueringService
 					.getTeamMembersNearby(player1,
-							munichsCenter.getUuid());
+							townHall.getReference());
 			Assert.assertNotNull(allowedParticipants);
 			Assert.assertEquals(2, allowedParticipants.size());
 		} catch (GPlaceServiceException e) {
@@ -150,7 +148,7 @@ public class ConqueringServiceTest {
 		try {
 			allowedParticipants = conqueringService
 					.getTeamMembersNearby(player3,
-							munichsCenter.getUuid());
+							townHall.getReference());
 			Assert.assertNotNull(allowedParticipants);
 			Assert.assertEquals(1, allowedParticipants.size());
 		} catch (GPlaceServiceException e) {
