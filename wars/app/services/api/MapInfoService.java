@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import services.google.places.api.GPlaceServiceException;
+
 import models.Location;
 import models.Place;
 import models.Player;
@@ -25,15 +27,15 @@ public interface MapInfoService extends Service {
 	 * 
 	 * @param team
 	 *            the team whose members are considered during the search
-	 * @param uuid
-	 *            the uuid of the google maps place around which to search
+	 * @param reference
+	 *            the reference of the google maps place around which to search
 	 * @param searchRadius
 	 *            a radius (in meters) around the place where team members are
 	 *            considered as being nearby
 	 * @return a list of team members near a place
 	 */
-	public List<Player> findTeamMembersNearby(Team team, String uuid,
-			Integer searchRadius);
+	public List<Player> findTeamMembersNearby(Team team, String reference,
+			Integer searchRadius) throws GPlaceServiceException;
 
 	/**
 	 * Find players nearby a location.

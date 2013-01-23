@@ -33,11 +33,13 @@ public interface ConqueringService {
 	 * 
 	 * @param player
 	 *            the player which initiates the conquering attempt
-	 * @param place
-	 *            the place to conquer
+	 * @param uuid
+	 * 			  the uuid of the place to conquer (from google maps)
+	 * @param reference
+	 * 			  the reference of the place to conquer (from google maps)
 	 * @return
 	 */
-	public InitiateConquerResult initiateConquer(Player player, String uuid);
+	public InitiateConquerResult initiateConquer(Player player, String uuid, String reference) throws GPlaceServiceException;
 
 	public void sendOutInvitations(String conqueringAttemptId)
 			throws ConqueringServiceException;
@@ -52,7 +54,7 @@ public interface ConqueringService {
 	 * @return
 	 */
 	public JoinConquerResult joinConquer(String conqueringAttemptId,
-			Player player);
+			Player player) throws GPlaceServiceException;
 
 	/**
 	 * Cancels an Conquering-Attempt
@@ -83,7 +85,7 @@ public interface ConqueringService {
 	 * @param place
 	 * @return
 	 */
-	public Set<Player> getTeamMembersNearby(Player player, String uuid);
+	public Set<Player> getTeamMembersNearby(Player player, String uuid) throws GPlaceServiceException;
 
 	/**
 	 * Filter out the players that are not allowed to take part into a
@@ -97,10 +99,10 @@ public interface ConqueringService {
 	 *            a list of players that are nearby the place
 	 * @return
 	 */
-	public Set<Player> getTeamMembersWithSufficientResources(String uuid,
-			Set<Player> players);
+	public Set<Player> getTeamMembersWithSufficientResources(String uuid, String reference,
+			Set<Player> players) throws GPlaceServiceException;
 
-	CheckConquerConditionsResult checkConquerConditions(
-			String conqueringAttemptId, Player player);
+	public CheckConquerConditionsResult checkConquerConditions(
+			String conqueringAttemptId, Player player) throws GPlaceServiceException;
 
 }
