@@ -10,7 +10,7 @@ class ArWars.SideBar
 			items = []
 
 			if $.isEmptyObject(data)
-				$('#resourceSources').append "<p>Currently there are no sources for resources available</p>"
+				$('#resourceSources').append "<p>Currently there are no conquered places available</p>"
 			else
 				$.each data.resourceSources, (key, val) =>
 					@places[key] = val 
@@ -34,6 +34,32 @@ class ArWars.SideBar
 
 				$("#resourceSources a[name='jumpToPlace']").bind 'click', (event) =>
 						@jumpToPlace $(event.srcElement).attr("placeId")
+						
+	loadUnitsOfPlayer: () ->
+		$.getJSON '/unit/getUnitsOfPlayer', (data) =>
+			items = []
+
+			if $.isEmptyObject(data)
+				$('#playerUnits').append "<p>Currently there are no units available</p>"
+			else
+				$.each data.undeployedUnits, (key, val) =>
+					unitName = key[0].toUpperCase() + key[1..-1].toLowerCase()
+					overallNumber = data.overallUnits[key]
+					items.push "<tr><td>#{unitName}</td><td>#{val}</td><td>#{overallNumber}</td><td><input class=\"input-mini\" type=\"text\" id=\"#{unitName}BuildQuantity\"></td></tr>"
+
+				$(items.join('')).appendTo '#playerUnits tbody'
+				$('#playerUnits').dataTable
+					sDom: "<'row'<'span2'l><'span8'f>r>t<'row'<'span6'i><'span6'p>>"
+					sPaginationType: "bootstrap"
+					oLanguage:
+						sLengthMenu: "_MENU_ records per page"
+					 
+					bPaginate: false
+					bLengthChange: false
+					bFilter: false
+					bSort: true
+					bInfo: false
+					bAutoWidth: false
 	
 	jumpToPlace: (placeId) ->
 		place = @places[placeId]

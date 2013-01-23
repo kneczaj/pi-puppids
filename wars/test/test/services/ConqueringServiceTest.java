@@ -20,6 +20,7 @@ import services.api.LocationTrackingService;
 import services.api.PlayerService;
 import services.api.error.LocationTrackingServiceException;
 import services.api.error.PlayerServiceException;
+import services.google.places.api.GPlaceServiceException;
 import test.util.InjectorHelper;
 import test.util.SampleLocations;
 
@@ -134,17 +135,30 @@ public class ConqueringServiceTest {
 		locationTrackingService.updatePlayerLocation(player3, location,
 				new Date(), 5, 0);
 
-		Set<Player> allowedParticipants = conqueringService
-				.getTeamMembersNearby(player1,
-						munichsCenter.getUuid());
-		Assert.assertNotNull(allowedParticipants);
-		Assert.assertEquals(2, allowedParticipants.size());
+		Set<Player> allowedParticipants; 
+		try {
+			allowedParticipants = conqueringService
+					.getTeamMembersNearby(player1,
+							munichsCenter.getUuid());
+			Assert.assertNotNull(allowedParticipants);
+			Assert.assertEquals(2, allowedParticipants.size());
+		} catch (GPlaceServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		allowedParticipants = conqueringService
-				.getTeamMembersNearby(player3,
-						munichsCenter.getUuid());
-		Assert.assertNotNull(allowedParticipants);
-		Assert.assertEquals(1, allowedParticipants.size());
+		try {
+			allowedParticipants = conqueringService
+					.getTeamMembersNearby(player3,
+							munichsCenter.getUuid());
+			Assert.assertNotNull(allowedParticipants);
+			Assert.assertEquals(1, allowedParticipants.size());
+		} catch (GPlaceServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	@After

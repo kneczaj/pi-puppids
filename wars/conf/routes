@@ -10,7 +10,13 @@ GET     /mapinfo/playersNearby						controllers.MapInfoController.playersNearby(
 GET     /resource/getResourceSourcesOfPlayer		controllers.ResourceController.getResourceSourcesOfPlayer()
 GET     /resource/getResourcesOfPlayer				controllers.ResourceController.getResourcesOfPlayer()
 GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResourcesOfTeam()
+GET     /unit/getUnitsOfPlayer						controllers.UnitController.getUnitsOfPlayer()
 GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(factionId, cityId)
+
+# ConquerController
+GET		/conquer/joinConquer						controllers.ConquerController.joinConquer(conqueringAttemptId)
+GET		/conquer/cancelConquer						controllers.ConquerController.cancelConquer(conqueringAttemptId)
+GET		/conquer/conquer							controllers.ConquerController.conquer(conqueringAttemptId)
 
 # testing
 GET		/sendHi										controllers.TeamController.sendHi()

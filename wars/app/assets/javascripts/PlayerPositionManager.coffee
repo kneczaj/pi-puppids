@@ -145,10 +145,33 @@ class ArWars.PlayerPositionManager
 		
 		marker = new google.maps.Marker markerOpts
 		@placeMarkers[place.id] = marker
-	
+
+		data = 
+		    id: place.id
+		    reference: place.reference
+
 		google.maps.event.addListener marker, "click", =>
-		  @infowindow.setContent place.name + "<br/>" + place.vicinity + "<br/>Type: " + place.types[0] + "<br/>Resource: <img src=\"" + marker.icon + "\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\">Conquer</button>"
-		  @infowindow.open @map, marker
+			@infowindow.setContent place.name + "<br/>" + place.vicinity + "<br/>Type: " + place.types[0] + "<br/>Resource: <img src=\"" + marker.icon + "\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
+			@infowindow.open @map, marker
+			$("button[placeId=" + place.id + "]").click () =>
+
+			  	$.getJSON '/conquer/initiateConquer', data, (responseData) =>
+					switch @responseData 
+						when "SUCCESSFUL"
+							$.pnotify
+				    			title: 'Started conquering attempt'
+				    			text: 'Conquering attempt was successfuly launched. Other team members that are nearby were notified to join.'
+				    			type: 'success'
+
+						when "PLAYER_NOT_NEARBY"
+							$.pnotify
+				    			text: 'You are to far away from the place you want to conquer!'
+				    			type: 'error'
+
+						when "PLACE_ALREADY_BELONGS_TO_FACTION"
+							$.pnotify
+				    			text: 'The place already belongs to your faction!'
+				    			type: 'error'
 
 	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>
