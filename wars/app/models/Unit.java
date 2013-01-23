@@ -2,18 +2,13 @@ package models;
 
 import java.util.Map;
 
-import org.bson.types.ObjectId;
-
 import com.google.code.morphia.annotations.Entity;
-import com.google.code.morphia.annotations.Id;
 import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
 
 @Entity("units")
-public class Unit {
+public class Unit extends BaseModel {
 
-	@Id
-	private ObjectId id;
 	private UnitType type;
 	private String name;
 	private Integer minStrength;
@@ -26,14 +21,6 @@ public class Unit {
 	
 	@Reference 
 	private Player player;
-
-	public ObjectId getId() {
-		return id;
-	}
-
-	public void setId(ObjectId id) {
-		this.id = id;
-	}
 
 	public UnitType getType() {
 		return type;
@@ -102,7 +89,7 @@ public class Unit {
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this.getClass())
-				.add("id", id)
+				.add("id", getId())
 				.add("name", name)
 				.add("chanceOfFailure", chanceOfFailure)
 				.add("player", player)

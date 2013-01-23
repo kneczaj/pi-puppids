@@ -19,6 +19,8 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import models.notifications.Notification;
+
 @Entity("players")
 public class Player {
 
@@ -50,6 +52,9 @@ public class Player {
 	
 	@Reference
 	private List<Unit> units = Lists.newLinkedList();
+	
+	@Reference
+	private List<Notification> notifications = Lists.newLinkedList();
 	
 	public Date getJoinTeamDate() {
 		return joinTeamDate;
@@ -174,6 +179,14 @@ public class Player {
 	public void setTeam(Team team) {
 		this.team = team;
 		this.joinTeamDate = new Date();
+	}
+	
+	public void addNotification(Notification n) {
+		notifications.add(n);
+	}
+	
+	public List<Notification> getNotificationsList() {
+		return notifications;
 	}
 	
 	

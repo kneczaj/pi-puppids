@@ -1,22 +1,30 @@
 package communication.messages;
 
-import java.util.List;
+//import java.util.List;
 
 import models.ConqueringAttempt;
 import models.Place;
 import models.Player;
+import models.notifications.Notification;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-import play.libs.Json;
+//import play.libs.Json;
 
-public class ConqueringInvitationMessage {
+public class ConqueringInvitationMessage extends Notification {
+	
+public int numberOfConquerors;
+	
+//	public ConqueringInvitationMessage() {
+//		super();
+//		payload = Payload.ConqeringInvitation;
+//	}
 	
 	public ConqueringAttempt conqueringAttempt;
-	public List<Player> playersToInvite;
+//	public List<Player> playersToInvite;
 	
 	public ObjectNode toJson() {
-		ObjectNode invitation = Json.newObject();
+		ObjectNode invitation = super.toJson();
 		
 		Player initiator = conqueringAttempt.getInitiator();
 		Place place = conqueringAttempt.getPlace();
@@ -31,6 +39,10 @@ public class ConqueringInvitationMessage {
 		invitation.put("placeLng", place.getLng());
 		
 		return invitation;
+	}
+	
+	public String getMessage() {
+		return "You are invited to conquer " + conqueringAttempt.getPlace() + "\n";
 	}
 	
 }
