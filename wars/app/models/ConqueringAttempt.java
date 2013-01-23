@@ -17,6 +17,8 @@ public class ConqueringAttempt {
 	
 	private String uuid;
 	
+	private String reference;
+	
 	private Date startDate;
 	
 	private Date endDate;
@@ -79,6 +81,14 @@ public class ConqueringAttempt {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 	
 }

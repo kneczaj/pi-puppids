@@ -13,6 +13,7 @@ import models.PlayerLocation;
 import models.Team;
 import services.api.MapInfoService;
 import services.google.places.api.GPlaceService;
+import services.google.places.api.GPlaceServiceException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,8 +42,8 @@ public class MapInfoServiceImpl implements MapInfoService {
 	private GPlaceService gPlaceService;
 	
 	@Override
-	public List<Player> findTeamMembersNearby(Team team, String uuid, Integer searchRadius) {
-		GPlace place = gPlaceDAO.findOne("uuid", uuid);
+	public List<Player> findTeamMembersNearby(Team team, String reference, Integer searchRadius) throws GPlaceServiceException {
+		GPlace place = gPlaceService.details(reference);
 		Location location =  new Location(place.getLongitude(), place.getLatitude());
 		
 		Calendar calendar = Calendar.getInstance();
