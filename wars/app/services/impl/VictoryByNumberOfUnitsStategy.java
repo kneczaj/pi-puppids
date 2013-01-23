@@ -4,9 +4,10 @@ import java.util.List;
 
 import models.Player;
 import models.Unit;
+import services.api.UnitService;
 import services.api.VictoryStrategy;
 
-import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 /**
  * A simple implementation of a Victory Strategy. Just compares the number of
@@ -16,22 +17,20 @@ import com.google.common.collect.Lists;
  */
 public class VictoryByNumberOfUnitsStategy implements VictoryStrategy {
 
+	@Inject
+	private UnitService unitService;
+	
 	@Override
 	public boolean doAttackersWin(List<Player> attackers,
 			List<Unit> defendingUnits) {
-
-		List<Unit> undeployedUnits = Lists.newArrayList();
-
+		
+		int undeployedUnits = 0; 
+				
 		for (Player p : attackers) {
-			List<Unit> pUnits = p.getUnits();
-			for (Unit u : pUnits) {
-				if (u.getDeployedAt() == null) {
-					undeployedUnits.add(u);
-				}
-			}
+			undeployedUnits += unitService.getNumberOfUndeployedUnits(p);
 		}
 
-		if (undeployedUnits.size() > defendingUnits.size()) {
+		if (undeployedUnits > defendingUnits.size()) {
 			return true;
 		} else {
 			return false;
