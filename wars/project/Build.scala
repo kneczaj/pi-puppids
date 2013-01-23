@@ -15,7 +15,8 @@ object ApplicationBuild extends Build {
             "com.typesafe" % "play-plugins-guice" % "2.0.3", 
             "com.google.code.gson" % "gson" % "2.2.2", 
             "securesocial" % "securesocial_2.9.1" % "2.0.7", 
-            "com.typesafe" %% "play-plugins-mailer" % "2.0.4"
+            "com.typesafe" %% "play-plugins-mailer" % "2.0.4", 
+            "org.apache.commons" % "commons-math" % "2.2"
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(   
