@@ -28,6 +28,7 @@ import communication.messages.ConqueringInvitationMessage;
 import communication.messages.ParticipantJoinedConquerMessage;
 import communication.messages.PlayerLocationChangedMessage;
 import communication.messages.RegistrationMessage;
+import communication.messages.SimpleNotificationMessage;
 import communication.messages.UnregistrationMessage;
 
 /**
@@ -62,6 +63,18 @@ public class ClientPushActor extends UntypedActor {
 //	public static void sendNotification(Notification notification) {
 //		
 //	}
+	
+	/*
+	 * Sends "Hi!" message to the teammates
+	 * for testing purposes
+	 */
+	public static void sendHi(Player player) {
+		SimpleNotificationMessage testNotification = new SimpleNotificationMessage();
+		testNotification.setMessageContent("Hi!");
+		testNotification.setPlayers(player.getTeammates());
+		
+		actor.tell(testNotification);
+	}
 	
 	public static void sendConqueringInvitation(ConqueringAttempt ca,
 			List<Player> onlinePlayersOfTeam) {
