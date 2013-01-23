@@ -22,6 +22,8 @@ import akka.actor.UntypedActor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
+
 import communication.messages.ConquerPossibleMessage;
 import communication.messages.ConqueringInvitationMessage;
 import communication.messages.ParticipantJoinedConquerMessage;
@@ -38,6 +40,7 @@ import communication.messages.UnregistrationMessage;
  */
 public class ClientPushActor extends UntypedActor {
 	
+	@Inject
 	private static NotificationService notificationService;
 
 	/**
@@ -166,10 +169,8 @@ public class ClientPushActor extends UntypedActor {
 			Logger.info("Sending invitations to (" + ci.getPlayers().size() + " players): " + json.toString());
 			
 			// Push out the invitation
-			for (Player invitedPlayer : ci.getPlayers()) {
-				String playerId = invitedPlayer.getId().toString();
-				registered.get(playerId).write(json);
-			}
+			sendToPlayers(json, ci.getPlayers());
+			
 		} else if (message instanceof ParticipantJoinedConquerMessage) {
 			ParticipantJoinedConquerMessage m = (ParticipantJoinedConquerMessage) message;
 			ObjectNode json = m.toJson();
@@ -178,32 +179,28 @@ public class ClientPushActor extends UntypedActor {
 			Player initiator = ca.getInitiator();
 			
 			String initiatorName = initiator.getUsername();
-			String initiatorId = initiator.getId().toString();
 			String joiner = m.participant.getUsername();
 			
 			Logger.info(joiner + " joined " + initiatorName + "'s conquering attempt for " + ca.getUuid());
 			Logger.info("informing the conquer initiator with a message: " + json.toString());
 			
-			registered.get(initiatorId).write(json);
+			sendToPlayer(json, initiator);
+			
 		} else if (message instanceof ConquerPossibleMessage) {
 			ConquerPossibleMessage m = (ConquerPossibleMessage) message;
 			ObjectNode json = m.toJson();
 			
 			Player initiator = m.conqueringAttempt.getInitiator();
-			String initiatorId = initiator.getId().toString();
 			
 			Logger.info("conquer is no possible " + json.toString());
-			registered.get(initiatorId).write(json);
+			sendToPlayer(json, initiator);
 			
 		} else if (message instanceof Notification) {
 			
 			Notification notification = (Notification) message;
 			ObjectNode json = notification.toJson();
 			
-			for (Player recipient : notification.getPlayers()) {
-				String playerId = recipient.getId().toString();
-				registered.get(playerId).write(json);
-			}
+			sendToPlayers(json, notification.getPlayers());
 			
 		} else {
 			unhandled(message);
@@ -211,7 +208,6 @@ public class ClientPushActor extends UntypedActor {
 		
 		if (message instanceof Notification) {
 			Notification notification = (Notification) message;
-//			notificationService.pushOutNotifications(notification);
 			if (notification.isSent())
 				notificationService.saveNotifications(notification);
 			else
@@ -219,5 +215,18 @@ public class ClientPushActor extends UntypedActor {
 						"toJson() should retrive the initial message from Notification class");
 		}
 	}
-
+	
+	private void sendToPlayer(ObjectNode json, Player recipient) {
+		String playerId = recipient.getId().toString();
+		WebSocket.Out<JsonNode> webSocket = registered.get(playerId);
+		if (webSocket != null)
+			webSocket.write(json);
+	}
+	
+	private void sendToPlayers(ObjectNode json, List<Player> playerList) {
+		
+		for (Player recipient : playerList) {
+			sendToPlayer(json, recipient);
+		}
+	}
 }
