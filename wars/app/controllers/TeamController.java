@@ -16,6 +16,7 @@ import services.api.error.TeamServiceException;
 import views.html.message;
 
 import com.google.inject.Inject;
+import communication.ClientPushActor;
 
 import daos.InvitationDAO;
 import daos.PlayerDAO;
@@ -70,6 +71,13 @@ public class TeamController extends Controller {
 			
 			return ok("error");
 		}
+	}
+	
+	@SecureSocial.SecuredAction(ajaxCall = true)
+	public static Result sendHi() {
+		Player player = authenticationService.getPlayer();
+		ClientPushActor.sendHi(player);
+		return ok("ok");
 	}
 	
 	@SecureSocial.SecuredAction
