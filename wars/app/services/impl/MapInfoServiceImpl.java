@@ -5,17 +5,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import models.GPlace;
 import models.Location;
 import models.Place;
 import models.Player;
 import models.PlayerLocation;
 import models.Team;
 import services.api.MapInfoService;
+import services.google.places.api.GPlaceService;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import daos.GPlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
 
@@ -26,15 +29,22 @@ import daos.PlayerLocationDAO;
  */
 public class MapInfoServiceImpl implements MapInfoService {
 
+	@Inject GPlaceDAO gPlaceDAO;
+	
 	@Inject
 	private PlayerDAO playerDAO;
 	
 	@Inject
 	private PlayerLocationDAO playerLocationDAO;
 	
+	@Inject
+	private GPlaceService gPlaceService;
+	
 	@Override
-	public List<Player> findTeamMembersNearby(Team team, Place place, Integer searchRadius) {
-		Location location =  new Location(place.getLng(), place.getLat());
+	public List<Player> findTeamMembersNearby(Team team, String uuid, Integer searchRadius) {
+		GPlace place = gPlaceDAO.findOne("uuid", uuid);
+		Location location =  new Location(place.getLongitude(), place.getLatitude());
+		
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MINUTE, -15);
 		Date youngerThan = calendar.getTime();

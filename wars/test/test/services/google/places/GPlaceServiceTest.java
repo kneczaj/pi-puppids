@@ -3,6 +3,7 @@ package test.services.google.places;
 import java.util.List;
 import java.util.Map;
 
+import models.GPlace;
 import models.Location;
 import models.PlaceType;
 
@@ -10,7 +11,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import services.google.places.api.GPlace;
 import services.google.places.api.GPlaceService;
 import services.google.places.api.GPlaceServiceException;
 import test.util.InjectorHelper;

@@ -25,14 +25,14 @@ public interface MapInfoService extends Service {
 	 * 
 	 * @param team
 	 *            the team whose members are considered during the search
-	 * @param place
-	 *            the place where to search
+	 * @param uuid
+	 *            the uuid of the google maps place around which to search
 	 * @param searchRadius
 	 *            a radius (in meters) around the place where team members are
 	 *            considered as being nearby
 	 * @return a list of team members near a place
 	 */
-	public List<Player> findTeamMembersNearby(Team team, Place place,
+	public List<Player> findTeamMembersNearby(Team team, String uuid,
 			Integer searchRadius);
 
 	/**

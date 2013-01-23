@@ -54,16 +54,16 @@ public class ConqueringServiceImpl implements ConqueringService {
 	private VictoryStrategy victoryStrategy;
 
 	@Override
-	public Set<Player> getTeamMembersNearby(Player player, Place place) {
+	public Set<Player> getTeamMembersNearby(Player player, String uuid) {
 		Set<Player> teamMembersNearby = new HashSet<Player>(
-				mapInfoService.findTeamMembersNearby(player.getTeam(), place,
+				mapInfoService.findTeamMembersNearby(player.getTeam(), uuid,
 						100));
 
 		return teamMembersNearby;
 	}
 
 	@Override
-	public Set<Player> getTeamMembersWithSufficientResources(Place place,
+	public Set<Player> getTeamMembersWithSufficientResources(String uuid,
 			Set<Player> players) {
 
 		if (players.isEmpty()) {
@@ -72,6 +72,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 		Set<Player> filteredList = Sets.newHashSet();
 		HashSet<String> ignoreList = Sets.newHashSet();
+		Place place = placeDAO.findOne("uuid", uuid);
 
 		for (Entry<ResourceType, Integer> resourceDemand : place
 				.getResourceDemand().entrySet()) {
@@ -97,7 +98,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 			// number of players that are allowed to participate decreased => so
 			// the rest of the team has to carry their share
-			return getTeamMembersWithSufficientResources(place, filteredList);
+			return getTeamMembersWithSufficientResources(uuid, filteredList);
 		}
 	}
 
@@ -198,7 +199,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 		}
 
 		Place place = ca.getPlace();
-		Set<Player> teamMembersNearby = getTeamMembersNearby(player, place);
+		Set<Player> teamMembersNearby = getTeamMembersNearby(player, place.getUuid());
 		CheckConquerConditionsResult result = new CheckConquerConditionsResult(
 				ca);
 
@@ -209,7 +210,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 		// Check if team members are wealthy enough
 		Set<Player> wealthyMembersNearby = getTeamMembersWithSufficientResources(
-				place, teamMembersNearby);
+				place.getUuid(), teamMembersNearby);
 		result.setParticipants(Lists.newArrayList(wealthyMembersNearby));
 
 		if (!wealthyMembersNearby.contains(player)) {
@@ -279,13 +280,15 @@ public class ConqueringServiceImpl implements ConqueringService {
 	}
 
 	@Override
-	public InitiateConquerResult initiateConquer(Player player, Place place) {
-		if (player == null || place == null) {
+	public InitiateConquerResult initiateConquer(Player player, String uuid) {
+		if (player == null || uuid == null) {
 			throw new NullPointerException("Player and place must not be null");
 		}
 
 		// check if place belongs already to the faction of the player
-		if (place.getConqueredBy().size() > 0) {
+		Place place = placeDAO.findOne("uuid", uuid);
+		
+		if (place != null && place.getConqueredBy().size() > 0) {
 			Faction factionOfPlayer = player.getTeam().getFaction();
 			Player conqueror = place.getConqueredBy().get(0);
 			Faction factionOfPlace = conqueror.getTeam().getFaction();
@@ -296,7 +299,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			}
 		}
 
-		Set<Player> membersNearby = getTeamMembersNearby(player, place);
+		Set<Player> membersNearby = getTeamMembersNearby(player, uuid);
 		if (!membersNearby.contains(player)) {
 			return new InitiateConquerResult(
 					InitiateConquerResult.Type.PLAYER_NOT_NEARBY);

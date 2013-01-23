@@ -158,9 +158,19 @@ class ArWars.PlayerPositionManager
 		if not coords.latitude?
 			return
 
-		@loadPlacesNearby coords.latitude, coords.longitude
-		@loadPlayersNearby coords.latitude, coords.longitude
+		if coords.accuracy >= @MAX_UNCERTAINTY
+			player = @players[window.ArWars.playerId]
+			latitude = player.team.lat
+			longitude = player.team.lng
 
+			@loadPlacesNearby latitude, longitude
+			@loadPlayersNearby latitude, longitude
+			return
+
+		else 
+			@loadPlacesNearby coords.latitude, coords.longitude
+			@loadPlayersNearby coords.latitude, coords.longitude
+		
 		currentDate = new Date
 		currentTimestamp = currentDate.getTime()
 		timestamp = location.timestamp
@@ -200,6 +210,21 @@ class ArWars.PlayerPositionManager
 	push2Map: (pId, latitude, longitude, uncertainty) ->
 		if not pId? then return
 		log "playerId: #{pId}, lat: #{latitude}, lng: #{longitude}, uncertainty: #{uncertainty}"
+
+		if uncertainty >= @MAX_UNCERTAINTY and pId is window.ArWars.playerId
+			# was there a notification in the last 30 seconds? then don't show it again
+			if @lastUnprecisePositionNotification?
+				timeDifference = new Date()-@lastUnprecisePositionNotification
+				if (timeDifference)/1000 <= 30
+					return
+
+			@lastUnprecisePositionNotification = new Date()
+			$.pnotify
+			    title: 'Unprecise location'
+			    text: 'The precision of your location could not be determined in a precise manner. You could try to activate GPS or go outside.'
+			    type: 'error'
+	
+			return
 
 		# Add Marker for the player
 		if @playerMarkers[pId]
@@ -242,21 +267,6 @@ class ArWars.PlayerPositionManager
 		# Add circle around marker
 		if @circles[pId]
 			@circles[pId].setMap null
-
-		if uncertainty >= @MAX_UNCERTAINTY and pId is window.ArWars.playerId
-			# was there a notification in the last 30 seconds? then don't show it again
-			if @lastUnprecisePositionNotification?
-				timeDifference = new Date()-@lastUnprecisePositionNotification
-				if (timeDifference)/1000 <= 30
-					return
-
-			@lastUnprecisePositionNotification = new Date()
-			$.pnotify
-			    title: 'Unprecise location'
-			    text: 'The precision of your location could not be determined in a precise manner. You could try to activate GPS or go outside.'
-			    type: 'error'
-	
-			return
 
 		currentOpts = {}
 		for key of ArWars.PlayerPositionManager.circleOpts
