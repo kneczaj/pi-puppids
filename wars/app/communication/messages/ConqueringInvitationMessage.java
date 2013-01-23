@@ -38,7 +38,7 @@ public int numberOfConquerors;
 	}
 	
 	public String getMessage() {
-		return "You are invited to conquer " + conqueringAttempt.getPlace() + "\n";
+		return "You are invited to conquer ";// + conqueringAttempt.getPlace() + "\n";
 	}
 	
 }
