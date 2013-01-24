@@ -292,8 +292,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			return status;
 		}
 
-		ConqueringAttempt ca = conqueringAttemptDAO.findOne("id",
-				conqueringAttemptId);
+		ConqueringAttempt ca = conqueringAttemptDAO.get(new ObjectId(conqueringAttemptId));
 
 		Place place = placeDAO.findOne("uuid", ca.getUuid());
 		List<Player> participants = result.getParticipants();

@@ -1,9 +1,12 @@
 package controllers;
 
+import models.CheckConquerConditionsResult;
 import models.ConqueringAttempt;
 import models.InitiateConquerResult;
 import models.Player;
-import play.Logger;
+
+import org.codehaus.jackson.node.ObjectNode;
+
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
@@ -29,37 +32,45 @@ public class ConquerController extends Controller {
 
 	@Inject
 	private static ConqueringService conqueringService;
-	
+
 	@Inject
 	private static NotificationService notificationService;
-	
+
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result initiateConquer(String uuid, String reference) {
 		Player p = authenticationService.getPlayer();
-		
+
 		try {
-			InitiateConquerResult result = conqueringService.initiateConquer(p, uuid, reference);
+			InitiateConquerResult result = conqueringService.initiateConquer(p,
+					uuid, reference);
+			ObjectNode json = result.toJson();
 			
 			ConqueringAttempt ca = result.getConqueringAttempt();
-			
-			if (result.getType().equals(InitiateConquerResult.Type.SUCCESSFUL) && ca != null) {
+
+			if (result.getType().equals(InitiateConquerResult.Type.SUCCESSFUL)
+					&& ca != null) {
 				conqueringService.sendOutInvitations(ca.getId().toString());
+
+				CheckConquerConditionsResult ccc = conqueringService
+						.checkConquerConditions(ca.getId().toString(), p);
+				
+				json.put("conqueringStatus", ccc.getConqueringStatus().toString());
 			}
-			Logger.info(result.toJson().toString());
-			return ok(result.toJson().toString());
+			
+			return ok(json.toString());
 		} catch (GPlaceServiceException e) {
 			return ok("error");
 		}
-	}	
+	}
 
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result joinConquer(String conqueringAttemptId) {
 		Player p = authenticationService.getPlayer();
-		
+
 		try {
 			JoinConquerResult joinResult = conqueringService.joinConquer(
 					conqueringAttemptId, p);
-	
+
 			return ok(JsonHelper.toJson(joinResult));
 		} catch (GPlaceServiceException e) {
 			return ok("error");
@@ -83,8 +94,9 @@ public class ConquerController extends Controller {
 		try {
 			ConqueringStatus conqueringResult = conqueringService.conquer(
 					conqueringAttemptId, p);
-			
-			// TODO: send info about the result of the battle to all participants
+
+			// TODO: send info about the result of the battle to all
+			// participants
 			return ok(JsonHelper.toJson(conqueringResult));
 		} catch (GPlaceServiceException e) {
 			return ok("error");
