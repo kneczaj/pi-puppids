@@ -50,6 +50,7 @@ public class GPlaceServiceImpl implements GPlaceService {
 			JSONObject result = jsonObj.getJSONObject("result");
 
 			GPlace place = getPlaceFromJson(result);
+			Logger.info("Google Places API fetch details returned: " + place.toString());
 			return place;
 		} catch (JSONException e) {
 			throw new GPlaceServiceException("Could not parse JSON object", e);

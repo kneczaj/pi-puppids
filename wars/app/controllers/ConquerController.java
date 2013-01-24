@@ -1,6 +1,9 @@
 package controllers;
 
+import models.ConqueringAttempt;
+import models.InitiateConquerResult;
 import models.Player;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
@@ -25,6 +28,25 @@ public class ConquerController extends Controller {
 
 	@Inject
 	private static ConqueringService conqueringService;
+	
+	@SecureSocial.SecuredAction(ajaxCall = true)
+	public static Result initiateConquer(String uuid, String reference) {
+		Player p = authenticationService.getPlayer();
+		
+		try {
+			InitiateConquerResult result = conqueringService.initiateConquer(p, uuid, reference);
+			
+			ConqueringAttempt ca = result.getConqueringAttempt();
+			
+			if (result.getType().equals(InitiateConquerResult.Type.SUCCESSFUL) && ca != null) {
+				conqueringService.sendOutInvitations(ca.getId().toString());
+			}
+			Logger.info(result.toJson().toString());
+			return ok(result.toJson().toString());
+		} catch (GPlaceServiceException e) {
+			return ok("error");
+		}
+	}	
 
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result joinConquer(String conqueringAttemptId) {

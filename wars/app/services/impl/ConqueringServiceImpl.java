@@ -24,7 +24,6 @@ import org.bson.types.ObjectId;
 import services.api.ConqueringService;
 import services.api.MapInfoService;
 import services.api.VictoryStrategy;
-import services.api.error.ConqueringServiceException;
 import services.google.places.api.GPlaceService;
 import services.google.places.api.GPlaceServiceException;
 import assets.constants.PlaceMappings;
@@ -68,7 +67,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			throws GPlaceServiceException {
 		Set<Player> teamMembersNearby = new HashSet<Player>(
 				mapInfoService.findTeamMembersNearby(player.getTeam(),
-						reference, 100));
+						reference, 150));
 
 		return teamMembersNearby;
 	}
@@ -351,7 +350,14 @@ public class ConqueringServiceImpl implements ConqueringService {
 		}
 
 		Set<Player> membersNearby = getTeamMembersNearby(player, reference);
-		if (!membersNearby.contains(player)) {
+		boolean containsInitiator = false;
+		for (Player p : membersNearby) {
+			if (p.getId().toString().equals(player.getId().toString())) {
+				containsInitiator = true;
+				break;
+			}
+		}
+		if (!containsInitiator) {
 			return new InitiateConquerResult(
 					InitiateConquerResult.Type.PLAYER_NOT_NEARBY);
 		}
@@ -368,8 +374,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 	}
 
 	@Override
-	public void sendOutInvitations(String conqueringAttemptId)
-			throws ConqueringServiceException {
+	public void sendOutInvitations(String conqueringAttemptId) {
 		ConqueringAttempt ca = conqueringAttemptDAO.get(new ObjectId(
 				conqueringAttemptId));
 		if (ca == null) {
@@ -380,6 +385,10 @@ public class ConqueringServiceImpl implements ConqueringService {
 		// Currently all online team members are notified
 		// TODO: filter players by distance
 		List<String> onlinePlayerIds = ClientPushActor.getReachablePlayers();
+		if (onlinePlayerIds == null || onlinePlayerIds.size() == 0) {
+			return;
+		}
+		
 		List<Player> onlinePlayersOfTeam = playerDAO.findPlayers(
 				onlinePlayerIds, ca.getInitiator().getTeam());
 		ClientPushActor.sendConqueringInvitation(ca, onlinePlayersOfTeam);
