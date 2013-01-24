@@ -64,7 +64,7 @@ class ArWars.PlayerPositionManager
 
 	lastUnprecisePositionNotification: null
 
-	constructor: (@mapNode, @infoPanel) ->
+	constructor: (@mapNode, @infoPanel, @conquerManager) ->
 		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
 		@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
 		@bounds = new google.maps.LatLngBounds()
@@ -99,7 +99,7 @@ class ArWars.PlayerPositionManager
 	loadPlacesNearby: (lat, lng) ->
 		request = 
 			location: 	new google.maps.LatLng(lat, lng)
-			radius:		100
+			radius:		150
 			
 		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 		service = new google.maps.places.PlacesService(@map)
@@ -146,34 +146,13 @@ class ArWars.PlayerPositionManager
 		marker = new google.maps.Marker markerOpts
 		@placeMarkers[place.id] = marker
 
-		data = 
-		    uuid: place.id
-		    reference: place.reference
-
 		google.maps.event.addListener marker, "click", () =>
 			type = place.types[0]
 			content = "#{place.name}<br/>#{place.vicinity}<br/>Type:#{type}<br/>Resource: <img src=\"#{marker.icon}\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
 			@infowindow.setContent content
 			@infowindow.open @map, marker
 			$("button[placeId=#{place.id}]").click () => 
-				$.getJSON '/conquer/initiateConquer', data, (responseData) ->
-					if responseData.type == 'PLAYER_NOT_NEARBY'	
-						$.pnotify 
-							title: 'Error'
-							text: 'You are too far away from the place you want to conquer'
-							type: 'error'
-
-					if responseData.type == 'PLACE_ALREADY_BELONGS_TO_FACTION'
-						$.pnotify 
-							title: ''
-							text: 'This place already belongs to your faction'
-							type: 'info'
-
-					if responseData.type == 'SUCCESSFUL'
-						$.pnotify 
-							title: 'Initiate conquer'
-							text: 'The conquering attempt was started and team members that are around were invited to join.'
-							type: 'success'
+				@conquerManager.initiateConquer place.id, place.reference
 
 	
 	# Called when LocationAPI detects a location change of the current player

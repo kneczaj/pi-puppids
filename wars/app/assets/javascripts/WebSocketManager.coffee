@@ -22,14 +22,25 @@ class ArWars.WebSocketManager
 				@playerPositionManager.push2Map data.id, data.latitude, data.longitude, data.accuracy
 
 			when "ConqueringInvitation" 
-				initiatorName = data.initiatorName
-				placeId = data.placeName
-				lat = data.placeLat
-				lnt = data.placeLng
-
 				noticeNode = $("#conqueringInvitationNotice")
 				$(noticeNode).find("#place").text(data.placeName)
 				$(noticeNode).find("#initiator").text(data.initiatorName)
+
+				# Click on join conquer button
+				$(noticeNode).find("button[name=join]").click () -> 
+					d = 
+						conqueringAttemptId: data.conqueringAttemptId
+
+					$.getJSON '/conquer/joinConquer', d, (responseData) ->
+						$.pnotify
+							title: 'Joined Conquer'
+							text: 'You joined the conquer'
+							type: 'info'
+
+				# Jump to fighting place
+				$(noticeNode).find("#place").click () => 
+					newLocation = new google.maps.LatLng data.placeLat, data.placeLng
+					@playerPositionManager.getMap().panTo newLocation
 
 				notice = $.pnotify
 					title: 'Conquering Invitation'
