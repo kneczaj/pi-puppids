@@ -22,14 +22,14 @@ class ArWars.WebSocketManager
 				@playerPositionManager.push2Map data.id, data.latitude, data.longitude, data.accuracy
 
 			when "ConqueringInvitation" 
-				initiator = data.initiatorId
-				#place = data.placeName
+				initiatorName = data.initiatorName
+				placeId = data.placeName
 				lat = data.placeLat
 				lnt = data.placeLng
 
 				noticeNode = $("#conqueringInvitationNotice")
-				#noticeNode.find("#place").text(place)
-				#noticeNode.find("#initiator").text(initiator)
+				$(noticeNode).find("#place").text(data.placeName)
+				$(noticeNode).find("#initiator").text(data.initiatorName)
 
 				notice = $.pnotify
 					title: 'Conquering Invitation'
@@ -41,9 +41,17 @@ class ArWars.WebSocketManager
 					insert_brs: false
 				
 				# todo: send ajax request to joing data.conqueringAttemptId
-			#when "ParticipantJoinedConquer" 
+			when "ParticipantJoinedConquer" 
+				$.pnotify
+					title: 'Participant joined'
+					text: "#{data.participantName} joined conquer"
+					type: 'info' 
 
-			#when "ConquerPossible" 
+			when "ConquerPossible"
+				$.pnotify
+					title: 'Conquer is now possible'
+					text: 'You meet all requirements to conquer the place. Click here to conduct it.'
+					type: 'success' 
 		
 
 	establishWebSocket: (url) ->

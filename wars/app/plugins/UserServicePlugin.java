@@ -21,8 +21,8 @@ import daos.AccessTokenDAO;
 import daos.PlayerDAO;
 
 /**
- * Implementation of a UserServicePlugin needed for SecureSocial
- * Stores things directly with the playerDAO.
+ * Implementation of a UserServicePlugin needed for SecureSocial Stores things
+ * directly with the playerDAO.
  * 
  * @author markus
  */
@@ -31,24 +31,24 @@ public class UserServicePlugin extends BaseUserService {
 	private PlayerDAO playerDAO;
 	private AccessTokenDAO accessTokenDAO;
 	private PlayerService playerService;
-	
+
 	private Application application;
 
 	public UserServicePlugin(Application application) {
-		super(application);		
+		super(application);
 		this.application = application;
-		
+
 		MorphiaLoggerFactory.reset();
 		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
 		Logger.info("Loading UserServicePlugin");
 	}
-	
+
 	public void start() {
 		Logger.info("Starting UserServicePlugin");
-		
+
 		GuicePlugin plugin = application.plugin(GuicePlugin.class);
 		Injector injector = plugin.getInjector();
-		
+
 		playerDAO = injector.getInstance(PlayerDAO.class);
 		accessTokenDAO = injector.getInstance(AccessTokenDAO.class);
 		playerService = plugin.getInjector().getInstance(PlayerService.class);
@@ -57,7 +57,7 @@ public class UserServicePlugin extends BaseUserService {
 	@Override
 	public void doSave(SocialUser user) {
 		Logger.debug("save user");
-		
+
 		try {
 			playerService.register(user);
 		} catch (PlayerServiceException e) {
@@ -80,20 +80,21 @@ public class UserServicePlugin extends BaseUserService {
 
 	@Override
 	public SocialUser doFind(UserId userId) {
-		Logger.debug("find user by username: " + userId.getId() + ", provider: " + userId.getProvider());
+		Logger.debug("find user by username: " + userId.getId()
+				+ ", provider: " + userId.getProvider());
 		Player p = playerDAO.findOne("username", userId.getId());
-		
+
 		if (p == null) {
 			return null;
 		}
-		
+
 		SocialUser s = new SocialUser();
 		s.setAuthMethod(AuthenticationMethod.valueOf(p
 				.getAuthenticationProvider()));
 		s.setEmail(p.getEmail());
 		s.setFirstName(p.getFirstname());
 		s.setLastName(p.getName());
-		
+
 		UserId uId = new UserId();
 		uId.setId(p.getUsername());
 		uId.setProvider(p.getAuthenticationProvider());
@@ -113,8 +114,7 @@ public class UserServicePlugin extends BaseUserService {
 		if (accessToken == null) {
 			Logger.error("could not find token");
 			return null;
-		}
-		else {
+		} else {
 			Logger.debug(accessToken.toString());
 			Logger.debug(accessToken.toToken().toString());
 			return accessToken.toToken();
@@ -128,7 +128,7 @@ public class UserServicePlugin extends BaseUserService {
 		if (p == null) {
 			return null;
 		}
-		
+
 		SocialUser result = p.toSocialUser();
 
 		return result;
@@ -137,7 +137,7 @@ public class UserServicePlugin extends BaseUserService {
 	@Override
 	public void doDeleteToken(String uuid) {
 		Logger.debug("delete token");
-		
+
 		AccessToken aToken = accessTokenDAO.findOne("uuid", uuid);
 		accessTokenDAO.delete(aToken);
 	}
@@ -147,7 +147,7 @@ public class UserServicePlugin extends BaseUserService {
 		if (accessTokenDAO == null) {
 			Logger.warn("DAO IS NULL!!!");
 		}
-		
+
 		for (AccessToken aToken : accessTokenDAO.find()) {
 			if (aToken.toToken().isExpired()) {
 				accessTokenDAO.delete(aToken);

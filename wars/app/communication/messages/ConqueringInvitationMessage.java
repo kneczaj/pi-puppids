@@ -32,6 +32,7 @@ public int numberOfConquerors;
 		invitation.put("conqueringAttemptId", conqueringAttempt.getId().toString());
 		invitation.put("start", conqueringAttempt.getStartDate().toString());
 		invitation.put("initiatorId", initiator.getId().toString());
+		invitation.put("initiatorName", initiator.getUsername());
 		invitation.put("placeId", uuid);
 		
 		return invitation;

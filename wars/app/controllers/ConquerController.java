@@ -11,6 +11,7 @@ import services.api.AuthenticationService;
 import services.api.ConqueringService;
 import services.api.ConqueringService.ConqueringStatus;
 import services.api.ConqueringService.JoinConquerResult;
+import services.api.NotificationService;
 import services.google.places.api.GPlaceServiceException;
 import util.JsonHelper;
 
@@ -28,6 +29,9 @@ public class ConquerController extends Controller {
 
 	@Inject
 	private static ConqueringService conqueringService;
+	
+	@Inject
+	private static NotificationService notificationService;
 	
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result initiateConquer(String uuid, String reference) {
@@ -79,7 +83,8 @@ public class ConquerController extends Controller {
 		try {
 			ConqueringStatus conqueringResult = conqueringService.conquer(
 					conqueringAttemptId, p);
-	
+			
+			// TODO: send info about the result of the battle to all participants
 			return ok(JsonHelper.toJson(conqueringResult));
 		} catch (GPlaceServiceException e) {
 			return ok("error");

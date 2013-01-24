@@ -175,21 +175,7 @@ class ArWars.PlayerPositionManager
 							text: 'The conquering attempt was started and team members that are around were invited to join.'
 							type: 'success'
 
-
-
-#    initiateConquerCallback: (responseData) ->
-#    	title = 'test'
-#    	type = 'error'
-#    	text = 'sdf'#
-#
-#		if responseData.type == 'PLAYER_NOT_NEARBY'
-#			title = 'Error'
-#			text = 'You are to far away from the place you want to conquer!'
-#			type = 'error'
-		
-		
-		
-
+	
 	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>
 		coords = location.coords
