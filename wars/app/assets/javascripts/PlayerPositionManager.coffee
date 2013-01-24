@@ -147,31 +147,48 @@ class ArWars.PlayerPositionManager
 		@placeMarkers[place.id] = marker
 
 		data = 
-		    id: place.id
+		    uuid: place.id
 		    reference: place.reference
 
-		google.maps.event.addListener marker, "click", =>
-			@infowindow.setContent place.name + "<br/>" + place.vicinity + "<br/>Type: " + place.types[0] + "<br/>Resource: <img src=\"" + marker.icon + "\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
+		google.maps.event.addListener marker, "click", () =>
+			type = place.types[0]
+			content = "#{place.name}<br/>#{place.vicinity}<br/>Type:#{type}<br/>Resource: <img src=\"#{marker.icon}\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
+			@infowindow.setContent content
 			@infowindow.open @map, marker
-			$("button[placeId=" + place.id + "]").click () =>
+			$("button[placeId=#{place.id}]").click () => 
+				$.getJSON '/conquer/initiateConquer', data, (responseData) ->
+					if responseData.type == 'PLAYER_NOT_NEARBY'	
+						$.pnotify 
+							title: 'Error'
+							text: 'You are too far away from the place you want to conquer'
+							type: 'error'
 
-			  	$.getJSON '/conquer/initiateConquer', data, (responseData) =>
-					switch @responseData 
-						when "SUCCESSFUL"
-							$.pnotify
-				    			title: 'Started conquering attempt'
-				    			text: 'Conquering attempt was successfuly launched. Other team members that are nearby were notified to join.'
-				    			type: 'success'
+					if responseData.type == 'PLACE_ALREADY_BELONGS_TO_FACTION'
+						$.pnotify 
+							title: ''
+							text: 'This place already belongs to your faction'
+							type: 'info'
 
-						when "PLAYER_NOT_NEARBY"
-							$.pnotify
-				    			text: 'You are to far away from the place you want to conquer!'
-				    			type: 'error'
+					if responseData.type == 'SUCCESSFUL'
+						$.pnotify 
+							title: 'Initiate conquer'
+							text: 'The conquering attempt was started and team members that are around were invited to join.'
+							type: 'success'
 
-						when "PLACE_ALREADY_BELONGS_TO_FACTION"
-							$.pnotify
-				    			text: 'The place already belongs to your faction!'
-				    			type: 'error'
+
+
+#    initiateConquerCallback: (responseData) ->
+#    	title = 'test'
+#    	type = 'error'
+#    	text = 'sdf'#
+#
+#		if responseData.type == 'PLAYER_NOT_NEARBY'
+#			title = 'Error'
+#			text = 'You are to far away from the place you want to conquer!'
+#			type = 'error'
+		
+		
+		
 
 	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>

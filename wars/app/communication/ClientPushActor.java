@@ -15,6 +15,7 @@ import play.Logger;
 import play.libs.Akka;
 import play.libs.F.Callback0;
 import play.mvc.WebSocket;
+import play.mvc.WebSocket.Out;
 import services.api.NotificationService;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -168,7 +169,10 @@ public class ClientPushActor extends UntypedActor {
 			// Push out the invitation
 			for (Player invitedPlayer : ci.getPlayers()) {
 				String playerId = invitedPlayer.getId().toString();
-				registered.get(playerId).write(json);
+				Out<JsonNode> socket = registered.get(playerId);
+				if (socket != null) {
+					socket.write(json);	
+				}
 			}
 		} else if (message instanceof ParticipantJoinedConquerMessage) {
 			ParticipantJoinedConquerMessage m = (ParticipantJoinedConquerMessage) message;
@@ -212,11 +216,11 @@ public class ClientPushActor extends UntypedActor {
 		if (message instanceof Notification) {
 			Notification notification = (Notification) message;
 //			notificationService.pushOutNotifications(notification);
-			if (notification.isSent())
-				notificationService.saveNotifications(notification);
-			else
-				Logger.error("Notification not sent because of wrong implementation - " +
-						"toJson() should retrive the initial message from Notification class");
+			//if (notification.isSent())
+				//notificationService.saveNotifications(notification);
+			//else
+				//Logger.error("Notification not sent because of wrong implementation - " +
+				//		"toJson() should retrive the initial message from Notification class");
 		}
 	}
 
