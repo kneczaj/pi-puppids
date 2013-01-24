@@ -1,5 +1,9 @@
 package models;
 
+import org.codehaus.jackson.node.ObjectNode;
+
+import play.libs.Json;
+
 import com.google.common.base.Objects;
 
 public class InitiateConquerResult {
@@ -31,6 +35,14 @@ public class InitiateConquerResult {
 
 	public void setConqueringAttempt(ConqueringAttempt conqueringAttempt) {
 		this.conqueringAttempt = conqueringAttempt;
+	}
+	
+	public ObjectNode toJson() {
+		ObjectNode result = Json.newObject();
+		result.put("type", type.toString());
+		result.put("conqueringAttempt", conqueringAttempt.toJson());
+		
+		return result;
 	}
 
 	public String toString() {

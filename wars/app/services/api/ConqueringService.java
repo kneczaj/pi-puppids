@@ -5,7 +5,6 @@ import java.util.Set;
 import models.CheckConquerConditionsResult;
 import models.InitiateConquerResult;
 import models.Player;
-import services.api.error.ConqueringServiceException;
 import services.google.places.api.GPlaceServiceException;
 
 /**
@@ -41,8 +40,7 @@ public interface ConqueringService {
 	 */
 	public InitiateConquerResult initiateConquer(Player player, String uuid, String reference) throws GPlaceServiceException;
 
-	public void sendOutInvitations(String conqueringAttemptId)
-			throws ConqueringServiceException;
+	public void sendOutInvitations(String conqueringAttemptId);
 
 	/**
 	 * Allows other players to join a conquering attempt.
