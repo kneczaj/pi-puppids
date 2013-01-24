@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.node.ObjectNode;
+
+import play.libs.Json;
 
 import com.google.code.morphia.annotations.Id;
 import com.google.common.collect.Sets;
@@ -89,6 +92,23 @@ public class ConqueringAttempt {
 
 	public void setReference(String reference) {
 		this.reference = reference;
+	}
+	
+	public ObjectNode toJson() {
+		ObjectNode attempt = Json.newObject();
+		attempt.put("id", id.toString());
+		attempt.put("initiatorId", initiator.getId().toString());
+		attempt.put("initiatorName", initiator.getUsername());
+		attempt.put("uuid", uuid);
+		attempt.put("reference", reference);
+		attempt.put("startDate", startDate.getTime());
+		if (endDate != null) {
+			attempt.put("endDate", endDate.getTime());
+		}
+		attempt.put("canceled", canceled);
+		attempt.put("joiningMemberCount", joiningMembers.size());
+		
+		return attempt;
 	}
 	
 }

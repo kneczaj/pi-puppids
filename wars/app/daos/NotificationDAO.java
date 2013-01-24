@@ -8,7 +8,6 @@ import com.google.code.morphia.Morphia;
 import com.google.inject.Inject;
 import com.mongodb.Mongo;
 
-@SuppressWarnings("rawtypes")
 public class NotificationDAO extends AbstractDAO<Notification, ObjectId> {
 	
 	@Inject 

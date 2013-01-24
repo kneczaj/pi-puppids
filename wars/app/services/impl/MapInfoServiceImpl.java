@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import play.Logger;
+
 import models.GPlace;
 import models.Location;
 import models.Place;
@@ -55,10 +57,12 @@ public class MapInfoServiceImpl implements MapInfoService {
 		String teamId = team.getId().toString();
 		
 		for (PlayerLocation pl : playersNearby.values()) {
+			Logger.info("Player " + pl.getPlayer().getUsername() + " is nearby");
 			Player player = pl.getPlayer();
 			
 			// check if the player belongs to the requested team
 			if (player.getTeam().getId().toString().equals(teamId)) {
+				Logger.info("Player " + pl.getPlayer().getUsername() + " has the propriate team");
 				teamMembersNearby.add(pl.getPlayer());
 			}
 		}
@@ -84,7 +88,9 @@ public class MapInfoServiceImpl implements MapInfoService {
 				continue;
 			}
 			
-			if (calculateLocationDistance(pl.getLocation(), location) <= radius) {
+			double currentDistance = calculateLocationDistance(pl.getLocation(), location);
+			Logger.info("Distance between location and " + p.getId().toString() + " is " + currentDistance + "m");
+			if (currentDistance <= radius) {
 				mapping.put(pl.getPlayer().getId().toString(), pl);
 			}
 		}
