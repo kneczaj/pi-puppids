@@ -33,7 +33,8 @@ class ArWars.SideBar
 					bAutoWidth: false
 
 				$("#resourceSources a[name='jumpToPlace']").bind 'click', (event) =>
-						@jumpToPlace $(event.srcElement).attr("placeId")
+					target = event.target or event.srcElement
+					@jumpToPlace $(target).parent().attr("placeId")
 						
 	loadUnitsOfPlayer: () ->
 		$.getJSON '/unit/getUnitsOfPlayer', (data) =>
