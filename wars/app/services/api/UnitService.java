@@ -86,7 +86,7 @@ public interface UnitService extends Service {
 	 *             thrown if the place has not enough units deployed to fulfill
 	 *             the request
 	 */
-	public void retrieveUnit(Player player, UnitType type, Integer amount,
+	public void undeployUnit(Player player, UnitType type, Integer amount,
 			Place from) throws UnitServiceException;
 
 
