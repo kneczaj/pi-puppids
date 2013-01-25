@@ -1,0 +1,321 @@
+@(player: Player)(location: PlayerLocation)(teammates: List[Player])(factions: List[Faction])(cities: List[City])(invitationsList: List[Invitation])
+
+@scripts = {
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdrfRsWjuVuIxjonf0mFWeF3v5wztOfxI&libraries=places&sensor=false"></script>
+<script type="text/javascript">
+	/*
+	 * Setting globals
+	 */
+	var playerId = "@player.getId().toString()";
+	var factionHasToBeChosen = false;
+	var showSentInvitations = false;
+	
+	@if(player.getTeam() == null || player.getTeam().getFaction == null) {
+		if (!@invitationsList.isEmpty()) {
+			showSentInvitations = true;
+		}
+		else {
+			factionHasToBeChosen = true;
+		}
+	}
+	
+	window.ArWars = { 
+		playerId: playerId,
+		mapSelector: '#map_canvas',
+		factionHasToBeChosen: factionHasToBeChosen,
+		showSentInvitations: showSentInvitations, 
+		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)"
+	};
+	
+	function tryInvite() {
+
+		var invitationRequest = new XMLHttpRequest();
+		var username = document.getElementById("userToInvite").value;
+		
+		invitationRequest.onreadystatechange = function() {
+	
+	  		if (invitationRequest.readyState == 4 && invitationRequest.status == 200) {
+	  		
+				var response = invitationRequest.responseText;
+				var message;
+				if (response == "ok") {
+					message = username + " has been succesfully invited";
+				} else if (response == "userIsYou") {
+					message = "You cannot invite yourself";
+				} else if (response == "givenUserDoesntExist") {
+					message = "The given user was not found";
+				} else if (response == "alreadyInTheTeam") {
+					message = "The given user is already a member of this team.";
+				}
+				
+				document.getElementById("error-message").innerHTML = message;
+				document.getElementById("userToInvite").value = "";
+			}
+  		}
+  	
+		invitationRequest.open("GET","invite/"+username, true);
+		invitationRequest.send();
+	};
+	
+	$(document).ready(function() {
+		$('#accordion2 div:visible:first > .accordion-body').addClass('in');
+		$('.container').addClass('container-fluid');
+		$('.container-fluid').removeClass('container');
+		
+			$.getJSON('/resource/getResourcesOfPlayer', function(data) {
+			  if ($.isEmptyObject(data)) {
+				  /*TODO: Show notification*/
+			  } else {
+				  $.each(data, function(key, val) {
+				    $('#p' + key).text(val);
+				    $('#p' + key).parent().popover({
+				    	trigger:'hover', 
+				    	placement: 'bottom',
+				    	content: $('#p' + key).parent().attr('data-content') + val
+				  	});
+			  	});
+			  }
+			});
+		
+			$.getJSON('/resource/getResourcesOfTeam', function(data) {
+			  if ($.isEmptyObject(data)) {
+				  /*TODO: Show notification*/
+			  } else {
+				  $.each(data, function(key, val) {
+					  $('#t' + key).text(val);
+				  });
+			  }
+			});
+	});
+</script>
+<script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/PlayerPositionManager.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/ConquerManager.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/LayoutResizer.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/WebSocketManager.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/SideBar.js")" type="text/javascript"></script>
+
+}
+
+@main(title = player.getUsername() + " - ARWars", scripts) {
+
+<div class="row-fluid">
+	<div class="span4">
+		<div class="well well-small sidebar-nav">
+
+			<div class="accordion" id="accordion2">
+				<div class="accordion-group visible-phone">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#map"><i class="icon-globe icon-white"></i> Map </a>
+					</div>
+					<div id="map" class="accordion-body collapse">
+						<div id="map_container_mobile" class="accordion-inner">
+							<div id="map_canvas"></div>
+							<div id="playerDetails">
+								<h4>Player</h4>
+							    <p>Team: <span class="team"></span> / Faction: <span class="faction"></span></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#places"><i class="icon-map-marker icon-white"></i> Places </a>
+					</div>
+					<div id="places" class="accordion-body collapse">
+						<div class="accordion-inner">
+							<table id="resourceSources" class="table table-striped table-bordered" cellpadding="0" cellspacing="0" border="0">
+								<thead>
+									<tr>
+										<th>Place</th><th>Resources</th><th>Units</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#units"><i class="icon-plane icon-white"></i> Units </a>
+					</div>
+					<div id="units" class="accordion-body collapse">
+						<div class="accordion-inner">
+							<table id="playerUnits" class="table table-striped table-bordered" cellpadding="0" cellspacing="0" border="0">
+								<thead>
+									<tr>
+										<th>Type</th><th>Free</th><th>Overall</th><th>New</th>
+									</tr>
+								</thead>
+								<tfoot>
+								</tfoot>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#team"><i class="icon-user icon-white"></i> Team </a>
+					</div>
+					<div id="team" class="accordion-body collapse">
+						<div class="accordion-inner">
+							<div id="teamInfo">
+								<h5>Team information:</h5>
+								Team name: @player.getTeam().getName()
+								<br>
+								Team master: @player.getTeam().getTeamMaster().getUsername()
+							</div>
+							<hr>
+							<div id="teamMembers">
+								<h5>Team members:</h5>
+								@for(member <- teammates) {
+									@member.getUsername()<br>
+								}
+								<br>
+								@if(player.isTeamMaster()) {
+									<form id="invitationForm" class="form-inline" action="javascript:tryInvite()">
+										<input type="text" placeholder="Email or user name" id="userToInvite">
+										<input type="submit" class="btn btn-warning" value="Invite">
+									</form>
+									<div id="error-message" class="control-group">
+									</div>
+								}
+							</div>
+							<hr>
+							<div id="teamResources">
+								<h5>Team resources:</h5>
+								<div id="resourcesTeam">
+									<ul class="inline">
+										<li><img src="@routes.Assets.at("images/resources/credits_white.png")"> <span id="tCredits">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/cultural_white.png")"> <span id="tCultural">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/food_white.png")"> <span id="tFood">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/knowledge_white.png")"> <span id="tKnowledge">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/material_white.png")"> <span id="tMaterial">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/special_white.png")"> <span id="tSpecial">-</span> </li>
+										<li><img src="@routes.Assets.at("images/resources/transportation_white.png")"> <span id="tTransportation">-</span> </li>
+									</ul>		
+								</div>
+							</div>
+						</div> 
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#statistics"><i class="icon-tasks icon-white"></i> Statistics </a>
+					</div>
+					<div id="statistics" class="accordion-body collapse">
+						<div class="accordion-inner">Lorem ipsum dolor sit amet,
+							consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+							labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+							nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+							commodo consequat. Duis aute irure dolor in reprehenderit in
+							voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+							Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+							officia deserunt mollit anim id est laborum.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--/sidebar-nav -->
+	</div>
+	<!--/span-->
+	<div class="span8">
+		<div id="resourcesPlayer" class="well well-small">
+			<ul class="inline">
+				<li><a rel="tooltip" title="Cultural" data-content="Influences the strength of units in conquering attempts"> <img src="@routes.Assets.at("images/resources/cultural_white.png")"> <span id="pCultural">-</span> </a></li>
+				<li><a rel="tooltip" title="Food" data-content="Limits the number of units a player can have at a given time"> <img src="@routes.Assets.at("images/resources/food_white.png")"> <span id="pFood">-</span> </a></li>
+				<li><a rel="tooltip" title="Knowledge" data-content="Influences how fast players can research new technologies"> <img src="@routes.Assets.at("images/resources/knowledge_white.png")"> <span id="pKnowledge">-</span> </a></li>
+				<li><a rel="tooltip" title="Material" data-content="The basic material in ARWars, needed to built units"> <img src="@routes.Assets.at("images/resources/material_white.png")"> <span id="pMaterial">-</span> </a></li>
+				<li><a rel="tooltip" title="Credits" data-content="The currency in ARWars, needed to built units"> <img src="@routes.Assets.at("images/resources/credits_white.png")"> <span id="pCredits">-</span> </a></li>
+				<li><a rel="tooltip" title="Special" data-content="Directly increases your game score"> <img src="@routes.Assets.at("images/resources/special_white.png")"> <span id="pSpecial">-</span> </a></li>
+				<li><a rel="tooltip" title="Transportation" data-content="Influences how fast units can be deployed to places"> <img src="@routes.Assets.at("images/resources/transportation_white.png")"> <span id="pTransportation">-</span> </a></li>
+			</ul>		
+		</div>
+		<div id="map_container_desktop" class="hidden-phone"></div>
+	</div>
+	<!--/span-->
+</div>
+<!--/row-->
+
+<!--modal-->
+<div id="chooseFactionModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="chooseFactionModalLabel" aria-hidden="false">
+  <div class="modal-header">
+    <h3 id="chooseFactionModalLabel">Choose a faction and a city</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+	  <div class="control-group">
+	    <label class="control-label" for="factionId">Faction</label>
+	    <div class="controls">
+	    	@for(faction <- factions) {
+	    		<label class="radio">
+				  <input type="radio" name="factionId" value="@faction.getId().toString()" checked>
+				  @faction.getName()
+				</label>
+			}
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <label class="control-label" for="city">City</label>
+	    <div class="controls">
+	    	<select class="span2" name="cityId">
+	    		@for(city <- cities) {
+	    			<option value="@city.getId().toString()">@city.getName()</option>
+				}
+	    	</select>
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <div class="controls">
+	    	<button name="back" class="btn @if(invitationsList.isEmpty()) { hide }">Back</button>
+	    	<button name="save" class="btn btn-warning">Save</button>
+	    	<button name="logout" class="btn" onClick="parent.location='logout'">Cancel and logout</button>
+	    </div>
+	  </div>
+	</form>
+  </div>
+</div>
+<!--/modal-->
+
+<!--invitationsModal-->
+
+<div id="sentInvitationsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="invitationsModalLabel" aria-hidden="false">
+  <div class="modal-header">
+    <h4 id="invitationsModalLabel">You have some invitations waiting for acceptance</h4>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+	  <div class="control-group">
+	    <div class="controls">
+	    	@for(invitation <- invitationsList) {
+	    		<label class="radio">
+				  <input type="radio" name="invitationId" value="@invitation.getToken()" checked>
+				  Team @invitation.getTeam().getName() - @invitation.getTeam().getFaction().getName() faction
+				</label>
+			}
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <div class="controls">
+	    	<button name="accept" class="btn btn-warning">Accept</button>
+	    	<button name="reject" class="btn">Create clear profile</button>
+	    </div>
+	  </div>
+	</form>
+  </div>
+</div>
+
+<!--/invitationsModal-->
+
+<!--conqueringInvitationNotice-->
+<div id="conqueringInvitationNotice" style="display:none">
+	<div>
+		<button name="join" class="btn">Join</button> conquering attempt of <span id="place"></span> (invited by <span id="invitator"></span>).
+	</div>
+</div>
+<!--/conqueringInvitationNotice-->
+}
