@@ -28,13 +28,13 @@ import daos.UnitDAO;
 public class PlaceServiceImpl implements PlaceService {
 
 	@Inject
-	private static PlaceDAO placeDAO;
+	private PlaceDAO placeDAO;
 
 	@Inject
-	private static PlayerDAO playerDAO;
+	private PlayerDAO playerDAO;
 
 	@Inject
-	private static UnitDAO unitDAO;
+	private UnitDAO unitDAO;
 
 	@Override
 	public ResourceType getResourceType(PlaceType placeType) {
