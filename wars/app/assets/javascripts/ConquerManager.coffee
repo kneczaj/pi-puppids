@@ -1,6 +1,6 @@
 class ArWars.ConquerManager
 
-	playerPositionManager
+	playerPositionManager = null
 
 	constructor: () ->
 
@@ -18,6 +18,9 @@ class ArWars.ConquerManager
 
 	processParticipantJoined: (data) ->
 		@notify 'Participant joined', "#{data.participantName} joined conquer", 'info' 
+
+	processConquerPossible: (data) ->
+		@notify 'Conquer is now possible', 'You meet all requirements to conquer the place. Click here to conduct it.', 'success' 
 
 	processConqueringInvitation: (invitation) ->
 		noticeNode = $("#conqueringInvitationNotice")

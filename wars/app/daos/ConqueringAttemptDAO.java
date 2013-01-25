@@ -1,6 +1,6 @@
 package daos;
 
-import models.ConqueringAttempt;
+import models.conquer.ConqueringAttempt;
 
 import org.bson.types.ObjectId;
 

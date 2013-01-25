@@ -1,6 +1,8 @@
-package models;
+package models.conquer;
 
 import java.util.List;
+
+import models.Player;
 
 import services.api.ConqueringService.ConqueringStatus;
 

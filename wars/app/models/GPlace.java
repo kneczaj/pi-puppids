@@ -6,6 +6,8 @@ import org.bson.types.ObjectId;
 
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 
 /**
  * All information of a place coming from the Google Places API should be
@@ -16,7 +18,6 @@ import com.google.code.morphia.annotations.Id;
 @Entity("gplaces")
 public class GPlace {
 
-	
 	@Id
 	private ObjectId id;
 	public ObjectId getId() {
@@ -116,6 +117,14 @@ public class GPlace {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this.getClass())
+				.add("id", id)
+				.add("name", name)
+				.add("types", Joiner.on(", ").join(types)).toString();
 	}
 
 }

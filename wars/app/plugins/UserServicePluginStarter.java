@@ -1,7 +1,6 @@
 package plugins;
 
 import play.Application;
-import play.Logger;
 import play.Plugin;
 
 public class UserServicePluginStarter extends Plugin {
@@ -14,7 +13,6 @@ public class UserServicePluginStarter extends Plugin {
 	
 	@Override
 	public void onStart() {
-		Logger.info("UserServicePluginInjector");
 		UserServicePlugin usp = application.plugin(UserServicePlugin.class);
 		usp.start();
 		

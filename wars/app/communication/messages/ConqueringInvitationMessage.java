@@ -2,8 +2,8 @@ package communication.messages;
 
 //import java.util.List;
 
-import models.ConqueringAttempt;
 import models.Player;
+import models.conquer.ConqueringAttempt;
 import models.notifications.Notification;
 
 import org.codehaus.jackson.node.ObjectNode;
