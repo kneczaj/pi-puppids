@@ -16,7 +16,7 @@ class ArWars.SideBar
 					@places[key] = val 
 
 					units = data.unitDeployments[key]
-					items.push "<tr><td>#{val.name} <a href='#' title='Jump to place on the map' name='jumpToPlace' placeId='#{key}'><img src=\"/assets/images/jump.png\" /></a></td><td>#{val.amount} <img src=\"/assets/images/resources/#{val.resource.toLowerCase()}_white.png\" /></td><td>#{units}</td></tr>"
+					items.push "<tr><td>#{val.name} <a title='Jump to place on the map' name='jumpToPlace' placeId='#{key}'><img src=\"/assets/images/jump.png\" /></a></td><td>#{val.amount} <img src=\"/assets/images/resources/#{val.resource.toLowerCase()}_white.png\" /></td><td>#{units}</td></tr>"
 
 				$(items.join('')).appendTo '#resourceSources tbody'
 				$('#resourceSources').dataTable
