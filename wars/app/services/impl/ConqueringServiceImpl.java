@@ -24,6 +24,7 @@ import org.bson.types.ObjectId;
 import services.api.ConqueringService;
 import services.api.MapInfoService;
 import services.api.VictoryStrategy;
+import services.api.WebSocketCommunicationService;
 import services.api.error.ConqueringServiceException;
 import services.google.places.api.GPlaceService;
 import services.google.places.api.GPlaceServiceException;
@@ -62,6 +63,9 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 	@Inject
 	private VictoryStrategy victoryStrategy;
+	
+	@Inject
+	private WebSocketCommunicationService webSocketCommunicationService;
 
 	@Override
 	public Set<Player> getTeamMembersNearby(Player player, String reference)
@@ -157,7 +161,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 			// inform the conquer initiator that a team member joined
 			// successfully the conquering attempt
-			ClientPushActor.conquerParticipantJoined(player, ca);
+			webSocketCommunicationService.conquerParticipantJoined(player, ca);
 
 			// Recheck the conquering conditions
 			CheckConquerConditionsResult result = checkConquerConditions(
@@ -167,7 +171,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			// initiator is informed that the conquer is now possible
 			if (result.getConqueringStatus().equals(
 					ConqueringStatus.CONQUER_POSSIBLE)) {
-				ClientPushActor.sendConquerPossible(ca);
+				webSocketCommunicationService.sendConquerPossible(ca);
 			}
 		}
 
@@ -382,7 +386,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 		List<String> onlinePlayerIds = ClientPushActor.getReachablePlayers();
 		List<Player> onlinePlayersOfTeam = playerDAO.findPlayers(
 				onlinePlayerIds, ca.getInitiator().getTeam());
-		ClientPushActor.sendConqueringInvitation(ca, onlinePlayersOfTeam);
+		webSocketCommunicationService.sendConqueringInvitation(ca, onlinePlayersOfTeam);
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import models.ConqueringAttempt;
 import models.Player;
-import models.PlayerLocation;
 import models.notifications.Notification;
 
 import org.codehaus.jackson.JsonNode;
@@ -15,21 +14,18 @@ import play.Logger;
 import play.libs.Akka;
 import play.libs.F.Callback0;
 import play.mvc.WebSocket;
-import services.api.NotificationService;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.inject.Inject;
 
 import communication.messages.ConquerPossibleMessage;
 import communication.messages.ConqueringInvitationMessage;
 import communication.messages.ParticipantJoinedConquerMessage;
 import communication.messages.PlayerLocationChangedMessage;
 import communication.messages.RegistrationMessage;
-import communication.messages.SimpleNotificationMessage;
 import communication.messages.UnregistrationMessage;
 
 /**
@@ -39,14 +35,11 @@ import communication.messages.UnregistrationMessage;
  * @author markus
  */
 public class ClientPushActor extends UntypedActor {
-	
-	@Inject
-	private static NotificationService notificationService;
 
 	/**
 	 * Create a static actor instance
 	 */
-	static ActorRef actor = Akka.system().actorOf(
+	public static ActorRef actor = Akka.system().actorOf(
 			new Props(ClientPushActor.class));
 
 	/**
@@ -60,47 +53,6 @@ public class ClientPushActor extends UntypedActor {
 	 */
 	public static List<String> getReachablePlayers() {
 		return Lists.newArrayList(registered.keySet());
-	}
-	
-//	public static void sendNotification(Notification notification) {
-//		
-//	}
-	
-	/*
-	 * Sends "Hi!" message to the teammates
-	 * for testing purposes
-	 */
-	public static void sendHi(Player player) {
-		SimpleNotificationMessage testNotification = new SimpleNotificationMessage();
-		testNotification.setMessageContent("Hi!");
-		testNotification.setPlayers(player.getTeammates());
-		
-		actor.tell(testNotification);
-	}
-	
-	public static void sendConqueringInvitation(ConqueringAttempt ca,
-			List<Player> onlinePlayersOfTeam) {
-		
-		ConqueringInvitationMessage ci = new ConqueringInvitationMessage();
-		ci.conqueringAttempt = ca;
-		ci.setPlayers(onlinePlayersOfTeam);
-		
-		actor.tell(ci);
-	}
-	
-	public static void conquerParticipantJoined(Player participant, ConqueringAttempt conqueringAttempt) {
-		ParticipantJoinedConquerMessage pm = new ParticipantJoinedConquerMessage();
-		pm.participant = participant;
-		pm.conqueringAttempt = conqueringAttempt;
-		
-		actor.tell(pm);
-	}
-
-	public static void sendConquerPossible(ConqueringAttempt conqueringAttempt) {
-		ConquerPossibleMessage cpm = new ConquerPossibleMessage();
-		cpm.conqueringAttempt = conqueringAttempt;
-		
-		actor.tell(cpm);
 	}
 	
 	/**
@@ -129,16 +81,6 @@ public class ClientPushActor extends UntypedActor {
 		});
 	}
 
-	/**
-	 * Used by the LocationTrackingService to tell the Actor to fan out the
-	 * change of the location of a player to all others.
-	 * 
-	 * @param playerLocation
-	 */
-	public static void playerLocationChanged(PlayerLocation playerLocation) {
-		actor.tell(new PlayerLocationChangedMessage(playerLocation));
-	}
-
 	@Override
 	public void onReceive(Object message) throws Exception {
 		if (message instanceof RegistrationMessage) {
@@ -149,6 +91,7 @@ public class ClientPushActor extends UntypedActor {
 					registration.getChannel());
 
 		} else if (message instanceof PlayerLocationChangedMessage) {
+			
 			Logger.info("pushing out player location change");
 			PlayerLocationChangedMessage msg = (PlayerLocationChangedMessage) message;
 			ObjectNode json = msg.toJson();
@@ -157,6 +100,7 @@ public class ClientPushActor extends UntypedActor {
 			for (WebSocket.Out<JsonNode> channel : registered.values()) {
 				channel.write(json);
 			}
+			
 		} else if (message instanceof UnregistrationMessage) {
 			UnregistrationMessage quit = (UnregistrationMessage) message;
 
@@ -205,15 +149,6 @@ public class ClientPushActor extends UntypedActor {
 		} else {
 			unhandled(message);
 		}
-		
-		if (message instanceof Notification) {
-			Notification notification = (Notification) message;
-			if (notification.isSent())
-				notificationService.saveNotifications(notification);
-			else
-				Logger.error("Notification not sent because of wrong implementation - " +
-						"toJson() should retrive the initial message from Notification class");
-		}
 	}
 	
 	private void sendToPlayer(ObjectNode json, Player recipient) {
@@ -229,4 +164,5 @@ public class ClientPushActor extends UntypedActor {
 			sendToPlayer(json, recipient);
 		}
 	}
+	
 }

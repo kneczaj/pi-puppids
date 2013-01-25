@@ -3,13 +3,13 @@ package models;
 import java.util.Date;
 import java.util.List;
 
+import play.Logger;
+
 import com.google.code.morphia.annotations.Embedded;
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-
-import play.Logger;
 
 @Entity("teams")
 public class Team extends TimeStampedModel {

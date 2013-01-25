@@ -4,11 +4,10 @@ import java.util.List;
 
 import models.City;
 import models.Faction;
+import models.Invitation;
 import models.Player;
 import models.PlayerLocation;
 import models.Team;
-import models.Invitation;
-
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;

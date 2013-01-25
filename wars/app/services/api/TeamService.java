@@ -1,13 +1,13 @@
 package services.api;
 
-import services.api.error.TeamServiceException;
+import java.util.List;
+
 import models.City;
 import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
-
-import java.util.List;
+import services.api.error.TeamServiceException;
 
 /**
  * Manage Teams
