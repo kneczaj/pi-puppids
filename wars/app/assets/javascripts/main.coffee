@@ -76,5 +76,5 @@ $(document).ready ->
 	sidebar.loadUnitsOfPlayer()
 	sidebar.loadNotifications()
 
-	webSocket = new window.ArWars.WebSocketManager playerPositionManager conquerManager
+	webSocket = new window.ArWars.WebSocketManager playerPositionManager, conquerManager
 	webSocket.establishWebSocket window.ArWars.webSocketURL

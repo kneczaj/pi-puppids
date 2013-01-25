@@ -13,7 +13,6 @@ class ArWars.SideBar
 			count: 100
 
 		$.getJSON 'notifications/getHistory', d, (responseData) => 
-			console.log "test"
 			$.each responseData, (index, notification) ->
 				notificationNode.append notification.notificationMessage
 

@@ -160,7 +160,7 @@ public class UnitServiceImplTest {
 		Place tum = placeDAO.findOne("name", "Technische Universität München");
 		
 		try {
-			unitService.retrieveUnit(load, UnitType.GRUNT, 2, tum);
+			unitService.undeployUnit(load, UnitType.GRUNT, 2, tum);
 		} catch (UnitServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

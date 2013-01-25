@@ -73,11 +73,15 @@ class ArWars.ConquerManager
 
 			if responseData.type == 'SUCCESSFUL'
 				if responseData.conqueringStatus == 'CONQUER_POSSIBLE'
-					t = "The conquering attempt was started. <a class=\"conductConquer\" attemptId=\"#{place.id}\">Conduct it immediately</a>"
+					t = "The conquering attempt was started. <a class=\"conductConquer\" attemptId=\"#{responseData.conqueringAttempt.id}\">Conduct it immediately</a>"
 				else
 					t = 'The conquering attempt was started and team members that are around were invited to join.'
 
 				@notify 'Initiate conquer', t, 'success'
+				$(".conductConquer").click () => 
+					attemptId = $(@).attr 'attemptId'
+					console.log "conduct #{attemptId} immediately"
+					@conquer attemptId
 
 			if responseData.conqueringStatus == 'CONQUER_POSSIBLE'
 				@conquer responseData.conqueringAttempt.id
