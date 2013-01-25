@@ -2,8 +2,19 @@ class ArWars.SideBar
 	
 	places: []
 
-	constructor: (@playerPositionManager) ->
+	constructor: (@playerPositionManager) ->	
 
+	loadNotifications: () ->
+		notificationNode = $("#notifications .accordion-inner")
+		notificationNode.html " "
+
+		d = 
+			offset: 0
+			count: 100
+
+		$.getJSON 'notifications/getHistory', d, (responseData) => 
+			$.each responseData, (index, notification) ->
+				notificationNode.append notification.notificationMessage
 
 	loadResourceSourcesOfPlayer: () ->
 		$.getJSON '/resource/getResourceSourcesOfPlayer', (data) =>

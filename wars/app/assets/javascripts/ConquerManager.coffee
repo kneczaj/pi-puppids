@@ -1,6 +1,11 @@
 class ArWars.ConquerManager
 
+	playerPositionManager = null
+
 	constructor: () ->
+
+	setPlayerPositionManager: (pm) ->
+		@playerPositionManager = pm
 
 	conquer: (conqueringAttemptId) ->
 		data = 
@@ -9,10 +14,50 @@ class ArWars.ConquerManager
 		$.getJSON '/conquer/conquer', data, (responseData) => 
 			console.log responseData
 			if responseData == 'SUCCESSFUL'
-				$.pnotify
-					title: 'Conquering successful'
-					text: 'Conquering attempt was successful'
-					type: 'success'
+				@notify 'Conquering successful', 'Conquering attempt was successful', 'success'
+
+	processParticipantJoined: (data) ->
+		@notify 'Participant joined', "#{data.participantName} joined conquer", 'info' 
+
+	processConquerPossible: (data) ->
+		@notify 'Conquer is now possible', 'You meet all requirements to conquer the place. Click here to conduct it.', 'success' 
+
+	processConqueringInvitation: (invitation) ->
+		noticeNode = $("#conqueringInvitationNotice")
+		$(noticeNode).find("#place").text(invitation.placeName)
+		$(noticeNode).find("#initiator").text(invitation.initiatorName)
+
+		# Jump to fighting place
+		$(noticeNode).find("#place").click () => 
+			newLocation = new google.maps.LatLng data.placeLat, data.placeLng
+			@playerPositionManager.getMap().panTo newLocation
+	
+		$.pnotify
+			title: 'Conquering Invitation'
+			icon: false
+			width: 'auto'
+			hide: false
+			closer: false
+			sticker: false
+			insert_brs: false
+		
+		# Click on join conquer button
+		$(noticeNode).find("button[name=join]").click () =>
+			@joinConquer invitation.conqueringAttemptId
+
+	joinConquer: (conqueringAttemptId) ->
+		d = 
+			conqueringAttemptId: conqueringAttemptId
+
+		$.getJSON '/conquer/joinConquer', d, (responseData) ->
+			@notify 'Joined Conquer', 'You joined the conquer', 'info'
+
+	cancelConquer: (conqueringAttemptId) ->
+		d = 
+			conqueringAttemptId: conqueringAttemptId
+
+		$.getJSON '/conquer/cancelConquer', d, (responseData) ->
+			@notify 'Canceled Conquer', 'The conquering attempt was canceled', 'success'
 
 	initiateConquer: (uuid, reference) ->
 		data = 
@@ -21,27 +66,28 @@ class ArWars.ConquerManager
 
 		$.getJSON '/conquer/initiateConquer', data, (responseData) =>
 			if responseData.type == 'PLAYER_NOT_NEARBY'	
-				$.pnotify 
-					title: 'Error'
-					text: 'You are too far away from the place you want to conquer'			
-					type: 'error'
+				@notify 'Error', 'You are too far away from the place you want to conquer', 'error'
 
 			if responseData.type == 'PLACE_ALREADY_BELONGS_TO_FACTION'
-				$.pnotify 
-					title: ''
-					text: 'This place already belongs to your faction'
-					type: 'info'
+				@notify '', 'This place already belongs to your faction', 'info'
 
 			if responseData.type == 'SUCCESSFUL'
 				if responseData.conqueringStatus == 'CONQUER_POSSIBLE'
-					t = "The conquering attempt was started. <a class=\"conductConquer\" attemptId=\"#{place.id}\">Conduct it immediately</a>"
+					t = "The conquering attempt was started. <a class=\"conductConquer\" attemptId=\"#{responseData.conqueringAttempt.id}\">Conduct it immediately</a>"
 				else
 					t = 'The conquering attempt was started and team members that are around were invited to join.'
 
-				$.pnotify 
-					title: 'Initiate conquer'
-					text: t
-					type: 'success'
+				@notify 'Initiate conquer', t, 'success'
+				$(".conductConquer").click () => 
+					attemptId = $(@).attr 'attemptId'
+					console.log "conduct #{attemptId} immediately"
+					@conquer attemptId
 
 			if responseData.conqueringStatus == 'CONQUER_POSSIBLE'
 				@conquer responseData.conqueringAttempt.id
+
+	notify: (title, text, type) ->
+		$.pnotify
+			title: title
+			text: text
+			type: type

@@ -165,6 +165,13 @@ class ArWars.PlayerPositionManager
 
 		if coords.accuracy >= @MAX_UNCERTAINTY
 			player = @players[window.ArWars.playerId]
+
+			if not player?
+				return
+
+			if not player.team?
+				return
+
 			latitude = player.team.lat
 			longitude = player.team.lng
 

@@ -40,12 +40,9 @@ public class UserServicePlugin extends BaseUserService {
 
 		MorphiaLoggerFactory.reset();
 		MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
-		Logger.info("Loading UserServicePlugin");
 	}
 
 	public void start() {
-		Logger.info("Starting UserServicePlugin");
-
 		GuicePlugin plugin = application.plugin(GuicePlugin.class);
 		Injector injector = plugin.getInjector();
 
@@ -56,8 +53,6 @@ public class UserServicePlugin extends BaseUserService {
 
 	@Override
 	public void doSave(SocialUser user) {
-		Logger.debug("save user");
-
 		try {
 			playerService.register(user);
 		} catch (PlayerServiceException e) {
@@ -67,7 +62,6 @@ public class UserServicePlugin extends BaseUserService {
 
 	@Override
 	public void doSave(Token token) {
-		Logger.debug("save token");
 		AccessToken aToken = new AccessToken();
 		aToken.setCreationTime(token.getCreationTime().toDate());
 		aToken.setExpirationTime(token.getExpirationTime().toDate());
@@ -80,8 +74,6 @@ public class UserServicePlugin extends BaseUserService {
 
 	@Override
 	public SocialUser doFind(UserId userId) {
-		Logger.debug("find user by username: " + userId.getId()
-				+ ", provider: " + userId.getProvider());
 		Player p = playerDAO.findOne("username", userId.getId());
 
 		if (p == null) {
@@ -109,21 +101,17 @@ public class UserServicePlugin extends BaseUserService {
 
 	@Override
 	public Token doFindToken(String tokenId) {
-		Logger.debug("find token");
 		AccessToken accessToken = accessTokenDAO.findOne("uuid", tokenId);
 		if (accessToken == null) {
 			Logger.error("could not find token");
 			return null;
 		} else {
-			Logger.debug(accessToken.toString());
-			Logger.debug(accessToken.toToken().toString());
 			return accessToken.toToken();
 		}
 	}
 
 	@Override
 	public SocialUser doFindByEmailAndProvider(String email, String providerId) {
-		Logger.debug("find social user by email and provider");
 		Player p = playerDAO.findOne("email", email);
 		if (p == null) {
 			return null;
@@ -136,18 +124,12 @@ public class UserServicePlugin extends BaseUserService {
 
 	@Override
 	public void doDeleteToken(String uuid) {
-		Logger.debug("delete token");
-
 		AccessToken aToken = accessTokenDAO.findOne("uuid", uuid);
 		accessTokenDAO.delete(aToken);
 	}
 
 	@Override
 	public void doDeleteExpiredTokens() {
-		if (accessTokenDAO == null) {
-			Logger.warn("DAO IS NULL!!!");
-		}
-
 		for (AccessToken aToken : accessTokenDAO.find()) {
 			if (aToken.toToken().isExpired()) {
 				accessTokenDAO.delete(aToken);

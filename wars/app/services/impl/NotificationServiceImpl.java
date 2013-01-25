@@ -34,6 +34,8 @@ public class NotificationServiceImpl implements NotificationService {
 	public List<Notification> getNotificationHistoryOfPlayer(Player player,
 			int offset, int count) {
 		
-		return player.getNotificationsList().subList(offset, offset+count);
+		List<Notification> notifications = player.getNotificationsList();
+		int toIndex = (notifications.size() < (offset+count)) ? notifications.size() : offset+count;
+		return notifications.subList(offset, toIndex);
 	}
 }

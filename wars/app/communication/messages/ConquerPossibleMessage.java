@@ -1,7 +1,7 @@
 package communication.messages;
 
-import models.ConqueringAttempt;
 import models.Player;
+import models.conquer.ConqueringAttempt;
 
 import org.codehaus.jackson.node.ObjectNode;
 

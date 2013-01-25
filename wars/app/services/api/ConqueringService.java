@@ -2,9 +2,9 @@ package services.api;
 
 import java.util.Set;
 
-import models.CheckConquerConditionsResult;
-import models.InitiateConquerResult;
 import models.Player;
+import models.conquer.CheckConquerConditionsResult;
+import models.conquer.InitiateConquerResult;
 import services.google.places.api.GPlaceServiceException;
 
 /**

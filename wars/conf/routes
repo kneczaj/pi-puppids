@@ -4,14 +4,16 @@
 
 # Home page
 GET     /                           				controllers.Application.index()
-GET		/updateLocation								controllers.LocationController.updateLocation(lat, lng, uncertainty, speed, timestamp)
-GET     /websocket/connect          				controllers.WebSocketController.connect(playerId)
-GET     /mapinfo/playersNearby						controllers.MapInfoController.playersNearby(lat, lng)
+
+# ResourceController
 GET     /resource/getResourceSourcesOfPlayer		controllers.ResourceController.getResourceSourcesOfPlayer()
 GET     /resource/getResourcesOfPlayer				controllers.ResourceController.getResourcesOfPlayer()
 GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResourcesOfTeam()
-GET     /unit/getUnitsOfPlayer						controllers.UnitController.getUnitsOfPlayer()
+
+# TeamController
 GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(factionId, cityId)
+GET		/invite/:username							controllers.TeamController.tryInvite(username)
+GET		/acceptInvitation/:token					controllers.TeamController.acceptInvitation(token)
 
 # ConquerController
 GET		/conquer/initiateConquer					controllers.ConquerController.initiateConquer(uuid, reference)
@@ -19,15 +21,26 @@ GET		/conquer/joinConquer						controllers.ConquerController.joinConquer(conquer
 GET		/conquer/cancelConquer						controllers.ConquerController.cancelConquer(conqueringAttemptId)
 GET		/conquer/conquer							controllers.ConquerController.conquer(conqueringAttemptId)
 
-# testing
-GET		/sendHi										controllers.TeamController.sendHi()
+# LocationController
+GET		/updateLocation								controllers.LocationController.updateLocation(lat, lng, uncertainty, speed, timestamp)
+
+# WebSocketController
+GET     /websocket/connect          				controllers.WebSocketController.connect(playerId)
+
+# MapInfoController
+GET     /mapinfo/playersNearby						controllers.MapInfoController.playersNearby(lat, lng)
+
+# NotificationController
+GET		/notifications/getHistory					controllers.NotificationController.getHistory(offset, count)
+
+# UnitController
+GET     /unit/getUnitsOfPlayer						controllers.UnitController.getUnitsOfPlayer()
 
 # Player profile
 GET     /profile                    				controllers.Application.profile()
 
-# Invite a new member
-GET		/invite/:username							controllers.TeamController.tryInvite(username)
-GET		/acceptInvitation/:token					controllers.TeamController.acceptInvitation(token)
+# testing
+GET		/sendHi										controllers.TeamController.sendHi()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               				controllers.Assets.at(path="/public", file)

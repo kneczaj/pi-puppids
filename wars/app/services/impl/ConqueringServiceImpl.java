@@ -8,16 +8,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import models.AmountType;
-import models.CheckConquerConditionsResult;
-import models.ConqueringAttempt;
 import models.Faction;
 import models.GPlace;
-import models.InitiateConquerResult;
 import models.Place;
 import models.PlaceType;
 import models.Player;
 import models.ResourceType;
 import models.Team;
+import models.conquer.CheckConquerConditionsResult;
+import models.conquer.ConqueringAttempt;
+import models.conquer.InitiateConquerResult;
 
 import org.bson.types.ObjectId;
 

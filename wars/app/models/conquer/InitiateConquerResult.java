@@ -1,4 +1,4 @@
-package models;
+package models.conquer;
 
 import org.codehaus.jackson.node.ObjectNode;
 
