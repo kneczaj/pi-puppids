@@ -40,7 +40,9 @@ public class InitiateConquerResult {
 	public ObjectNode toJson() {
 		ObjectNode result = Json.newObject();
 		result.put("type", type.toString());
-		result.put("conqueringAttempt", conqueringAttempt.toJson());
+		
+		if (conqueringAttempt != null)
+			result.put("conqueringAttempt", conqueringAttempt.toJson());
 		
 		return result;
 	}
