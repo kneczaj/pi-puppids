@@ -236,7 +236,7 @@ public class UnitServiceImpl implements UnitService {
 	}
 
 	@Override
-	public void retrieveUnit(Player player, UnitType type, Integer amount,
+	public void undeployUnit(Player player, UnitType type, Integer amount,
 			Place from) throws UnitServiceException {
 
 		Player loadedPlayer = playerDAO.findOne("username",
