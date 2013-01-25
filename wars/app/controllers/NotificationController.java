@@ -27,11 +27,13 @@ public class NotificationController extends Controller {
 	private static NotificationService notificationService;
 
 	@SecureSocial.SecuredAction(ajaxCall = true)
-	public static Result getHistory(int offset, int count) {
+	public static Result getHistory(String offset, String count) {
+
 		Player p = authenticationService.getPlayer();
-		List<Notification> notifications = notificationService.getNotificationHistoryOfPlayer(p, offset,
-				count);
-		
+		List<Notification> notifications = notificationService
+				.getNotificationHistoryOfPlayer(p, Integer.valueOf(offset),
+						Integer.valueOf(count));
+
 		return ok(JsonHelper.toJson(notifications));
 	}
 

@@ -1,16 +1,20 @@
-package models;
+package models.conquer;
 
 import java.util.Date;
 import java.util.Set;
+
+import models.Player;
 
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
 
+import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Id;
 import com.google.common.collect.Sets;
 
+@Entity("conquering_attempts")
 public class ConqueringAttempt {
 	
 	@Id

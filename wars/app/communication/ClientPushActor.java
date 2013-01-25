@@ -3,9 +3,9 @@ package communication;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
-import models.ConqueringAttempt;
 import models.Player;
 import models.PlayerLocation;
+import models.conquer.ConqueringAttempt;
 import models.notifications.Notification;
 
 import org.codehaus.jackson.JsonNode;

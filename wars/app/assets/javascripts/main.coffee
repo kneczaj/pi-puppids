@@ -68,9 +68,13 @@ $(document).ready ->
 	conquerManager = new window.ArWars.ConquerManager()
 	layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
 	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails'), conquerManager
+	
 	conquerManager.setPlayerPositionManager playerPositionManager
+	
 	sidebar = new window.ArWars.SideBar playerPositionManager
 	sidebar.loadResourceSourcesOfPlayer()
 	sidebar.loadUnitsOfPlayer()
+	sidebar.loadNotifications()
+
 	webSocket = new window.ArWars.WebSocketManager playerPositionManager conquerManager
 	webSocket.establishWebSocket window.ArWars.webSocketURL

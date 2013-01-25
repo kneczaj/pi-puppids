@@ -4,15 +4,15 @@ import java.util.List;
 
 import models.City;
 import models.Faction;
+import models.Invitation;
 import models.Player;
 import models.PlayerLocation;
 import models.Team;
-import models.Invitation;
-
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import services.api.AuthenticationService;
+import services.api.NotificationService;
 import services.api.TeamService;
 import views.html.index;
 import views.html.profile;
@@ -30,6 +30,9 @@ public class Application extends Controller {
 	
 	@Inject
 	private static TeamService teamService;
+	
+	@Inject
+	private static NotificationService notificationService;
 	
 	@Inject
 	private static PlayerLocationDAO playerLocationDAO;
@@ -53,7 +56,6 @@ public class Application extends Controller {
 		List<City> cities = cityDAO.find().asList();
 		
 		PlayerLocation playerLocation = playerLocationDAO.findLatestLocation(player);
-		
 		List<Invitation> sentInvitations = teamService.getPlayerInvitations(player);
 		
 		return ok(index.render(player, playerLocation, teammates, factions, cities, sentInvitations));

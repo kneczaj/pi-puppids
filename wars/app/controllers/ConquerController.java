@@ -1,9 +1,9 @@
 package controllers;
 
-import models.CheckConquerConditionsResult;
-import models.ConqueringAttempt;
-import models.InitiateConquerResult;
 import models.Player;
+import models.conquer.CheckConquerConditionsResult;
+import models.conquer.ConqueringAttempt;
+import models.conquer.InitiateConquerResult;
 
 import org.codehaus.jackson.node.ObjectNode;
 
