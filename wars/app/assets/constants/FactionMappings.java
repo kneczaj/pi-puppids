@@ -2,9 +2,9 @@ package assets.constants;
 
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-
 import models.FactionName;
+
+import com.google.common.collect.Maps;
 
 public class FactionMappings {
 	public static Map<FactionName, String> FACTION_NAME_MAP = generateFactionNameMap();

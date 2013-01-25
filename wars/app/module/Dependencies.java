@@ -14,6 +14,7 @@ import services.api.ScoreService;
 import services.api.TeamService;
 import services.api.UnitService;
 import services.api.VictoryStrategy;
+import services.api.WebSocketCommunicationService;
 import services.dummy.ResourceServiceDummyImpl;
 import services.dummy.ScoreServiceDummyImpl;
 import services.google.places.api.GPlaceService;
@@ -29,6 +30,7 @@ import services.impl.ResourceServiceImpl;
 import services.impl.TeamServiceImpl;
 import services.impl.UnitServiceImpl;
 import services.impl.VictoryByNumberOfUnitsStategy;
+import services.impl.WebSocketCommunicationServiceImpl;
 
 import com.google.code.morphia.Morphia;
 import com.google.inject.Binder;
@@ -47,6 +49,7 @@ import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
 import daos.TeamDAO;
 import daos.UnitDAO;
+import daos.UndeliveredNotificationDAO;
 
 /**
  * Configures Google Guice to inject the proper implementations for certain interfaces.
@@ -66,6 +69,8 @@ public class Dependencies implements Module {
 		binder.bind(GPlaceService.class).to(GPlaceServiceImpl.class).in(Singleton.class);
 		binder.bind(ConqueringService.class).to(ConqueringServiceImpl.class).in(Singleton.class);
 		binder.bind(VictoryStrategy.class).to(VictoryByNumberOfUnitsStategy.class).in(Singleton.class);
+		binder.bind(WebSocketCommunicationService.class).to(WebSocketCommunicationServiceImpl.class).in(Singleton.class);
+		
 		
 		if (Play.isTest()) {
 			binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);	
@@ -92,6 +97,7 @@ public class Dependencies implements Module {
 		binder.bind(UnitDAO.class).in(Singleton.class);
 		binder.bind(ConqueringAttemptDAO.class).in(Singleton.class);
 		binder.bind(NotificationDAO.class).in(Singleton.class);
+		binder.bind(UndeliveredNotificationDAO.class).in(Singleton.class);
 	}
 
 }

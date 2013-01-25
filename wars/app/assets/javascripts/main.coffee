@@ -6,7 +6,9 @@ $(document).ready ->
 
 	rejectInvitationClickHandler = ->
 		$("#sentInvitationsModal").modal 'hide'
-		$("#chooseFactionModal").modal 'show'
+		$("#chooseFactionModal").modal
+			backdrop: "static"
+			keyboard: false
 		return false
 		
 	acceptInvitationClickHandler = ->
@@ -17,7 +19,9 @@ $(document).ready ->
 	$("button[name=accept]", "#sentInvitationsModal").bind 'click', acceptInvitationClickHandler
 	$("button[name=reject]", "#sentInvitationsModal").bind 'click', rejectInvitationClickHandler	
 	if window.ArWars.showSentInvitations is true 
-		$("#sentInvitationsModal").modal 'show'
+		$("#sentInvitationsModal").modal
+			backdrop: "static"
+			keyboard: false
 		
 		
 
@@ -54,7 +58,9 @@ $(document).ready ->
 		return false
 		
 	factionBackToInvitationsClickHandler = ->
-		$("#sentInvitationsModal").modal 'show'
+		$("#sentInvitationsModal").modal
+			backdrop: "static"
+			keyboard: false
 		$("#chooseFactionModal").modal 'hide'
 		return false
 		
@@ -63,7 +69,9 @@ $(document).ready ->
 	$("#chooseFactionModal form").submit factionClickHandler	
 
 	if window.ArWars.factionHasToBeChosen is true 
-		$("#chooseFactionModal").modal 'show'
+		$("#chooseFactionModal").modal
+			backdrop: "static"
+			keyboard: false
 
 	conquerManager = new window.ArWars.ConquerManager()
 	layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
