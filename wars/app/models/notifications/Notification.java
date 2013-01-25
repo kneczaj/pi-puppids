@@ -2,10 +2,10 @@ package models.notifications;
 
 import java.util.List;
 
-import org.codehaus.jackson.node.ObjectNode;
-
-import models.TimeStampedModel;
 import models.Player;
+import models.TimeStampedModel;
+
+import org.codehaus.jackson.node.ObjectNode;
 
 import play.Logger;
 import play.libs.Json;
@@ -14,10 +14,10 @@ import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Reference;
 import com.google.common.collect.Lists;
 
-@Entity("notification")
+@Entity("notifications")
 public class Notification extends TimeStampedModel {
 	
-	private boolean sent;
+	private boolean messageGenerated;
 	
 	// cache for notification message - generated at sent event
 	// guarantees that message will be readable without gathering
@@ -29,7 +29,7 @@ public class Notification extends TimeStampedModel {
 	
 	public Notification() {
 		super();
-		sent = false;
+		messageGenerated = false;
 	}
 	
 	public String getMessage() {
@@ -41,7 +41,7 @@ public class Notification extends TimeStampedModel {
 	// derived classes should override this method and return string message depending 
 	// on the content of appropriate variables
 	// The function should write message to this.message 
-	private void generateMessage() {
+	public void generateMessage() {
 		Logger.error("generateMessage() function is not implemented in " + this.getClass().getName() + " class");
 	}
 
@@ -53,8 +53,8 @@ public class Notification extends TimeStampedModel {
 		return this.players;
 	}
 	
-	public boolean isSent() {
-		return sent;
+	public boolean isMessageGenerated() {
+		return messageGenerated;
 	}
 	
 	public ObjectNode toJson() {
@@ -63,7 +63,7 @@ public class Notification extends TimeStampedModel {
 		// derived class toJson() function.
 		// Only then this message will be treated as a notification message
 		// when received.
-		sent = true;
+		messageGenerated = true;
 		
 		ObjectNode notification = Json.newObject();
 		notification.put("notificationMessage", getMessage());

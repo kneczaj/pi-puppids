@@ -8,7 +8,6 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
-
 import services.api.TeamService;
 import services.api.error.TeamServiceException;
 
@@ -31,19 +30,19 @@ import daos.TeamDAO;
 public class TeamServiceImpl implements TeamService {
 	
 	@Inject
-	private static TeamDAO teamDAO;
+	private TeamDAO teamDAO;
 	
 	@Inject
-	private static PlayerDAO playerDAO;
+	private PlayerDAO playerDAO;
 	
 	@Inject
-	private static CityDAO cityDAO;
+	private CityDAO cityDAO;
 	
 	@Inject
-	private static InvitationDAO invitationDAO;
+	private InvitationDAO invitationDAO;
 	
 	@Inject
-	private static FactionDAO factionDAO;
+	private FactionDAO factionDAO;
 	
 	@Override
 	public Team createTeam(City city, String name) {
