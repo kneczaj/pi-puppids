@@ -4,13 +4,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import services.google.places.api.GPlaceServiceException;
-
 import models.Location;
 import models.Place;
 import models.Player;
 import models.PlayerLocation;
 import models.Team;
+import services.google.places.api.GPlaceServiceException;
 
 /**
  * MapInfoService: - find players nearby - find places nearby

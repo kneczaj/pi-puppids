@@ -10,13 +10,12 @@ import securesocial.core.providers.utils.RoutesHelper;
 import services.api.AuthenticationService;
 import services.api.PlayerService;
 import services.api.TeamService;
+import services.api.WebSocketCommunicationService;
 import services.api.error.PlayerServiceException;
 import services.api.error.TeamServiceException;
-
 import views.html.message;
 
 import com.google.inject.Inject;
-import communication.ClientPushActor;
 
 import daos.InvitationDAO;
 import daos.PlayerDAO;
@@ -31,6 +30,9 @@ public class TeamController extends Controller {
 	
 	@Inject
 	private static PlayerService playerService;
+	
+	@Inject
+	private static WebSocketCommunicationService webSocketCommunicationService;
 
 	@Inject
 	private static PlayerDAO playerDAO;
@@ -76,7 +78,7 @@ public class TeamController extends Controller {
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result sendHi() {
 		Player player = authenticationService.getPlayer();
-		ClientPushActor.sendHi(player);
+		webSocketCommunicationService.sendHi(player);
 		return ok("ok");
 	}
 	

@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import models.notifications.Notification;
+
 import org.bson.types.ObjectId;
 
 import securesocial.core.java.AuthenticationMethod;
@@ -19,8 +21,6 @@ import com.google.code.morphia.annotations.Reference;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import models.notifications.Notification;
 
 @Entity("players")
 public class Player {
