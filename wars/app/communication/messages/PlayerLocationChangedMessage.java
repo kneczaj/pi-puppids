@@ -1,9 +1,10 @@
 package communication.messages;
 
+import models.PlayerLocation;
+
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
-import models.PlayerLocation;
 
 /**
  * Is sent to the ClientPushActor if the location of a player changed.

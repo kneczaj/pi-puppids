@@ -6,10 +6,10 @@ import models.Location;
 import models.Player;
 import models.PlayerLocation;
 import services.api.LocationTrackingService;
+import services.api.WebSocketCommunicationService;
 import services.api.error.LocationTrackingServiceException;
 
 import com.google.inject.Inject;
-import communication.ClientPushActor;
 
 import daos.PlayerLocationDAO;
 
@@ -21,7 +21,10 @@ import daos.PlayerLocationDAO;
 public class LocationTrackingServiceImpl implements LocationTrackingService {
 
 	@Inject
-	private static PlayerLocationDAO locationDAO;
+	private PlayerLocationDAO locationDAO;
+	
+	@Inject
+	private WebSocketCommunicationService webSocketCommunicationService;
 
 	@Override
 	public void updatePlayerLocation(Player player, Location location,
@@ -38,7 +41,7 @@ public class LocationTrackingServiceImpl implements LocationTrackingService {
 		
 		locationDAO.save(pl);
 		
-		ClientPushActor.playerLocationChanged(pl);
+		webSocketCommunicationService.playerLocationChanged(pl);
 	}
 	
 

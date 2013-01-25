@@ -14,16 +14,7 @@ public interface NotificationService {
 	 * @param notification
 	 * @param players
 	 */
-	public void saveNotifications(Notification notification);
-	
-	/**
-	 * Push a notification to the list of players mentioned.
-	 * Pushes the notification over WebSocket to the player's browsers.
-	 * 
-	 * @param notification
-	 * @param players
-	 */
-	public void pushOutNotifications(Notification notification);
+	public void saveNotification(Notification notification);
 	
 	/**
 	 * Get the history of notifications for a given player.
@@ -36,4 +27,13 @@ public interface NotificationService {
 	 */
 	public List<Notification> getNotificationHistoryOfPlayer(Player player, int offset, int count);
 	
+	
+	/**
+	 * Saves notification which was not deliver because players were offline
+	 * 
+	 * @param notification
+	 * @param absentPlayers
+	 */
+	public void saveUndeliveredNotifications(Notification notification, List<Player> absentPlayers);
+
 }
