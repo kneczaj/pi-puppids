@@ -8,7 +8,11 @@ import models.Player;
 import models.ResourceType;
 import models.Team;
 import models.Unit;
+
+import org.codehaus.jackson.node.ObjectNode;
+
 import play.Logger;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
@@ -18,7 +22,6 @@ import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
 import util.JsonHelper;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import daos.PlayerDAO;
@@ -53,21 +56,30 @@ public class ResourceController extends Controller {
 		
 		try {
 			Map<Place, ResourceType> map = resourceService.getResourceSourcesOfPlayer(p);
-			Map<String, Place> resourceSources = Maps.newHashMap();
-			Map<String, Integer> unitDeployments = Maps.newHashMap();
+			
+			ObjectNode resourceSources = Json.newObject();
+			ObjectNode unitDeployments = Json.newObject();
 			
 			for (Place place : map.keySet()) {
-				resourceSources.put(place.getIdString(), place);
+				ObjectNode placeJson = Json.newObject();
+				placeJson.put("uuid", place.getUuid());
+				placeJson.put("name", place.getName());
+				placeJson.put("amount", place.getAmount());
+				placeJson.put("lat", place.getLat());
+				placeJson.put("lng", place.getLng());
+				placeJson.put("resource", place.getResource().toString());
+				
+				resourceSources.put(place.getIdString(), placeJson);
 				
 				List<Unit> units = placeService.getDeployedUnitsOfPlayer(p, place);
 				unitDeployments.put(place.getIdString(), units.size());
 			}
+
+			ObjectNode json = Json.newObject();
+			json.put("resourceSources", resourceSources);
+			json.put("unitDeployments", unitDeployments);
 			
-			Map<String, Object> ret = Maps.newHashMap();
-			ret.put("resourceSources", resourceSources);
-			ret.put("unitDeployments", unitDeployments);
-			
-			return ok(JsonHelper.toJson(ret));
+			return ok(json.toString());
 		} catch (ResourceServiceException e) {
 			Logger.warn("Could not find resource sources of player", e);
 

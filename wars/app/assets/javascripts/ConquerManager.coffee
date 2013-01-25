@@ -78,7 +78,7 @@ class ArWars.ConquerManager
 					t = 'The conquering attempt was started and team members that are around were invited to join.'
 
 				@notify 'Initiate conquer', t, 'success'
-				$(".conductConquer").click () => 
+				$(".conductConquer").click () -> 
 					attemptId = $(@).attr 'attemptId'
 					console.log "conduct #{attemptId} immediately"
 					@conquer attemptId

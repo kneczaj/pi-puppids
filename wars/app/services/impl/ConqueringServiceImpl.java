@@ -317,11 +317,12 @@ public class ConqueringServiceImpl implements ConqueringService {
 			place.setConqueredBy(participants);
 			placeDAO.updateConquerors(place, participants);
 		} else {
-			GPlace gPlace = gPlaceService.details(ca.getUuid());
+			GPlace gPlace = gPlaceService.details(ca.getReference());
 			Place newPlace = new Place();
 			newPlace.setName(gPlace.getName());
 			newPlace.setLat(gPlace.getLatitude());
 			newPlace.setLng(gPlace.getLongitude());
+			newPlace.setUuid(gPlace.getUuid());
 
 			PlaceType type = PlaceType.valueOf(gPlace.getTypes().get(0));
 			newPlace.setType(type);

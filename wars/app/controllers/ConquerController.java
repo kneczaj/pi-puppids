@@ -7,6 +7,7 @@ import models.conquer.InitiateConquerResult;
 
 import org.codehaus.jackson.node.ObjectNode;
 
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
@@ -99,6 +100,7 @@ public class ConquerController extends Controller {
 			// participants
 			return ok(JsonHelper.toJson(conqueringResult));
 		} catch (GPlaceServiceException e) {
+			Logger.info(e.toString() + e.getMessage());
 			return ok("error");
 		}
 	}
