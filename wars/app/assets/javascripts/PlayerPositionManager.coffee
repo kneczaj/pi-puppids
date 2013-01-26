@@ -38,9 +38,9 @@ class ArWars.PlayerPositionManager
 		]
 
 	@locationOptions = 
-		enableHighAccuracy : true
-		timeout : 3000
-		maximumAge : 500
+		enableHighAccuracy : false
+		timeout : 300
+		maximumAge : 50000
 
 	@circleOpts =  
 		clickable: false

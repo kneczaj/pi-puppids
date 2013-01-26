@@ -34,6 +34,9 @@ public int numberOfConquerors;
 		invitation.put("initiatorId", initiator.getId().toString());
 		invitation.put("initiatorName", initiator.getUsername());
 		invitation.put("placeId", uuid);
+		invitation.put("placeName", conqueringAttempt.getPlaceName());
+		invitation.put("lat", conqueringAttempt.getLat());
+		invitation.put("lng", conqueringAttempt.getLng());
 		
 		return invitation;
 	}

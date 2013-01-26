@@ -145,10 +145,10 @@ public class ConqueringServiceImpl implements ConqueringService {
 			return JoinConquerResult.CONQUER_CANCELED;
 		}
 
-		Team teamOfPlayer = player.getTeam();
-		Team teamOfInitiator = ca.getInitiator().getTeam();
+		String teamOfPlayer = player.getTeam().getId().toString();
+		String teamOfInitiator = ca.getInitiator().getTeam().getId().toString();
 
-		if (!teamOfPlayer.getId().equals(teamOfInitiator)) {
+		if (!teamOfPlayer.equals(teamOfInitiator)) {
 			return JoinConquerResult.UNALLOWED_TO_JOIN;
 		}
 
@@ -355,6 +355,10 @@ public class ConqueringServiceImpl implements ConqueringService {
 		// check if place belongs already to the faction of the player
 		Place place = placeDAO.findOne("uuid", uuid);
 
+		String placeName;
+		Double placeLat;
+		Double placeLng;
+		
 		if (place != null && place.getConqueredBy().size() > 0) {
 			Faction factionOfPlayer = player.getTeam().getFaction();
 			Player conqueror = place.getConqueredBy().get(0);
@@ -364,6 +368,15 @@ public class ConqueringServiceImpl implements ConqueringService {
 				return new InitiateConquerResult(
 						InitiateConquerResult.Type.PLACE_ALREADY_BELONGS_TO_FACTION);
 			}
+			
+			placeName = place.getName();
+			placeLat = place.getLat();
+			placeLng = place.getLng();
+		} else {
+			GPlace details = gPlaceService.details(reference);
+			placeName = details.getName();
+			placeLat = details.getLatitude();
+			placeLng = details.getLongitude();
 		}
 
 		Set<Player> membersNearby = getTeamMembersNearby(player, reference);
@@ -383,6 +396,9 @@ public class ConqueringServiceImpl implements ConqueringService {
 		ca.setStartDate(new Date());
 		ca.setInitiator(player);
 		ca.setUuid(uuid);
+		ca.setPlaceName(placeName);
+		ca.setLat(placeLat);
+		ca.setLng(placeLng);
 		ca.setReference(reference);
 
 		conqueringAttemptDAO.save(ca);
@@ -406,9 +422,23 @@ public class ConqueringServiceImpl implements ConqueringService {
 			return;
 		}
 		
-		List<Player> onlinePlayersOfTeam = playerDAO.findPlayers(
-				onlinePlayerIds, ca.getInitiator().getTeam());
-		webSocketCommunicationService.sendConqueringInvitation(ca, onlinePlayersOfTeam);
+		List<Player> playersToInvite = Lists.newArrayList();
+		String initiatorId = ca.getInitiator().getId().toString();
+		
+		List<Player> teamMates = ca.getInitiator().getTeam().getPlayers();
+		for (String entry : onlinePlayerIds) {
+			if (entry.equals(initiatorId)) {
+				continue;
+			}
+			
+			for (Player p : teamMates) {
+				if (entry.equals(p.getId().toString())) {
+					playersToInvite.add(p);
+				}
+			}
+		}
+		
+		webSocketCommunicationService.sendConqueringInvitation(ca, playersToInvite);
 	}
 
 }

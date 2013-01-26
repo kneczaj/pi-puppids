@@ -30,9 +30,4 @@ public class PlayerDAO extends AbstractDAO<Player, ObjectId> {
 		super(mongo, morphia);
 	}
 	
-	public List<Player> findPlayers(List<String> playerIds, Team t) {
-		Query<Player> query = this.createQuery().filter("_id in", playerIds).filter("team", t);
-		return this.find(query).asList();
-	}
-	
 }
