@@ -11,9 +11,13 @@ import services.api.WebSocketCommunicationService;
 import com.google.inject.Inject;
 
 import daos.NotificationDAO;
+import daos.PlayerDAO;
 import daos.UndeliveredNotificationDAO;
 
 public class NotificationServiceImpl implements NotificationService {
+	
+	@Inject
+	private PlayerDAO playerDAO;
 	
 	@Inject
 	private NotificationDAO notificationDAO;
@@ -26,11 +30,13 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void saveNotification(Notification notification) {
-		
-		for (Player p: notification.getPlayers())
-			p.addNotification(notification);
-		
 		notificationDAO.save(notification);
+		
+		for (Player p: notification.getPlayers()) {
+			p.addNotification(notification);
+			playerDAO.save(p);
+		}
+		
 	}
 	
 	@Override
@@ -44,8 +50,12 @@ public class NotificationServiceImpl implements NotificationService {
 	
 	@Override
 	public void saveUndeliveredNotifications(Notification notification, List<Player> absentPlayers) {
-		for (Player player: absentPlayers)
+		for (Player player: absentPlayers) {
+			player.addNotification(notification);
+			playerDAO.save(player);
+			
 			undeliveredNotificationDAO.save(new UndeliveredNotification(notification, player));
+		}
 
 	}
 	
