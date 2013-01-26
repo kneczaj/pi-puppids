@@ -32,6 +32,12 @@ public class ConqueringAttempt {
 	
 	private boolean canceled = false;
 	
+	private String placeName;
+	
+	private Double lat;
+	
+	private Double lng;
+	
 	private Set<Player> joiningMembers = Sets.newHashSet();
 
 	public ObjectId getId() {
@@ -98,6 +104,30 @@ public class ConqueringAttempt {
 		this.reference = reference;
 	}
 	
+	public String getPlaceName() {
+		return placeName;
+	}
+
+	public void setPlaceName(String placeName) {
+		this.placeName = placeName;
+	}
+
+	public Double getLat() {
+		return lat;
+	}
+
+	public void setLat(Double lat) {
+		this.lat = lat;
+	}
+
+	public Double getLng() {
+		return lng;
+	}
+
+	public void setLng(Double lng) {
+		this.lng = lng;
+	}
+
 	public ObjectNode toJson() {
 		ObjectNode attempt = Json.newObject();
 		attempt.put("id", id.toString());
