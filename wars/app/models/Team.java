@@ -115,10 +115,18 @@ public class Team extends TimeStampedModel {
 		Date minDate = null;
 		for (Player player : players) {
 			Date date = player.getJoinTeamDate();
-		    if (minPlayer == null || minDate.compareTo(date) > 0 ) {
-		        minPlayer = player;
-		        minDate = date;
-		    }
+			
+			if (minPlayer == null && date != null)  {
+				minPlayer = player;
+				minDate = date;
+				
+				continue;
+			} 
+			
+			if (date != null && minDate.getTime() > date.getTime()) {
+				minPlayer = player;
+				minDate = date;
+			}
 		}
 		
 		setTeamMaster(minPlayer);
