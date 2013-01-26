@@ -196,7 +196,7 @@ public class Player {
 	}
 	
 	public void addNotification(Notification n) {
-		notifications.add(n);
+		notifications.add(0, n);
 	}
 	
 	public List<Notification> getNotificationsList() {

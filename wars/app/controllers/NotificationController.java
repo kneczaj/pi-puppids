@@ -3,15 +3,18 @@ package controllers;
 import java.util.List;
 
 import models.Player;
-import models.notifications.Notification;
+
+import org.codehaus.jackson.node.ArrayNode;
+
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import services.api.AuthenticationService;
 import services.api.NotificationService;
-import util.JsonHelper;
 
 import com.google.inject.Inject;
+import communication.messages.ConqueringInvitationMessage;
 
 /**
  * Controller for the NotificationService
@@ -30,11 +33,20 @@ public class NotificationController extends Controller {
 	public static Result getHistory(String offset, String count) {
 
 		Player p = authenticationService.getPlayer();
-		List<Notification> notifications = notificationService
+		List notifications = notificationService
 				.getNotificationHistoryOfPlayer(p, Integer.valueOf(offset),
 						Integer.valueOf(count));
-
-		return ok(JsonHelper.toJson(notifications));
+		
+		ArrayNode array = Json.newObject().arrayNode();
+		
+		for (Object n : notifications) {
+			if (n instanceof ConqueringInvitationMessage) {
+				ConqueringInvitationMessage cim = (ConqueringInvitationMessage) n;
+				array.add(cim.toJson());
+			}
+		}
+		
+		return ok(array.toString());
 	}
 
 }
