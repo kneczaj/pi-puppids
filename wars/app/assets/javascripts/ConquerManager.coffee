@@ -83,9 +83,6 @@ class ArWars.ConquerManager
 					console.log "conduct #{attemptId} immediately"
 					@conquer attemptId
 
-			if responseData.conqueringStatus == 'CONQUER_POSSIBLE'
-				@conquer responseData.conqueringAttempt.id
-
 	notify: (title, text, type) ->
 		$.pnotify
 			title: title
