@@ -66,9 +66,15 @@ class ArWars.PlayerPositionManager
 
 	constructor: (@mapNode, @infoPanel, @conquerManager) ->
 		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
-		@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
 		@bounds = new google.maps.LatLngBounds()
 
+		d = 
+			playerId: window.ArWars.playerId
+
+		$.getJSON '/getPlayer', d, (responseData) => 
+			@players[window.ArWars.playerId] = responseData
+			@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
+		
 	getMap: () ->
 		@map
 
@@ -166,12 +172,6 @@ class ArWars.PlayerPositionManager
 		if coords.accuracy >= @MAX_UNCERTAINTY
 			player = @players[window.ArWars.playerId]
 
-			if not player?
-				return
-
-			if not player.team?
-				return
-
 			latitude = player.team.lat
 			longitude = player.team.lng
 
@@ -257,7 +257,6 @@ class ArWars.PlayerPositionManager
 		# Register ClickHandler for this marker
 		google.maps.event.addListener marker, 'click', () =>
 			player = @players[pId]
-			if not player? then return
 
 			username = if player.username then player.username else ""
 			team = if player.team.name is "pseudo" then "loner" else player.team.name
