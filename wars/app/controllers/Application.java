@@ -8,6 +8,11 @@ import models.Invitation;
 import models.Player;
 import models.PlayerLocation;
 import models.Team;
+
+import org.bson.types.ObjectId;
+import org.codehaus.jackson.node.ObjectNode;
+
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
@@ -21,6 +26,7 @@ import com.google.inject.Inject;
 
 import daos.CityDAO;
 import daos.FactionDAO;
+import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
 
 public class Application extends Controller {
@@ -46,6 +52,9 @@ public class Application extends Controller {
 	@Inject
 	private static CityDAO invitationDAO;
 	
+	@Inject
+	private static PlayerDAO playerDAO;
+	
 	@SecureSocial.SecuredAction
 	public static Result index() {
 		Player player = authenticationService.getPlayer();
@@ -59,6 +68,26 @@ public class Application extends Controller {
 		List<Invitation> sentInvitations = teamService.getPlayerInvitations(player);
 		
 		return ok(index.render(player, playerLocation, teammates, factions, cities, sentInvitations));
+	}
+	
+	@SecureSocial.SecuredAction(ajaxCall=true)
+	public static Result getPlayer(String playerId) { 
+		Player p = playerDAO.get(new ObjectId(playerId));
+		
+		ObjectNode team = Json.newObject();
+		team.put("name", p.getTeam().getName());
+		team.put("lat", p.getTeam().getCity().getLatitude());
+		team.put("lng", p.getTeam().getCity().getLongitude());
+		
+		ObjectNode faction = Json.newObject();
+		faction.put("name", p.getTeam().getFaction().toString());
+		
+		ObjectNode json = Json.newObject();
+		json.put("username", p.getUsername());
+		json.put("team", team);
+		json.put("faction", faction);
+		
+		return ok(json.toString());
 	}
 	
 	@SecureSocial.SecuredAction
