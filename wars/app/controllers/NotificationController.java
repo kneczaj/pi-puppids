@@ -14,7 +14,10 @@ import services.api.AuthenticationService;
 import services.api.NotificationService;
 
 import com.google.inject.Inject;
+
+import communication.messages.ConquerPossibleMessage;
 import communication.messages.ConqueringInvitationMessage;
+import communication.messages.ParticipantJoinedConquerMessage;
 
 /**
  * Controller for the NotificationService
@@ -29,6 +32,7 @@ public class NotificationController extends Controller {
 	@Inject
 	private static NotificationService notificationService;
 
+	@SuppressWarnings("rawtypes")
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result getHistory(String offset, String count) {
 
@@ -41,8 +45,14 @@ public class NotificationController extends Controller {
 		
 		for (Object n : notifications) {
 			if (n instanceof ConqueringInvitationMessage) {
-				ConqueringInvitationMessage cim = (ConqueringInvitationMessage) n;
-				array.add(cim.toJson());
+				ConqueringInvitationMessage m = (ConqueringInvitationMessage) n;
+				array.add(m.toJson());
+			} else if (n instanceof ConquerPossibleMessage) {
+				ConquerPossibleMessage m = (ConquerPossibleMessage) n;
+				array.add(m.toJson());
+			} else if (n instanceof ParticipantJoinedConquerMessage) {
+				ParticipantJoinedConquerMessage m = (ParticipantJoinedConquerMessage) n;
+				array.add(m.toJson());
 			}
 		}
 		
