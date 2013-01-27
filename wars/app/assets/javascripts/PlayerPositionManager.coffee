@@ -53,25 +53,13 @@ class ArWars.PlayerPositionManager
 	circles: []
 	players: []
 	placeMarkers: []
-	
-	locationWatchHandle: null
-	map: null
-	mapNode: null
-	selectedPlayer: null
-	infoPanel: null
-	infowindow: null
-	bounds: null
-
-	lastUnprecisePositionNotification: null
 
 	constructor: (@mapNode, @infoPanel, @conquerManager) ->
 		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
 		@bounds = new google.maps.LatLngBounds()
 
-		d = 
-			playerId: window.ArWars.playerId
-
-		$.getJSON '/getPlayer', d, (responseData) => 
+		# load information for the current player
+		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
 			@players[window.ArWars.playerId] = responseData
 			@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
 		
@@ -84,14 +72,12 @@ class ArWars.PlayerPositionManager
 		@circles[pId] = null
 
 	loadPlayersNearby: (lat, lng) -> 
-		d = 
-			lat: lat
-			lng: lng
-		
 		$.ajax
 			url : "/mapinfo/playersNearby"
 			type : "get"
-			data : d
+			data : 
+				lat: lat
+				lng: lng
 			dataType : "json"
 			success : (response, textStatus, jqXHR) =>
 				for key, value of response
@@ -109,9 +95,9 @@ class ArWars.PlayerPositionManager
 			
 		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 		service = new google.maps.places.PlacesService(@map)
-		service.nearbySearch(request, @callback)
+		service.nearbySearch(request, @onNearbySearchResult)
 
-	callback: (results, status, pagination) =>
+	onNearbySearchResult: (results, status, pagination) =>
 		if status is google.maps.places.PlacesServiceStatus.OK
 			@createMarker(i) for i in results
 		
@@ -210,13 +196,9 @@ class ArWars.PlayerPositionManager
 	# Called when the LocationAPI threw an error
 	onPositionError: (error) ->
 		if error.code == 1 # permission was denied by user
-			log "User denied geolocation"
-		else if error.code == 2 # position unavailable
-			log "position unavailable"
-		else if error.code == 3 # timeout in calculating / finding the position
-			log "timeout while calculating position"
+			@notify 'Location Error', 'To play ARWars it is strongly recommended that you switch on the location features in your browsers preferences.', 'error'
 		else
-			log "unknown error"
+			@notify 'Location Error', 'Currently, there is no position data available with your device.', 'info'
 
 	# Pushes the location of a player to the Google Map
 	push2Map: (pId, latitude, longitude, uncertainty) ->
@@ -231,10 +213,7 @@ class ArWars.PlayerPositionManager
 					return
 
 			@lastUnprecisePositionNotification = new Date()
-			$.pnotify
-			    title: 'Unprecise location'
-			    text: 'The precision of your location could not be determined in a precise manner. You could try to activate GPS or go outside.'
-			    type: 'error'
+			@notify 'Unprecise location', 'The precision of your location could not be determined in a precise manner. You could try to activate GPS or go outside.', 'error'
 	
 			return
 
@@ -289,3 +268,9 @@ class ArWars.PlayerPositionManager
 		circle = new google.maps.Circle currentOpts
 		circle.setMap @map
 		@circles[pId] = circle
+
+	notify: (title, text, type) ->
+		$.pnotify
+			title: title
+			text: text
+			type: type
