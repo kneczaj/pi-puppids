@@ -39,7 +39,6 @@ GET     /unit/buildUnits							controllers.UnitController.buildUnits(gruntAmount
 
 # Player profile
 GET     /profile                    				controllers.Application.profile()
-GET		/getPlayer									controllers.Application.getPlayer(playerId)
 
 # testing
 GET		/sendHi										controllers.TeamController.sendHi()

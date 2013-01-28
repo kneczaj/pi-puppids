@@ -83,6 +83,10 @@ $(document).ready ->
 	sidebar.loadResourceSourcesOfPlayer()
 	sidebar.loadUnitsOfPlayer()
 	sidebar.loadNotifications()
+	
+	$("button#btnBuild").click () => 
+		sidebar.buildUnitsClickHandler()
+		return false
 
 	webSocket = new window.ArWars.WebSocketManager playerPositionManager, conquerManager
 	webSocket.establishWebSocket window.ArWars.webSocketURL

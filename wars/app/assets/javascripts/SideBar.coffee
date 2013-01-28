@@ -62,10 +62,10 @@ class ArWars.SideBar
 					overallNumber = data.overallUnits[key]
 					totalDeployed += val
 					totalOverall += overallNumber
-					items.push "<tr><td>#{unitName}</td><td>#{val}</td><td>#{overallNumber}</td><td><input class=\"input-mini\" type=\"text\" id=\"#{unitName}BuildQuantity\"></td></tr>"
+					items.push "<tr><td>#{unitName}</td><td>#{val}</td><td>#{overallNumber}</td></tr>"
 					
 				$(items.join('')).appendTo '#playerUnits tbody'
-				$('#playerUnits tfoot').append "<tr><td>Sum</td><td>#{totalDeployed}</td><td>#{totalOverall}</td><td><input type=\"submit\" class=\"btn btn-block btn-warning\" value=\"Build\"></td></tr>"
+				$('#playerUnits tfoot').append "<tr><td>Sum</td><td>#{totalDeployed}</td><td>#{totalOverall}</td></tr>"
 				$('#playerUnits').dataTable
 					sDom: "<'row'<'span2'l><'span8'f>r>t<'row'<'span6'i><'span6'p>>"
 					sPaginationType: "bootstrap"							
@@ -84,3 +84,38 @@ class ArWars.SideBar
 		newLocation = new google.maps.LatLng place.lat, place.lng
 
 		@playerPositionManager.getMap().panTo newLocation
+		
+	buildUnitsClickHandler: () ->
+		gruntAmount = $("input#gruntAmount").val()
+		infantryAmount = $("input#infantryAmount").val()
+
+		data = 
+			gruntAmount: gruntAmount
+			infantryAmount: infantryAmount
+
+		$.ajax
+			url : "/unit/buildUnits"
+			type : "get"
+			data : data
+			success : (response, textStatus, jqXHR) =>
+				if response is 'ok'
+					$('#playerUnits').dataTable().fnClearTable()
+					$('#playerUnits').dataTable().fnDestroy()
+					$('#playerUnits tfoot').empty()
+					@loadUnitsOfPlayer()
+					@notify 'Building units', 'You successfully built new units', 'success'
+					$("#buildUnitsModal").modal('hide')
+					
+				else
+					@notify 'Building units', 'The building of new units failed', 'error'
+			
+			error : (jqXHR, textStatus, errorThrown) =>
+					@notify 'Building units', 'There was a server error. Please try again later.', 'error'
+
+		return false
+		
+	notify: (title, text, type) ->
+		$.pnotify
+			title: title
+			text: text
+			type: type

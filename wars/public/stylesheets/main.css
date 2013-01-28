@@ -94,6 +94,14 @@ tfoot {
 	color: #faa732;
 }
 
+#gruntAmount, #infantryAmount {
+	border: none;
+	box-shadow: none;
+	color: #faa732;
+	font-weight: bold;
+	background-color: #444;
+}
+
 div.dataTables_length label {
     float: left;
     text-align: left;
