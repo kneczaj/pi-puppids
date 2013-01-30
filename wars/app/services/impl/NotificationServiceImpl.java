@@ -1,5 +1,6 @@
 package services.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import models.Player;
@@ -8,6 +9,7 @@ import models.notifications.UndeliveredNotification;
 import services.api.NotificationService;
 import services.api.WebSocketCommunicationService;
 
+import com.google.code.morphia.query.Query;
 import com.google.inject.Inject;
 
 import daos.NotificationDAO;
@@ -57,6 +59,19 @@ public class NotificationServiceImpl implements NotificationService {
 			undeliveredNotificationDAO.save(new UndeliveredNotification(notification, player));
 		}
 
+	}
+	
+	public List<Notification> takeUndeliveredNotifications(Player player) {
+		Query<UndeliveredNotification> q = undeliveredNotificationDAO.createQuery().field("player").equal(player);
+		List<UndeliveredNotification> pairs = undeliveredNotificationDAO.find(q).asList();
+		
+		List<Notification> notifications = new LinkedList<Notification>();
+		for (UndeliveredNotification n : pairs) {
+			notifications.add(n.getNotification());
+		}
+		
+		undeliveredNotificationDAO.deleteByQuery(q);
+		return notifications;
 	}
 	
 }
