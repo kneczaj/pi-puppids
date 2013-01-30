@@ -21,7 +21,7 @@ public class Notification extends TimeStampedModel {
 	
 	// cache for notification message - generated at sent event
 	// guarantees that message will be readable without gathering
-	// needed information from the db again.
+	// needed information from the db again - even in case of changes in the db.
 	private String message;
 	
 	@Reference
@@ -59,7 +59,7 @@ public class Notification extends TimeStampedModel {
 	
 	public ObjectNode toJson() {
 		
-		// Set sent to true only if this function is run from
+		// Set messageGenerated to true only if this function is run from
 		// derived class toJson() function.
 		// Only then this message will be treated as a notification message
 		// when received.

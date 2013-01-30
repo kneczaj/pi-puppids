@@ -35,5 +35,14 @@ public interface NotificationService {
 	 * @param absentPlayers
 	 */
 	public void saveUndeliveredNotifications(Notification notification, List<Player> absentPlayers);
+	
+	/**
+	 * Returns the list of undelivered notifications, and removes 
+	 * them from undeliveredNotifications collection 
+	 * 
+	 * @param player
+	 * @return list of undelivered notifications
+	 */
+	public List<Notification> takeUndeliveredNotifications(Player player);
 
 }
