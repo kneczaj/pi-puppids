@@ -97,7 +97,7 @@ public class ResourceServiceDummyImpl implements ResourceService {
 		Random rnd = new Random();
 
 		for (ResourceType type : ResourceType.values()) {
-			map.put(type, rnd.nextInt(1024));
+			map.put(type, rnd.nextInt(1024)+500);
 		}
 
 		return map;
