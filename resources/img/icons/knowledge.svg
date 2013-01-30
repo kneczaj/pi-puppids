@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48"
+   height="48"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="knowledge.svg"
+   inkscape:export-filename="/home/michi/studium/WebAppLab/pi-puppids/resources/img/icons/knowledge.png"
+   inkscape:export-xdpi="187.5"
+   inkscape:export-ydpi="187.5">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="11.2"
+     inkscape:cx="11.990253"
+     inkscape:cy="27.333089"
+     inkscape:document-units="px"
+     inkscape:current-layer="g3829"
+     showgrid="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:showpageshadow="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="863"
+     inkscape:window-x="0"
+     inkscape:window-y="37"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2985"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="1px"
+       spacingy="1px"
+       originx="0px" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="0,48"
+       id="guide2987" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,0"
+       id="guide2989" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="48,48"
+       id="guide2991" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,48"
+       id="guide2993" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="24,24"
+       id="guide2995" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="24,24"
+       id="guide2997" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="18,45"
+       id="guide3864" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="30,45"
+       id="guide3866" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="18,30"
+       id="guide4595" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="5,8"
+       id="guide4597" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1004.3622)">
+    <g
+       id="g3822"
+       transform="translate(-0.125,1.3000512)">
+      <g
+         id="g3829"
+         transform="translate(-0.5125,8.4098952e-5)">
+        <path
+           style="fill:#ffffff;fill-opacity:1;stroke:none"
+           d="M 18,5.9999647 18,18 C 18,19.999965 3,41.999965 5,43 6,44.999965 42,44.999965 43,43 45,41.999965 30,19.999965 30,18 L 30,5.9999647 c -3.978871,1.35228 -7.97904,1.3414513 -12,0 z"
+           id="path5286"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccc"
+           transform="translate(0.6375,1003.0621)" />
+        <path
+           sodipodi:type="arc"
+           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="path4593"
+           sodipodi:cx="24"
+           sodipodi:cy="4.5"
+           sodipodi:rx="6"
+           sodipodi:ry="1.5"
+           d="m 30,4.5 a 6,1.5 0 1 1 -12,0 6,1.5 0 1 1 12,0 z"
+           transform="translate(0.6375,1003.0621)" />
+      </g>
+    </g>
+  </g>
+</svg>
