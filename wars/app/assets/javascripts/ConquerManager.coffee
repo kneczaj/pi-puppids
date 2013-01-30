@@ -30,7 +30,7 @@ class ArWars.ConquerManager
 			if responseData == 'PLAYER_HAS_INSUFFICIENT_RESOURCES'
 				@notify 'Conquer', 'Your teammates have inssufficient resources to attack this place', 'info'
 
-			if responseData == 'SUCCESSFUL'
+			if responseData == 'SUCCESSFUL' # TODO: update places list
 				@notify 'Conquering successful', 'Conquering attempt was successful', 'success'
 
 	processParticipantJoined: (data) ->
@@ -106,8 +106,7 @@ class ArWars.ConquerManager
 
 				@notify 'Initiate conquer', t, 'success'
 				$(".conductConquer").click () => 
-					attemptId = $(@).attr 'attemptId'
-					console.log "conduct #{attemptId} immediately"
+					attemptId = responseData.conqueringAttempt.id
 					@conquer attemptId
 
 	notify: (title, text, type) ->
