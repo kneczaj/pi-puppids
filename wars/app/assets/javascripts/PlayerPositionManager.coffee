@@ -194,7 +194,7 @@ class ArWars.PlayerPositionManager
 				log textStatus
 
 	# Called when the LocationAPI threw an error
-	onPositionError: (error) ->
+	onPositionError: (error) =>
 		if error.code == 1 # permission was denied by user
 			@notify 'Location Error', 'To play ARWars it is strongly recommended that you switch on the location features in your browsers preferences.', 'error'
 		else
