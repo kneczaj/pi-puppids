@@ -16,7 +16,7 @@ public class SamplePlaces {
 	public static Place townHall = generateTownHall();
 	public static GPlace newTownHall = generateNewTownHall();
 
-	private static Place generateTUM() {
+	public static Place generateTUM() {
 		Place tum = new Place();
 
 		tum.setType(PlaceType.university);
