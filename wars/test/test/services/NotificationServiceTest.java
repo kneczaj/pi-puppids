@@ -4,7 +4,9 @@ import java.util.List;
 
 import models.Player;
 import models.Team;
+import models.notifications.ConqueringInvitationMessage;
 import models.notifications.Notification;
+import models.notifications.SimpleNotificationMessage;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -18,8 +20,6 @@ import test.util.InjectorHelper;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
-import communication.messages.ConqueringInvitationMessage;
-import communication.messages.SimpleNotificationMessage;
 
 import daos.NotificationDAO;
 import daos.PlayerDAO;

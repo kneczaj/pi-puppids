@@ -79,7 +79,7 @@ $(document).ready ->
 	
 	conquerManager.setPlayerPositionManager playerPositionManager
 	
-	sidebar = new window.ArWars.SideBar playerPositionManager
+	sidebar = new window.ArWars.SideBar playerPositionManager, conquerManager
 	sidebar.loadResourceSourcesOfPlayer()
 	sidebar.loadUnitsOfPlayer()
 	sidebar.loadNotifications()

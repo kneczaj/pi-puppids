@@ -5,18 +5,18 @@ import java.util.List;
 import models.Player;
 import models.PlayerLocation;
 import models.conquer.ConqueringAttempt;
+import models.notifications.ConquerPossibleMessage;
+import models.notifications.ConqueringInvitationMessage;
 import models.notifications.Notification;
-import play.Logger;
+import models.notifications.ParticipantJoinedConquerMessage;
+import models.notifications.SimpleNotificationMessage;
 import services.api.NotificationService;
 import services.api.WebSocketCommunicationService;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import communication.ClientPushActor;
-import communication.messages.ConquerPossibleMessage;
-import communication.messages.ConqueringInvitationMessage;
-import communication.messages.ParticipantJoinedConquerMessage;
 import communication.messages.PlayerLocationChangedMessage;
-import communication.messages.SimpleNotificationMessage;
 
 public class WebSocketCommunicationServiceImpl implements
 		WebSocketCommunicationService {
@@ -29,12 +29,13 @@ public class WebSocketCommunicationServiceImpl implements
 	private void tellActor(Object message) {
 		if (message instanceof Notification) {
             Notification notification = (Notification) message;
-            notification.toJson();
-            if (notification.isMessageGenerated())
-                    notificationService.saveNotification(notification);
-            else
-                    Logger.error("Notification not sent because of wrong implementation - " +
-                                  "toJson() should retrive the initial message from Notification class");
+            List<Player> absentPlayers = ClientPushActor.getAbsentPlayersOf(notification.getPlayers());
+            
+            notificationService.saveNotification(notification);
+
+            if (absentPlayers.size() > 0) {
+            	notificationService.saveUndeliveredNotifications(notification, absentPlayers);
+            }
 		}
 		ClientPushActor.actor.tell(message);
 	}
@@ -44,7 +45,6 @@ public class WebSocketCommunicationServiceImpl implements
 	
     public void sendHi(Player player) {
             SimpleNotificationMessage testNotification = new SimpleNotificationMessage();
-            testNotification.setMessageContent("Hi!");
             testNotification.setPlayers(player.getTeammates());
            
             tellActor(testNotification);
@@ -62,6 +62,7 @@ public class WebSocketCommunicationServiceImpl implements
    
     public void conquerParticipantJoined(Player participant, ConqueringAttempt conqueringAttempt) {
             ParticipantJoinedConquerMessage pm = new ParticipantJoinedConquerMessage();
+            pm.setPlayers(Lists.newArrayList(conqueringAttempt.getInitiator()));
             pm.participant = participant;
             pm.conqueringAttempt = conqueringAttempt;
            
@@ -70,6 +71,7 @@ public class WebSocketCommunicationServiceImpl implements
 
     public void sendConquerPossible(ConqueringAttempt conqueringAttempt) {
             ConquerPossibleMessage cpm = new ConquerPossibleMessage();
+            cpm.setPlayers(Lists.newArrayList(conqueringAttempt.getInitiator()));
             cpm.conqueringAttempt = conqueringAttempt;
            
             tellActor(cpm);

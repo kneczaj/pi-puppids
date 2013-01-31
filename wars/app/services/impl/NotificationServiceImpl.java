@@ -29,7 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
 	
 	@Inject
 	private WebSocketCommunicationService webSocketCommunicationService;
-
+	
 	@Override
 	public void saveNotification(Notification notification) {
 		notificationDAO.save(notification);
@@ -53,9 +53,6 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void saveUndeliveredNotifications(Notification notification, List<Player> absentPlayers) {
 		for (Player player: absentPlayers) {
-			player.addNotification(notification);
-			playerDAO.save(player);
-			
 			undeliveredNotificationDAO.save(new UndeliveredNotification(notification, player));
 		}
 

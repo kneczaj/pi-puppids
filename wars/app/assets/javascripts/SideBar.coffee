@@ -2,19 +2,45 @@ class ArWars.SideBar
 	
 	places: []
 
-	constructor: (@playerPositionManager) ->	
+	constructor: (@playerPositionManager, @conquerManager) ->
+		@notificationNode = $("#notifications .accordion-inner")	
 
 	loadNotifications: () ->
-		notificationNode = $("#notifications .accordion-inner")
-		notificationNode.html " "
+		@notificationNode.html " "
 
 		d = 
 			offset: 0
 			count: 100
 
 		$.getJSON 'notifications/getHistory', d, (responseData) => 
-			$.each responseData, (index, notification) ->
-				notificationNode.append notification.notificationMessage
+			content = ''
+			$.each responseData, (index, notification) =>
+				notificationHtml = ''
+				switch notification.messageType 
+					when 'ConqueringInvitation':
+						@renderConqueringInvitation notification
+					when 'ParticipantJoinedConquer'
+						@renderParticipantJoinedConquer notification
+					when 'ConquerPossible'
+						@renderConquerPossible notification
+
+	renderConqueringInvitation: (notification) ->
+		aId = notification.conqueringAttemptId
+		content = "You are invited to <a name=\"joinConquer-#{aId}\">join the conquer</a> of #{notification.placeName}. It was initiated by #{notification.initiatorName}"
+		@notificationNode.append content
+		$("a[name='joinConquer-#{aId}']").click () =>
+			@conquerManager.joinConquer aId
+
+	renderParticipantJoinedConquer: (notification) ->
+		content = "#{notification.participantName} joined your conquering attempt."
+		@notificationNode.append content
+
+	renderConquerPossible: (notification) ->
+		aId = notification.conqueringAttemptId
+		content = "Your conquering attempt for #{notification.placeName} is now possible. <a name=\"conquer-#{aId}\">Conduct it immediately</a>"
+		@notificationNode.append content
+		$("a[name='conquer-#{aId}']").click() =>
+			@conquerManager.conquer aId
 
 	loadResourceSourcesOfPlayer: () ->
 		$.getJSON '/resource/getResourceSourcesOfPlayer', (data) =>
