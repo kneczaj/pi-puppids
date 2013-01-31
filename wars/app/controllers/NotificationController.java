@@ -3,6 +3,9 @@ package controllers;
 import java.util.List;
 
 import models.Player;
+import models.notifications.ConquerPossibleMessage;
+import models.notifications.ConqueringInvitationMessage;
+import models.notifications.ParticipantJoinedConquerMessage;
 
 import org.codehaus.jackson.node.ArrayNode;
 
@@ -15,9 +18,6 @@ import services.api.NotificationService;
 
 import com.google.inject.Inject;
 
-import communication.messages.ConquerPossibleMessage;
-import communication.messages.ConqueringInvitationMessage;
-import communication.messages.ParticipantJoinedConquerMessage;
 
 /**
  * Controller for the NotificationService

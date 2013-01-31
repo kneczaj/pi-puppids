@@ -5,7 +5,10 @@ import java.util.concurrent.ConcurrentMap;
 
 import models.Player;
 import models.conquer.ConqueringAttempt;
+import models.notifications.ConquerPossibleMessage;
+import models.notifications.ConqueringInvitationMessage;
 import models.notifications.Notification;
+import models.notifications.ParticipantJoinedConquerMessage;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -20,9 +23,6 @@ import akka.actor.UntypedActor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import communication.messages.ConquerPossibleMessage;
-import communication.messages.ConqueringInvitationMessage;
-import communication.messages.ParticipantJoinedConquerMessage;
 import communication.messages.PlayerLocationChangedMessage;
 import communication.messages.RegistrationMessage;
 import communication.messages.UnregistrationMessage;
@@ -52,6 +52,32 @@ public class ClientPushActor extends UntypedActor {
 	 */
 	public static List<String> getReachablePlayers() {
 		return Lists.newArrayList(registered.keySet());
+	}
+	
+	/**
+	 * Get the subset of players of playersToCheck that are currently reachable over a WebSocket connection
+	 * 
+	 * @param playersToCheck
+	 * @return
+	 */
+	public static List<Player> getAbsentPlayersOf(List<Player> playersToCheck) {
+		 List<String> playerIds = ClientPushActor.getReachablePlayers();
+         List<Player> absentPlayers = Lists.newArrayList();
+         
+         for (Player p : playersToCheck) {
+         	boolean isAbsent = true;
+         	for (String playerId : playerIds) {
+         		if (playerId.equals(p.getId().toString())) {
+         			isAbsent = false;
+         		}
+         	}
+         	
+         	if (isAbsent) {
+         		absentPlayers.add(p);
+         	}
+         }
+         
+         return absentPlayers;
 	}
 	
 	/**

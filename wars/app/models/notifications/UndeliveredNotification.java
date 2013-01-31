@@ -16,7 +16,7 @@ public class UndeliveredNotification extends BaseModel {
 	private Notification notification;
 	
 	public UndeliveredNotification() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 	
 	public UndeliveredNotification(Notification notification, Player player) {

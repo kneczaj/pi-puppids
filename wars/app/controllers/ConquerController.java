@@ -95,7 +95,7 @@ public class ConquerController extends Controller {
 		try {
 			ConqueringStatus conqueringResult = conqueringService.conquer(
 					conqueringAttemptId, p);
-
+			
 			// TODO: send info about the result of the battle to all
 			// participants
 			return ok(JsonHelper.toJson(conqueringResult));

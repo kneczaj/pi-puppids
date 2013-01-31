@@ -1,4 +1,4 @@
-package communication.messages;
+package models.notifications;
 
 import models.Player;
 import models.conquer.ConqueringAttempt;
@@ -7,7 +7,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
 
-public class ParticipantJoinedConquerMessage {
+public class ParticipantJoinedConquerMessage extends Notification {
 	
 	public Player participant;
 	public ConqueringAttempt conqueringAttempt;
