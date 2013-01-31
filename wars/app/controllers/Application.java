@@ -87,7 +87,7 @@ public class Application extends Controller {
 		team.put("lng", p.getTeam().getCity().getLongitude());
 		
 		ObjectNode faction = Json.newObject();
-		faction.put("name", p.getTeam().getFaction().toString());
+		faction.put("name", p.getTeam().getFaction().getName());
 		
 		ObjectNode json = Json.newObject();
 		json.put("username", p.getUsername());

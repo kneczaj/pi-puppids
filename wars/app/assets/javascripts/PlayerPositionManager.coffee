@@ -232,10 +232,18 @@ class ArWars.PlayerPositionManager
 		@playerMarkers[pId] = marker
 		@bounds.extend pos
 		@map.fitBounds @bounds
+
+		player = @players[pId]
+		if not player?
+			$.getJSON '/getPlayer', (playerId: pId), (responseData) => 
+				@players[pId] = responseData
 	
 		# Register ClickHandler for this marker
 		google.maps.event.addListener marker, 'click', () =>
 			player = @players[pId]
+			
+			if not player?
+				return
 
 			username = if player.username then player.username else ""
 			team = if player.team.name is "pseudo" then "loner" else player.team.name
