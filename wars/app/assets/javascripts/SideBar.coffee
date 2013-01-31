@@ -17,7 +17,7 @@ class ArWars.SideBar
 			$.each responseData, (index, notification) =>
 				notificationHtml = ''
 				switch notification.messageType 
-					when 'ConqueringInvitation':
+					when 'ConqueringInvitation'
 						@renderConqueringInvitation notification
 					when 'ParticipantJoinedConquer'
 						@renderParticipantJoinedConquer notification

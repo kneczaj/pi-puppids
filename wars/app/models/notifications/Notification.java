@@ -7,12 +7,14 @@ import models.TimeStampedModel;
 
 import org.codehaus.jackson.node.ObjectNode;
 
+import play.libs.Json;
+
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Reference;
 import com.google.common.collect.Lists;
 
 @Entity("notifications")
-public abstract class Notification extends TimeStampedModel {
+public class Notification extends TimeStampedModel {
 
 	@Reference
 	private List<Player> players = Lists.newLinkedList();
@@ -25,6 +27,11 @@ public abstract class Notification extends TimeStampedModel {
 		return this.players;
 	}
 
-	public abstract ObjectNode toJson();
+	/**
+	 * Has to be overwritten in subclasses of Notification
+	 */
+	public ObjectNode toJson() {
+		return Json.newObject();
+	}
 	
 }
