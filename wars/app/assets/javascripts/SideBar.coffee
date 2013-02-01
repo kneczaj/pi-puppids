@@ -149,6 +149,7 @@ class ArWars.SideBar
 					$('#playerUnits').dataTable().fnDestroy()
 					$('#playerUnits tfoot').empty()
 					@loadUnitsOfPlayer()
+					@loadResourcesOfPlayer()
 					@notify 'Building units', 'You successfully built new units', 'success'
 					$("#buildUnitsModal").modal('hide')
 					
