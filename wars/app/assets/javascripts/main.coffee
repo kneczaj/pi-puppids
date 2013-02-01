@@ -81,6 +81,8 @@ $(document).ready ->
 	
 	sidebar = new window.ArWars.SideBar playerPositionManager, conquerManager
 	sidebar.loadResourceSourcesOfPlayer()
+	sidebar.loadResourcesOfPlayer()
+	sidebar.loadResourcesOfTeam()
 	sidebar.loadUnitsOfPlayer()
 	sidebar.loadNotifications()
 	
