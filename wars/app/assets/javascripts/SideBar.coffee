@@ -42,6 +42,26 @@ class ArWars.SideBar
 		$("a[name='conquer-#{aId}']").click() =>
 			@conquerManager.conquer aId
 
+	loadResourcesOfPlayer: () ->
+		$.getJSON "/resource/getResourcesOfPlayer", (data) =>
+			if $.isEmptyObject(data)
+				@notify 'Resources', 'The player resources could not be loaded', 'error'
+			else
+				$.each data, (key, val) ->
+					$("#p" + key).text val
+					$("#p" + key).parent().popover
+						trigger: "hover"
+						placement: "bottom"
+						content: $("#p" + key).parent().attr("data-content") + val
+
+	loadResourcesOfTeam: () ->
+		$.getJSON "/resource/getResourcesOfTeam", (data) =>
+			if $.isEmptyObject(data)
+				@notify 'Resources', 'The team resources could not be loaded', 'error'
+			else
+				$.each data, (key, val) ->
+					$("#t" + key).text val
+
 	loadResourceSourcesOfPlayer: () ->
 		$.getJSON '/resource/getResourceSourcesOfPlayer', (data) =>
 			items = []

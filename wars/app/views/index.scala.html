@@ -61,31 +61,6 @@
 		$('#accordion2 div:visible:first > .accordion-body').addClass('in');
 		$('.container').addClass('container-fluid');
 		$('.container-fluid').removeClass('container');
-		
-			$.getJSON('/resource/getResourcesOfPlayer', function(data) {
-			  if ($.isEmptyObject(data)) {
-				  /*TODO: Show notification*/
-			  } else {
-				  $.each(data, function(key, val) {
-				    $('#p' + key).text(val);
-				    $('#p' + key).parent().popover({
-				    	trigger:'hover', 
-				    	placement: 'bottom',
-				    	content: $('#p' + key).parent().attr('data-content') + val
-				  	});
-			  	});
-			  }
-			});
-		
-			$.getJSON('/resource/getResourcesOfTeam', function(data) {
-			  if ($.isEmptyObject(data)) {
-				  /*TODO: Show notification*/
-			  } else {
-				  $.each(data, function(key, val) {
-					  $('#t' + key).text(val);
-				  });
-			  }
-			});
 			
 			$(function() {
 				$( "#gruntSlider" ).slider({
