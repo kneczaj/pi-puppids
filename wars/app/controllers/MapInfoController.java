@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import models.Faction;
@@ -13,12 +14,11 @@ import models.Team;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import services.api.MapInfoService;
-import util.JsonHelper;
-
 import com.google.inject.Inject;
 
 /**
@@ -87,15 +87,31 @@ public class MapInfoController extends Controller {
 	}
 
 	@SecureSocial.SecuredAction(ajaxCall=true)
-	public static Result placesNearby(String latitude, String longitude) {
-		Double lng = Double.valueOf(longitude);
-		Double lat = Double.valueOf(latitude);
+	public static Result loadConqueredPlaces() {
+		List<Place> places = mapInfoService.findConqueredPlaces();
+		JSONObject obj = new JSONObject();
+		for (Place p : places) {
+			Logger.info("Conquered place: " + p.toString());
+			JSONObject element = new JSONObject();
 
-		Location l = new Location(lng, lat);
-		Map<Place, Location> placeLocations = mapInfoService
-				.findPlacesNearby(l);
-
-		return ok(JsonHelper.toJson(placeLocations));
+			try {
+				element.put("uuid", p.getUuid());
+				element.put("name", p.getName());
+				element.put("lat", p.getLat());
+				element.put("lng", p.getLng());
+				element.put("type", p.getType());
+				element.put("resource", p.getResource().toString());
+				element.put("resAmount", p.getAmount().toString());
+				element.put("units", p.getDeployedUnits().size());
+				element.put("faction", p.getConqueredBy().get(0).getTeam().getFaction().getName());
+				element.put("team", p.getConqueredBy().get(0).getTeam().getName());
+				
+				obj.put(p.getUuid(), element);
+			} catch (JSONException e) {
+				return ok("error");
+			}
+		}
+		return ok(obj.toString());
 	}
 
 }

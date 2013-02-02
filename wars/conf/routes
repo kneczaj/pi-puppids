@@ -29,6 +29,7 @@ GET     /websocket/connect          				controllers.WebSocketController.connect(
 
 # MapInfoController
 GET     /mapinfo/playersNearby						controllers.MapInfoController.playersNearby(lat, lng)
+GET     /mapinfo/getConqueredPlaces					controllers.MapInfoController.loadConqueredPlaces()
 
 # NotificationController
 GET		/notifications/getHistory					controllers.NotificationController.getHistory(offset, count)
