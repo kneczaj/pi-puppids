@@ -49,10 +49,9 @@ public interface MapInfoService extends Service {
 			Integer searchRadius, Date youngerThan);
 
 	/**
-	 * Find places nearby a location.
+	 * Find all conquered places.
 	 * 
-	 * @param location
 	 */
-	public Map<Place, Location> findPlacesNearby(Location location);
+	public List<Place> findConqueredPlaces();
 
 }

@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import daos.GPlaceDAO;
+import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
 
@@ -36,6 +37,9 @@ public class MapInfoServiceImpl implements MapInfoService {
 	
 	@Inject
 	private PlayerDAO playerDAO;
+	
+	@Inject
+	private PlaceDAO placeDAO;
 	
 	@Inject
 	private PlayerLocationDAO playerLocationDAO;
@@ -99,9 +103,14 @@ public class MapInfoServiceImpl implements MapInfoService {
 	}
 
 	@Override
-	public Map<Place, Location> findPlacesNearby(Location location) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Place> findConqueredPlaces() {
+		List<Place> places = placeDAO.find().asList();
+		for (Place p : places) {
+			if (p == null || p.getConqueredBy().isEmpty()) {
+				places.remove(p);
+			}
+		}
+		return places;
 	}
 
 }
