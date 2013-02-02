@@ -1,15 +1,19 @@
 package services.dummy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import models.Place;
+import models.PlaceType;
 import models.Player;
 import models.ResourceType;
 import models.Team;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
+
+import assets.constants.PlaceMappings;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -57,6 +61,14 @@ public class ResourceServiceDummyImpl implements ResourceService {
 							ResourceType.Transportation,
 							ResourceType.Special,
 							ResourceType.Cultural};
+		
+		PlaceType[] placeTypes = {PlaceType.atm, 
+				PlaceType.bakery,
+				PlaceType.school,
+				PlaceType.church,
+				PlaceType.movie_theater,
+				PlaceType.pharmacy,
+				PlaceType.train_station};
 
 		Integer[] amounts = {100, 200, 300, 400, 500, 600, 700};
 		
@@ -69,13 +81,22 @@ public class ResourceServiceDummyImpl implements ResourceService {
 			return map;
 		}
 
+		List <Player> players = new ArrayList <Player> ();
+		players.add(player);
+		
 		for (int i=0; i<7; i++) {
+			Map<ResourceType, Integer> resourceDemands = PlaceMappings.PLACE_TO_RESOURCE_DEMAND_MAP.get(placeTypes[i]);
+			
 			Place place = new Place();
 			place.setName(placeNames[i]);
 			place.setResource(resourceTypes[i]);
 			place.setAmount(amounts[i]);
 			place.setLat(48.136944);
 			place.setLng(11.575278);
+			place.setConqueredBy(players);
+			place.setType(placeTypes[i]);
+			place.setResourceDemand(resourceDemands);
+			place.setUuid("uuid" + i);
 			placeDAO.save(place);
 			
 			map.put(place, resourceTypes[i]);
