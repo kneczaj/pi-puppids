@@ -91,9 +91,7 @@ public class MapInfoController extends Controller {
 		List<Place> places = mapInfoService.findConqueredPlaces();
 		JSONObject obj = new JSONObject();
 		for (Place p : places) {
-			Logger.info("Conquered place: " + p.toString());
 			JSONObject element = new JSONObject();
-
 			try {
 				element.put("uuid", p.getUuid());
 				element.put("name", p.getName());
