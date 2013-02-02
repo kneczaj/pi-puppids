@@ -14,7 +14,6 @@ import models.Team;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
