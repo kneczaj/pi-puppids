@@ -91,8 +91,8 @@ public class ResourceServiceDummyImpl implements ResourceService {
 			place.setName(placeNames[i]);
 			place.setResource(resourceTypes[i]);
 			place.setAmount(amounts[i]);
-			place.setLat(48.136944);
-			place.setLng(11.575278);
+			place.setLat(48.136944 + (0.01 * i));
+			place.setLng(11.575278 + (0.01 * i));
 			place.setConqueredBy(players);
 			place.setType(placeTypes[i]);
 			place.setResourceDemand(resourceDemands);
