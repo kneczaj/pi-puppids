@@ -82,7 +82,7 @@ $(document).ready ->
 	mapInfoManger = new window.ArWars.MapInfoManager playerPositionManager
 	mapInfoManger.loadConqueredPlaces()
 	
-	sidebar = new window.ArWars.SideBar playerPositionManager, conquerManager
+	sidebar = new window.ArWars.SideBar playerPositionManager, conquerManager, mapInfoManger
 	sidebar.loadResourceSourcesOfPlayer()
 	sidebar.loadResourcesOfPlayer()
 	sidebar.loadResourcesOfTeam()

@@ -103,7 +103,7 @@ public class MapInfoController extends Controller {
 				element.put("faction", p.getConqueredBy().get(0).getTeam().getFaction().getName());
 				element.put("team", p.getConqueredBy().get(0).getTeam().getName());
 				
-				obj.put(p.getUuid(), element);
+				obj.put(p.getIdString(), element);
 			} catch (JSONException e) {
 				return ok("error");
 			}
