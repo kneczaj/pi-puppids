@@ -2,8 +2,9 @@ class ArWars.SideBar
 	
 	places: []
 
-	constructor: (@playerPositionManager, @conquerManager) ->
-		@notificationNode = $("#notifications .accordion-inner")	
+	constructor: (@playerPositionManager, @conquerManager, @mapInfoManger) ->
+		@notificationNode = $("#notifications .accordion-inner")
+		@map = playerPositionManager.getMap()
 
 	loadNotifications: () ->
 		@notificationNode.html " "
@@ -129,7 +130,10 @@ class ArWars.SideBar
 		place = @places[placeId]
 		newLocation = new google.maps.LatLng place.lat, place.lng
 
-		@playerPositionManager.getMap().panTo newLocation
+		@map.setZoom(19)
+		@map.panTo newLocation
+		@mapInfoManger.setInfowindow(@mapInfoManger.places[placeId], @mapInfoManger.placeMarkers[placeId])
+		
 		
 	buildUnitsClickHandler: () ->
 		gruntAmount = $("input#gruntAmount").val()
