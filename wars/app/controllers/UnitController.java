@@ -88,7 +88,6 @@ public class UnitController extends Controller {
 		int ia = Integer.parseInt(infantryAmount);
 		ObjectId objId = new ObjectId(placeId);
 		Place place = placeDao.findOne("id", objId);
-		Logger.info("Deploying At: " + place.toString());
 		
 		Logger.debug("player tries to deploy " + gruntAmount + " Grunts and " + infantryAmount + " Infantry to place \"" + place.getName() + "\"");
 
