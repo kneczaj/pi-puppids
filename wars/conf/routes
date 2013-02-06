@@ -37,6 +37,7 @@ GET		/notifications/getHistory					controllers.NotificationController.getHistory
 # UnitController
 GET     /unit/getUnitsOfPlayer						controllers.UnitController.getUnitsOfPlayer()
 GET     /unit/buildUnits							controllers.UnitController.buildUnits(gruntAmount, infantryAmount)
+GET     /unit/deployUnits							controllers.UnitController.deployUnits(gruntAmount, infantryAmount, placeId)
 
 # Player profile
 GET     /profile                    				controllers.Application.profile()

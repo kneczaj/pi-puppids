@@ -27,9 +27,9 @@ class ArWars.MapInfoManager
 		@placeMarkers[pid] = marker
 		
 		google.maps.event.addListener marker, "click", () =>
-			@setInfowindow place, marker
+			@setInfowindow pid, place, marker
 			
-	setInfowindow: (place, marker) =>
+	setInfowindow: (pid, place, marker) =>
 		buttonClass = ""
 		switch place.faction
 		  when "red"
@@ -37,9 +37,12 @@ class ArWars.MapInfoManager
 		  when "blue"
 		    buttonClass = "primary"
 		    
-		content = "#{place.name}<br/>Type: #{place.type}<br/>Resources: #{place.resAmount} <img src=\"/assets/images/resources/#{place.resource.toLowerCase()}_#{place.faction}.png\"><br/>Units: #{place.units}<br/>Conquered by: #{place.team} (#{place.faction} faction)<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" placeUuid=\"#{place.uuid}\">Deploy units</button>"
+		content = "#{place.name}<br/>Type: #{place.type}<br/>Resources: #{place.resAmount} <img src=\"/assets/images/resources/#{place.resource.toLowerCase()}_#{place.faction}.png\"><br/>Units: #{place.units}<br/>Conquered by: #{place.team} (#{place.faction} faction)<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" placeId=\"#{pid}\">Deploy units</button>"
 		@infowindow.setContent content
 		@infowindow.open @map, marker
+		$("button[placeId=#{pid}]").click () -> 
+				$("#deployAt").val pid 
+				$("#deployUnitsModal").modal 'show'
 		
 	notify: (title, text, type) ->
 		$.pnotify

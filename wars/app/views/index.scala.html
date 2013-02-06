@@ -63,27 +63,49 @@
 		$('.container-fluid').removeClass('container');
 			
 			$(function() {
-				$( "#gruntSlider" ).slider({
+				$( "#gruntBuildSlider" ).slider({
 					range: "min",
 					value: 0,
 					min: 0,
 					max: 10,
 					slide: function( event, ui ) {
-						$( "#gruntAmount" ).val( ui.value );
+						$( "#gruntBuildAmount" ).val( ui.value );
 					}
 				});
-				$( "#gruntAmount" ).val( $( "#gruntSlider" ).slider( "value" ) );
+				$( "#gruntBuildAmount" ).val( $( "#gruntBuildSlider" ).slider( "value" ) );
 
-				$( "#infantrySlider" ).slider({
+				$( "#infantryBuildSlider" ).slider({
 					range: "min",
 					value: 0,
 					min: 0,
 					max: 10,
 					slide: function( event, ui ) {
-						$( "#infantryAmount" ).val( ui.value );
+						$( "#infantryBuildAmount" ).val( ui.value );
 					}
 				});
-				$( "#infantryAmount" ).val( $( "#infantrySlider" ).slider( "value" ) );
+				$( "#infantryBuildAmount" ).val( $( "#infantryBuildSlider" ).slider( "value" ) );
+				
+				$( "#gruntDeploySlider" ).slider({
+					range: "min",
+					value: 0,
+					min: 0,
+					max: 10,
+					slide: function( event, ui ) {
+						$( "#gruntDeployAmount" ).val( ui.value );
+					}
+				});
+				$( "#gruntDeployAmount" ).val( $( "#gruntDeploySlider" ).slider( "value" ) );
+
+				$( "#infantryDeploySlider" ).slider({
+					range: "min",
+					value: 0,
+					min: 0,
+					max: 10,
+					slide: function( event, ui ) {
+						$( "#infantryDeployAmount" ).val( ui.value );
+					}
+				});
+				$( "#infantryDeployAmount" ).val( $( "#infantryDeploySlider" ).slider( "value" ) );
 			});
 	});
 </script>
@@ -133,6 +155,9 @@
 								<tbody>
 								</tbody>
 							</table>
+							<a href="#deployUnitsModal" role="button" class="btn btn-block btn-warning" data-toggle="modal">Deploy units</a>
+							<br>
+							<br>
 						</div>
 					</div>
 				</div>
@@ -330,16 +355,16 @@
     <form class="form-horizontal">
     	@for((k,v) <- unitCostMap) {
 	    	<div class="control-group">
-			    <label class="control-label" for="@k.toString().toLowerCase.concat("Amount")">@k.toString().toLowerCase.capitalize</label>
+			    <label class="control-label" for="@k.toString().toLowerCase.concat("BuildAmount")">@k.toString().toLowerCase.capitalize</label>
 			    <div class="controls">
 			    	<p>
-			    	<input type="text" class="input-mini" id="@k.toString().toLowerCase.concat("Amount")" /> 
+			    	<input type="text" class="input-mini" id="@k.toString().toLowerCase.concat("BuildAmount")" /> 
 			    	Costs per unit: 
 			    	@for((l,w) <- v) {
 			    		<span>@w </span><img src="/assets/images/resources/@l.toString().toLowerCase.concat("_white.png")">&nbsp;&nbsp; 
 			    	}
 			    	</p>
-					<p><div id="@k.toString().toLowerCase.concat("Slider")"></div></p>
+					<p><div id="@k.toString().toLowerCase.concat("BuildSlider")"></div></p>
 			    </div>
 		  	</div>
 		}
@@ -349,6 +374,41 @@
 	    	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 	    </div>
 	  </div>
+	</form>
+  </div>
+</div>
+<!--/modal-->
+
+<!--modal-->
+<div id="deployUnitsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deployUnitModalLabel" aria-hidden="false">
+  <div class="modal-header">
+    <h3 id="chooseFactionModalLabel">Deploy units to your conquered places</h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal">
+	    @for((k,v) <- unitCostMap) {
+			<div class="control-group">
+			    <label class="control-label" for="@k.toString().toLowerCase.concat("DeployAmount")">@k.toString().toLowerCase.capitalize</label>
+			    <div class="controls">
+			    	<p>
+			    		<input type="text" class="input-mini" id="@k.toString().toLowerCase.concat("DeployAmount")" /> 
+			    	</p>
+					<p><div id="@k.toString().toLowerCase.concat("DeploySlider")"></div></p>
+			    </div>
+		  	</div>
+		}
+  		<div class="control-group">
+		    <label class="control-label" for="deployPlace">Deploy at</label>
+		    <div class="controls">
+		    	<select id="deployAt"></select>
+		    </div>
+	  	</div>
+		<div class="control-group">
+			<div class="controls">
+				<button id="btnDeploy" class="btn btn-warning">Deploy</button>
+	    		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			</div>
+		</div>
 	</form>
   </div>
 </div>

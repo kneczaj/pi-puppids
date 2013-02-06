@@ -66,6 +66,7 @@ class ArWars.SideBar
 	loadResourceSourcesOfPlayer: () ->
 		$.getJSON '/resource/getResourceSourcesOfPlayer', (data) =>
 			items = []
+			itemsOptions = []
 
 			if $.isEmptyObject(data)
 				$('#resourceSources').append "<p>Currently there are no conquered places available</p>"
@@ -75,8 +76,15 @@ class ArWars.SideBar
 
 					units = data.unitDeployments[key]
 					items.push "<tr><td>#{val.name} <a title='Jump to place on the map' name='jumpToPlace' placeId='#{key}'><img src=\"/assets/images/jump.png\" /></a></td><td>#{val.amount} <img src=\"/assets/images/resources/#{val.resource.toLowerCase()}_white.png\" /></td><td>#{units}</td></tr>"
+					itemsOptions.push "<option value=\"#{key}\">#{val.name}</option>"
 
 				$(items.join('')).appendTo '#resourceSources tbody'
+				$(itemsOptions.join('')).appendTo '#deployAt'
+				$("#deployAt").append $("#deployAt").find("option").sort((a, b) ->
+					(if a.text is b.text then 0 else (if a.text < b.text then -1 else 1))
+				)
+				$("#deployAt").val(0)
+				
 				$('#resourceSources').dataTable
 					sDom: "<'row'<'span2'l><'span8'f>r>t<'row'<'span6'i><'span6'p>>"
 					sPaginationType: "bootstrap"
@@ -106,6 +114,7 @@ class ArWars.SideBar
 			else
 				$.each data.undeployedUnits, (key, val) =>
 					unitName = key[0].toUpperCase() + key[1..-1].toLowerCase()
+					selector = key.toLowerCase() + "DeploySlider"
 					overallNumber = data.overallUnits[key]
 					totalDeployed += val
 					totalOverall += overallNumber
@@ -132,12 +141,11 @@ class ArWars.SideBar
 
 		@map.setZoom(19)
 		@map.panTo newLocation
-		@mapInfoManger.setInfowindow(@mapInfoManger.places[placeId], @mapInfoManger.placeMarkers[placeId])
-		
+		@mapInfoManger.setInfowindow(placeId, @mapInfoManger.places[placeId], @mapInfoManger.placeMarkers[placeId])
 		
 	buildUnitsClickHandler: () ->
-		gruntAmount = $("input#gruntAmount").val()
-		infantryAmount = $("input#infantryAmount").val()
+		gruntAmount = $("input#gruntBuildAmount").val()
+		infantryAmount = $("input#infantryBuildAmount").val()
 
 		data = 
 			gruntAmount: gruntAmount
@@ -162,6 +170,36 @@ class ArWars.SideBar
 			
 			error : (jqXHR, textStatus, errorThrown) =>
 					@notify 'Building units', 'There was a server error. Please try again later.', 'error'
+
+		return false
+		
+	deployUnitsClickHandler: () ->
+		gruntAmount = $("input#gruntDeployAmount").val()
+		infantryAmount = $("input#infantryDeployAmount").val()
+		placeId = $("#deployAt option:selected").val()
+
+		data = 
+			gruntAmount: gruntAmount
+			infantryAmount: infantryAmount
+			placeId: placeId
+
+		$.ajax
+			url : "/unit/deployUnits"
+			type : "get"
+			data : data
+			success : (response, textStatus, jqXHR) =>
+				if response is 'ok'
+					$('#resourceSources').dataTable().fnClearTable()
+					$('#resourceSources').dataTable().fnDestroy()
+					@loadResourceSourcesOfPlayer()
+					@notify 'Deploying units', 'You successfully deployed units to a place', 'success'
+					$("#deployUnitsModal").modal('hide')
+					
+				else
+					@notify 'Deploying units', 'The deploying of new units failed', 'error'
+			
+			error : (jqXHR, textStatus, errorThrown) =>
+					@notify 'Deploying units', 'There was a server error. Please try again later.', 'error'
 
 		return false
 		

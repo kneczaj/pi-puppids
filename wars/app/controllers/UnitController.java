@@ -2,6 +2,9 @@ package controllers;
 
 import java.util.Map;
 
+import org.bson.types.ObjectId;
+
+import models.Place;
 import models.Player;
 import models.UnitType;
 import play.Logger;
@@ -16,6 +19,8 @@ import util.JsonHelper;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import daos.PlaceDAO;
+
 /**
  * Controller for the UnitService
  * 
@@ -29,6 +34,9 @@ public class UnitController extends Controller {
 	
 	@Inject
 	private static UnitService unitService;
+	
+	@Inject
+	private static PlaceDAO placeDao;
 	
 	@SecureSocial.SecuredAction(ajaxCall=true)
 	public static Result getUnitsOfPlayer() {
@@ -63,6 +71,33 @@ public class UnitController extends Controller {
 			}
 			if (ia > 0) {
 				unitService.buildUnit(player, UnitType.INFANTRY, ia);
+			}
+			
+			return ok("ok");
+		} catch (UnitServiceException e) {
+			Logger.info(e.toString());
+			
+			return ok("error");
+		}
+	}
+	
+	@SecureSocial.SecuredAction(ajaxCall=true)
+	public static Result deployUnits(String gruntAmount, String infantryAmount, String placeId) {
+		Player player = authenticationService.getPlayer();
+		int ga = Integer.parseInt(gruntAmount);
+		int ia = Integer.parseInt(infantryAmount);
+		ObjectId objId = new ObjectId(placeId);
+		Place place = placeDao.findOne("id", objId);
+		Logger.info("Deploying At: " + place.toString());
+		
+		Logger.debug("player tries to deploy " + gruntAmount + " Grunts and " + infantryAmount + " Infantry to place \"" + place.getName() + "\"");
+
+		try {
+			if (ga > 0) {
+				unitService.deployUnit(player, UnitType.GRUNT, ga, place);
+			}
+			if (ia > 0) {
+				unitService.deployUnit(player, UnitType.INFANTRY, ia, place);
 			}
 			
 			return ok("ok");
