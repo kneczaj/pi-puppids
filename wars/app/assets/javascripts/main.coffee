@@ -89,6 +89,10 @@ $(document).ready ->
 	sidebar.loadUnitsOfPlayer()
 	sidebar.loadNotifications()
 	
+	$("button#btnDeploy").click () => 
+		sidebar.deployUnitsClickHandler()
+		return false
+		
 	$("button#btnBuild").click () => 
 		sidebar.buildUnitsClickHandler()
 		return false

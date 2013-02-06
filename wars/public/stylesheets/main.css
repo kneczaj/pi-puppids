@@ -94,7 +94,8 @@ tfoot {
 	color: #faa732;
 }
 
-#gruntAmount, #infantryAmount {
+#gruntBuildAmount, #infantryBuildAmount, 
+#gruntDeployAmount, #infantryDeployAmount {
 	border: none;
 	box-shadow: none;
 	color: #faa732;
