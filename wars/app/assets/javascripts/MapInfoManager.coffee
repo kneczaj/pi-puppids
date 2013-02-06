@@ -5,7 +5,9 @@ class ArWars.MapInfoManager
 
 	constructor: (@playerPositionManager) ->
 		@map = @playerPositionManager.getMap()
-
+		
+		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
+			@player = responseData
 	
 	loadConqueredPlaces: () ->
 		$.getJSON "/mapinfo/getConqueredPlaces", (data) =>
@@ -37,10 +39,16 @@ class ArWars.MapInfoManager
 		  when "blue"
 		    buttonClass = "primary"
 		    
-		content = "#{place.name}<br/>Type: #{place.type}<br/>Resources: #{place.resAmount} <img src=\"/assets/images/resources/#{place.resource.toLowerCase()}_#{place.faction}.png\"><br/>Units: #{place.units}<br/>Conquered by: #{place.team} (#{place.faction} faction)<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" placeId=\"#{pid}\">Deploy units</button>"
+		content = "#{place.name}<br/>Type: #{place.type}<br/>Resources: #{place.resAmount} <img src=\"/assets/images/resources/#{place.resource.toLowerCase()}_#{place.faction}.png\"><br/>Units: #{place.units}<br/>Conquered by: #{place.team} (#{place.faction} faction)"
+		
+		if @player.team.name is place.team 
+			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" name=\"btnDeploy\" placeId=\"#{pid}\">Deploy units</button>"
+		else if not (@player.faction.name is place.faction) 
+			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" placeId=\"#{pid}\">Conquer</button>"
+		
 		@infowindow.setContent content
 		@infowindow.open @map, marker
-		$("button[placeId=#{pid}]").click () -> 
+		$("button[placeId=#{pid}][name=\"btnDeploy\"]").click () -> 
 				$("#deployAt").val pid 
 				$("#deployUnitsModal").modal 'show'
 		
