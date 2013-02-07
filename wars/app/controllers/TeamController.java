@@ -6,6 +6,7 @@ import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
+import securesocial.core.java.SecureSocial.SecuredAction;
 import securesocial.core.providers.utils.RoutesHelper;
 import services.api.AuthenticationService;
 import services.api.PlayerService;
@@ -82,9 +83,25 @@ public class TeamController extends Controller {
 		return ok("ok");
 	}
 	
+	@SecuredAction
+	public static Result deleteMember(String memberName) {
+		
+		Player loggedPlayer = authenticationService.getPlayer();
+		if (!loggedPlayer.isTeamMaster())
+			return ok("error - player is not a team master");
+		
+		Player member = playerDAO.findOne("username", memberName);
+		
+		try {
+			teamService.removePlayer(loggedPlayer.getTeam(), member);
+		} catch (TeamServiceException e) {
+			return ok(e.getMessage());
+		}
+		return redirect("/");
+	}
+	
 	@SecureSocial.SecuredAction
 	public static Result acceptInvitation(String token) throws TeamServiceException {
-		
 		
 		Invitation invitation;
 		try {

@@ -8,6 +8,7 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
+import models.Unit;
 import services.api.TeamService;
 import services.api.error.TeamServiceException;
 
@@ -147,13 +148,18 @@ public class TeamServiceImpl implements TeamService {
 
 			oldTeam.removePlayer(player);
 			if (oldTeam.getPlayers().isEmpty()) {
+				
 				// not so easy to delete... there are several tables that have
 				// references to a team
 				// if it is deleted we get tons of NPE's!
 				//
 				// the references need also be deleted or we just leave the team
 				// in the db
-				// teamDAO.delete(oldTeam);
+				
+				// deletes all invitations to the old team - I think that's all the references
+				Query<Invitation> query = invitationDAO.createQuery().field("team").equal(oldTeam);
+				invitationDAO.deleteByQuery(query);
+				teamDAO.delete(oldTeam);
 			} else {
 				oldTeam.refindTeamMaster();
 				teamDAO.save(oldTeam);
@@ -203,7 +209,9 @@ public class TeamServiceImpl implements TeamService {
 		mail.send("Dear " + name + "<br><br>" + "Player "
 				+ sender.getUsername() + " has invited you to their team "
 				+ invitation.getTeam().getName() + ". " + "Click <a href=\""
-				+ link + "\">here</a> to confirm." + "<br><br>" + "Enjoy!");
+				+ link + "\">here</a> to confirm." 
+				+ "<br><br>" 
+				+ "Enjoy!");
 
 		invitation.setSent();
 		invitationDAO.save(invitation);
@@ -266,5 +274,20 @@ public class TeamServiceImpl implements TeamService {
 		}
 
 		return false;
+	}
+	
+	public void removePlayer(Team team, Player player) throws TeamServiceException {
+		
+		if (!team.isMember(player))
+			throw new TeamServiceException(
+					"Cannot delete - this player doesn't belong to this team");
+		
+		Team newTeam = createInitialTeam(player);
+		newTeam.setCity(team.getCity());
+		newTeam.setFaction(team.getFaction());
+		
+		// TODO: add the notification to removed player
+		
+		joinTeam(player, newTeam);
 	}
 }
