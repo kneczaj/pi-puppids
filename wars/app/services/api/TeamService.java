@@ -141,5 +141,14 @@ public interface TeamService extends Service {
 	 * @return
 	 */
 	public Boolean validateInvitation(Invitation invitation, Player player);
+	
+	/**
+	 * Removes a player from a team
+	 * 
+	 * @param team
+	 * @param player
+	 * @throws exception when given player doesn't belong to given team
+	 */
+	public void removePlayer(Team team, Player player) throws TeamServiceException;
 
 }
