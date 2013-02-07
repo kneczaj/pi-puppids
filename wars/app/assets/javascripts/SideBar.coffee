@@ -101,6 +101,12 @@ class ArWars.SideBar
 				$("#resourceSources a[name='jumpToPlace']").bind 'click', (event) =>
 					target = event.target or event.srcElement
 					@jumpToPlace $(target).parent().attr("placeId")
+					
+	reloadResourceSourcesOfPlayer: () ->
+		$('#resourceSources').dataTable().fnClearTable()
+		$('#resourceSources').dataTable().fnDestroy()
+		$("#deployAt").empty()
+		@loadResourceSourcesOfPlayer()
 						
 	loadUnitsOfPlayer: () ->
 		$.getJSON '/unit/getUnitsOfPlayer', (data) =>
@@ -114,11 +120,14 @@ class ArWars.SideBar
 			else
 				$.each data.undeployedUnits, (key, val) =>
 					unitName = key[0].toUpperCase() + key[1..-1].toLowerCase()
-					selector = key.toLowerCase() + "DeploySlider"
 					overallNumber = data.overallUnits[key]
 					totalDeployed += val
 					totalOverall += overallNumber
 					items.push "<tr><td>#{unitName}</td><td>#{val}</td><td>#{overallNumber}</td></tr>"
+					$("#" + key.toLowerCase() + "DeploySlider").slider "option", 
+						max: val 
+						value: 0
+					$("#" + key.toLowerCase() + "DeployAmount").val '0'
 					
 				$(items.join('')).appendTo '#playerUnits tbody'
 				$('#playerUnits tfoot').append "<tr><td>Sum</td><td>#{totalDeployed}</td><td>#{totalOverall}</td></tr>"
@@ -134,7 +143,13 @@ class ArWars.SideBar
 					bSort: true
 					bInfo: false
 					bAutoWidth: false
-	
+
+	reloadUnitsOfPlayer: () ->
+		$('#playerUnits').dataTable().fnClearTable()
+		$('#playerUnits').dataTable().fnDestroy()
+		$('#playerUnits tfoot').empty()
+		@loadUnitsOfPlayer()
+
 	jumpToPlace: (placeId) ->
 		place = @places[placeId]
 		newLocation = new google.maps.LatLng place.lat, place.lng
@@ -146,61 +161,63 @@ class ArWars.SideBar
 	buildUnitsClickHandler: () ->
 		gruntAmount = $("input#gruntBuildAmount").val()
 		infantryAmount = $("input#infantryBuildAmount").val()
+		
+		if gruntAmount <= 0 and infantryAmount <= 0
+			@notify 'Building units', 'No units built. You need to select some units first.', 'info'
+		else
+			data = 
+				gruntAmount: gruntAmount
+				infantryAmount: infantryAmount
+	
+			$.ajax
+				url : "/unit/buildUnits"
+				type : "get"
+				data : data
+				success : (response, textStatus, jqXHR) =>
+					if response is 'ok'
+						@reloadUnitsOfPlayer()
+						@loadResourcesOfPlayer()
+						@notify 'Building units', 'You successfully built new units', 'success'
+						
+					else
+						@notify 'Building units', 'The building of new units failed', 'error'
+				
+				error : (jqXHR, textStatus, errorThrown) =>
+						@notify 'Building units', 'There was a server error. Please try again later.', 'error'
 
-		data = 
-			gruntAmount: gruntAmount
-			infantryAmount: infantryAmount
-
-		$.ajax
-			url : "/unit/buildUnits"
-			type : "get"
-			data : data
-			success : (response, textStatus, jqXHR) =>
-				if response is 'ok'
-					$('#playerUnits').dataTable().fnClearTable()
-					$('#playerUnits').dataTable().fnDestroy()
-					$('#playerUnits tfoot').empty()
-					@loadUnitsOfPlayer()
-					@loadResourcesOfPlayer()
-					@notify 'Building units', 'You successfully built new units', 'success'
-					$("#buildUnitsModal").modal('hide')
-					
-				else
-					@notify 'Building units', 'The building of new units failed', 'error'
-			
-			error : (jqXHR, textStatus, errorThrown) =>
-					@notify 'Building units', 'There was a server error. Please try again later.', 'error'
-
+		$("#buildUnitsModal").modal('hide')
 		return false
 		
 	deployUnitsClickHandler: () ->
 		gruntAmount = $("input#gruntDeployAmount").val()
 		infantryAmount = $("input#infantryDeployAmount").val()
 		placeId = $("#deployAt option:selected").val()
+		
+		if gruntAmount <= 0 and infantryAmount <= 0
+			@notify 'Deploying units', 'No units deployed. You need to build or select some units first.', 'info'
+		else
+			data = 
+				gruntAmount: gruntAmount
+				infantryAmount: infantryAmount
+				placeId: placeId
+	
+			$.ajax
+				url : "/unit/deployUnits"
+				type : "get"
+				data : data
+				success : (response, textStatus, jqXHR) =>
+					if response is 'ok'
+						@reloadResourceSourcesOfPlayer()
+						@reloadUnitsOfPlayer()
+						@notify 'Deploying units', 'You successfully deployed units to a place', 'success'
+						
+					else
+						@notify 'Deploying units', 'The deploying of new units failed', 'error'
+				
+				error : (jqXHR, textStatus, errorThrown) =>
+						@notify 'Deploying units', 'There was a server error. Please try again later.', 'error'
 
-		data = 
-			gruntAmount: gruntAmount
-			infantryAmount: infantryAmount
-			placeId: placeId
-
-		$.ajax
-			url : "/unit/deployUnits"
-			type : "get"
-			data : data
-			success : (response, textStatus, jqXHR) =>
-				if response is 'ok'
-					$('#resourceSources').dataTable().fnClearTable()
-					$('#resourceSources').dataTable().fnDestroy()
-					@loadResourceSourcesOfPlayer()
-					@notify 'Deploying units', 'You successfully deployed units to a place', 'success'
-					$("#deployUnitsModal").modal('hide')
-					
-				else
-					@notify 'Deploying units', 'The deploying of new units failed', 'error'
-			
-			error : (jqXHR, textStatus, errorThrown) =>
-					@notify 'Deploying units', 'There was a server error. Please try again later.', 'error'
-
+		$("#deployUnitsModal").modal('hide')
 		return false
 		
 	notify: (title, text, type) ->
