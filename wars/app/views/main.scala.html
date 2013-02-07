@@ -19,6 +19,14 @@
         <script src="@routes.Assets.at("javascripts/jquery.pnotify.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/dataTableBootstrap.js")" type="text/javascript"></script>
         @scripts
+        <script type="text/javascript">
+	    	$(document).ready(function() {
+	    		if ('undefined' === typeof(window.ArWars)) { 
+	    			$('a[href$="profile"]').remove();
+	    			$('a[href$="logout"]').remove();
+	    		}
+	    	});
+        </script>
     </head>
     <body>
 		<div class="navbar navbar-inverse navbar-fixed-top">
