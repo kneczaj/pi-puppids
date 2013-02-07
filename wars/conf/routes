@@ -14,6 +14,7 @@ GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResour
 GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(factionId, cityId)
 GET		/invite/:username							controllers.TeamController.tryInvite(username)
 GET		/acceptInvitation/:token					controllers.TeamController.acceptInvitation(token)
+GET		/team/deleteMember							controllers.TeamController.deleteMember(member)
 
 # ConquerController
 GET		/conquer/initiateConquer					controllers.ConquerController.initiateConquer(uuid, reference)
