@@ -97,6 +97,10 @@ public class Team extends TimeStampedModel {
 		return this.players.remove(player);
 	}
 	
+	public Boolean isMember(Player player) {
+		return this.players.contains(player);
+	}
+	
 	public void setTeamMaster(Player player) {
 		this.teamMaster = player;
 	}
@@ -142,6 +146,21 @@ public class Team extends TimeStampedModel {
 				.add("score", score)
 				.add("faction", faction)
 				.add("city", city).toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		Team other = (Team) obj;
+		if (!getName().equals(other.getName()))
+			return false;
+		return true;
 	}
 
 }

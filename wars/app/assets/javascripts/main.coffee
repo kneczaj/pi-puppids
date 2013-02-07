@@ -23,7 +23,6 @@ $(document).ready ->
 			backdrop: "static"
 			keyboard: false
 		
-		
 
 	showError = (message) ->
 		hideError()
@@ -73,9 +72,11 @@ $(document).ready ->
 			backdrop: "static"
 			keyboard: false
 
-	conquerManager = new window.ArWars.ConquerManager()
+	
+	conquerManager = new window.ArWars.ConquerManager
 	layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
 	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails'), conquerManager
+	deleteMemberConfirmationModal = new window.ArWars.DeleteMemberConfirmationModal
 	
 	conquerManager.setPlayerPositionManager playerPositionManager
 	
