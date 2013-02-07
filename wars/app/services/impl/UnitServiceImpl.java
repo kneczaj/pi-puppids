@@ -14,7 +14,6 @@ import services.api.UnitService;
 import services.api.error.UnitServiceException;
 import assets.constants.UnitMappings;
 
-import com.google.code.morphia.query.Query;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -73,11 +72,12 @@ public class UnitServiceImpl implements UnitService {
 			throw new NullPointerException("Could not find player with name "
 					+ player.getUsername() + ".");
 
-		Query<Unit> query = unitDAO.createQuery();
-		query.and(query.criteria("deployedAt").equal(null),
-				query.criteria("player").equal(player), query.criteria("type")
-						.equal(unitType));
-		List<Unit> undeployedUnits = unitDAO.find(query).asList();
+		List<Unit> undeployedUnits = Lists.newLinkedList();
+
+		for (Unit unit : loadedPlayer.getUnits()) {
+			if (unit.getDeployedAt() == null && unit.getType().equals(unitType))
+				undeployedUnits.add(unit);
+		}
 
 		return undeployedUnits;
 	}
@@ -90,13 +90,14 @@ public class UnitServiceImpl implements UnitService {
 			throw new NullPointerException("Could not find player with name "
 					+ player.getUsername() + ".");
 
-		Query<Unit> query = unitDAO.createQuery();
-		query.and(query.criteria("deployedAt").equal(null),
-				query.criteria("player").equal(player));
-		Integer undeployedUnits = Long.valueOf(unitDAO.find(query).countAll())
-				.intValue();
+		List<Unit> undeployedUnits = Lists.newLinkedList();
 
-		return undeployedUnits;
+		for (Unit unit : loadedPlayer.getUnits()) {
+			if (unit.getDeployedAt() == null)
+				undeployedUnits.add(unit);
+		}
+
+		return undeployedUnits.size();
 	}
 
 	@Override
@@ -107,14 +108,14 @@ public class UnitServiceImpl implements UnitService {
 			throw new NullPointerException("Could not find player with name "
 					+ player.getUsername() + ".");
 
-		Query<Unit> query = unitDAO.createQuery();
-		query.and(query.criteria("deployedAt").equal(null),
-				query.criteria("player").equal(player), query.criteria("type")
-						.equal(unitType));
-		Integer undeployedUnits = Long.valueOf(unitDAO.find(query).countAll())
-				.intValue();
+		List<Unit> undeployedUnits = Lists.newLinkedList();
 
-		return undeployedUnits;
+		for (Unit unit : loadedPlayer.getUnits()) {
+			if (unit.getDeployedAt() == null && unit.getType().equals(unitType))
+				undeployedUnits.add(unit);
+		}
+
+		return undeployedUnits.size();
 	}
 
 	@Override
@@ -125,13 +126,14 @@ public class UnitServiceImpl implements UnitService {
 			throw new NullPointerException("Could not find player with name "
 					+ player.getUsername() + ".");
 
-		Query<Unit> query = unitDAO.createQuery();
-		query.and(query.criteria("deployedAt").notEqual(null),
-				query.criteria("player").equal(player));
-		Integer deployedUnits = Long.valueOf(unitDAO.find(query).countAll())
-				.intValue();
+		List<Unit> deployedUnits = Lists.newLinkedList();
 
-		return deployedUnits;
+		for (Unit unit : loadedPlayer.getUnits()) {
+			if (unit.getDeployedAt() != null)
+				deployedUnits.add(unit);
+		}
+
+		return deployedUnits.size();
 	}
 
 	@Override
@@ -142,14 +144,14 @@ public class UnitServiceImpl implements UnitService {
 			throw new NullPointerException("Could not find player with name "
 					+ player.getUsername() + ".");
 
-		Query<Unit> query = unitDAO.createQuery();
-		query.and(query.criteria("deployedAt").notEqual(null),
-				query.criteria("player").equal(player), query.criteria("type")
-						.equal(unitType));
-		Integer deployedUnits = Long.valueOf(unitDAO.find(query).countAll())
-				.intValue();
+		List<Unit> deployedUnits = Lists.newLinkedList();
 
-		return deployedUnits;
+		for (Unit unit : loadedPlayer.getUnits()) {
+			if (unit.getDeployedAt() == null && unit.getType().equals(unitType))
+				deployedUnits.add(unit);
+		}
+
+		return deployedUnits.size();
 	}
 
 	@Override
@@ -225,7 +227,7 @@ public class UnitServiceImpl implements UnitService {
 					"Not enough units to fulfill request!");
 
 		// Deploy units and persist changes
-		for (int i=0; i<amount; i++) {
+		for (int i = 0; i < amount; i++) {
 			Unit unit = deployableUnits.get(i);
 			unit.setDeployedAt(loadedPlace);
 			loadedPlace.getDeployedUnits().add(unit);
@@ -259,7 +261,7 @@ public class UnitServiceImpl implements UnitService {
 					"Not enough units to fulfill request!");
 
 		Map<String, Unit> retrievalMap = Maps.newHashMap();
-		
+
 		// Build the map of units to be retrived
 		for (int i = 0; i < amount; i++) {
 			Unit unit = deployedUnits.get(i);
@@ -267,20 +269,20 @@ public class UnitServiceImpl implements UnitService {
 			retrievalMap.put(unit.getId().toStringMongod(), unit);
 			unitDAO.save(unit);
 		}
-		
+
 		List<Unit> retrieveThisUnits = Lists.newLinkedList();
-		
-		//prepare units for retrieval
+
+		// prepare units for retrieval
 		for (Unit unit : loadedPlace.getDeployedUnits()) {
 			if (retrievalMap.containsKey(unit.getId().toStringMongod()))
 				retrieveThisUnits.add(unit);
 		}
 
-		//retrieve the units
+		// retrieve the units
 		for (Unit unit : retrieveThisUnits) {
 			loadedPlace.getDeployedUnits().remove(unit);
 		}
-		
+
 		placeDAO.save(loadedPlace);
 	}
 }
