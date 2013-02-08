@@ -145,4 +145,26 @@ public class ResourceServiceDummyImpl implements ResourceService {
 		return map;
 	}
 
+	@Override
+	public void distributeResourcesToPlayer(Player player)
+			throws ResourceServiceException {
+		
+		Player load = playerDAO.findOne("username", player.getUsername());
+
+		if (load == null)
+			throw new NullPointerException("Could not find player with name "
+					+ player.getUsername() + ".");
+		
+		Map<ResourceType, Integer> resourceDepot = load.getResourceDepot();
+		
+		//add resources to the player's depot
+		for (ResourceType type : ResourceType.values()) {
+			resourceDepot.put(type, 500);
+		}
+		
+		load.setResourceDepot(resourceDepot);
+		playerDAO.save(load);
+		
+	}
+
 }

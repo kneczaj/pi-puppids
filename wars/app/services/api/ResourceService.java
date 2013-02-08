@@ -45,4 +45,12 @@ public interface ResourceService extends Service {
 	public Map<ResourceType, Integer> getResourcesOfTeam(Team team)
 			throws ResourceServiceException;
 
+	/**
+	 * Give a player resources according to the player's conquered places
+	 * @param player
+	 * @throws ResourceServiceException
+	 */
+	public void distributeResourcesToPlayer(Player player)
+			throws ResourceServiceException;
+
 }
