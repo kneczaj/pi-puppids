@@ -146,7 +146,7 @@ public class ResourceServiceDummyImpl implements ResourceService {
 	}
 
 	@Override
-	public void distributeResourcesToPlayer(Player player)
+	public Map<ResourceType, Integer> distributeResourcesToPlayer(Player player)
 			throws ResourceServiceException {
 		
 		Player load = playerDAO.findOne("username", player.getUsername());
@@ -165,6 +165,7 @@ public class ResourceServiceDummyImpl implements ResourceService {
 		load.setResourceDepot(resourceDepot);
 		playerDAO.save(load);
 		
+		return resourceDepot;
 	}
 
 }

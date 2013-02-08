@@ -48,9 +48,10 @@ public interface ResourceService extends Service {
 	/**
 	 * Give a player resources according to the player's conquered places
 	 * @param player
+	 * @return the player's new resource depot
 	 * @throws ResourceServiceException
 	 */
-	public void distributeResourcesToPlayer(Player player)
+	public Map<ResourceType, Integer> distributeResourcesToPlayer(Player player)
 			throws ResourceServiceException;
 
 }
