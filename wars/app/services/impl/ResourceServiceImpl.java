@@ -113,4 +113,39 @@ public class ResourceServiceImpl implements ResourceService {
 		return teamResourceMap;
 	}
 
+	@Override
+	public void distributeResourcesToPlayer(Player player)
+			throws ResourceServiceException {
+		Player load = playerDAO.findOne("username", player.getUsername());
+
+		if (load == null)
+			throw new NullPointerException("Could not find player with name "
+					+ player.getUsername() + ".");
+		
+		Map<ResourceType, Integer> resourceDepot = load.getResourceDepot();
+		Map<ResourceType, Integer> resourcesToAdd = Maps.newHashMap();
+		
+		//Initialize map
+		for (ResourceType type : ResourceType.values()) {
+			resourcesToAdd.put(type, 0);
+		}
+		
+		//sum up resources for all places
+		for (Place place : load.getConquered()) {
+			ResourceType type = place.getResource();
+			Integer amount = place.getAmount();
+			
+			resourcesToAdd.put(type, resourcesToAdd.get(type) + amount);
+		}
+		
+		//add resources to the player's depot
+		for (ResourceType type : ResourceType.values()) {
+			Integer amount = resourcesToAdd.get(type);
+			resourceDepot.put(type, resourceDepot.get(type) + amount);
+		}
+		
+		load.setResourceDepot(resourceDepot);
+		playerDAO.save(load);
+	}
+
 }
