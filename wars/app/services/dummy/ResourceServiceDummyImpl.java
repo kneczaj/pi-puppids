@@ -114,14 +114,7 @@ public class ResourceServiceDummyImpl implements ResourceService {
 	 */
 	@Override
 	public Map<ResourceType, Integer> getResourcesOfPlayer(Player player) {
-		Map<ResourceType, Integer> map = Maps.newHashMap();
-		Random rnd = new Random();
-
-		for (ResourceType type : ResourceType.values()) {
-			map.put(type, rnd.nextInt(1024)+500);
-		}
-
-		return map;
+		return player.getResourceDepot();
 	}
 
 	/**

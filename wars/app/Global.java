@@ -5,11 +5,12 @@ import play.GlobalSettings;
 import play.Logger;
 import play.libs.Akka;
 import akka.util.Duration;
-import assets.constants.RessourceDistributionValues;
+import assets.constants.ResourceDistributionValues;
 
 import com.google.code.morphia.logging.MorphiaLoggerFactory;
 import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
-import communication.ResourceDistributionActor;
+import communication.DistributionActor;
+import communication.messages.StartDistributionMessage;
 
 /**
  * Global settings for the play framework.
@@ -31,10 +32,10 @@ public class Global extends GlobalSettings {
 	public void onStart(Application app) {
 		//Start the ressource distribution actor
 		Akka.system().scheduler().schedule(
-				  Duration.create(0, TimeUnit.MILLISECONDS), //Initial delay 0 milliseconds
-				  Duration.create(RessourceDistributionValues.TIME_BETWEEN_DISTRIBUTION_IN_SECONDS, TimeUnit.SECONDS),     //Frequency 30 minutes
-				  ResourceDistributionActor.actor, 
-				  "Hallo Welt!"
+				  Duration.create(5000, TimeUnit.MILLISECONDS), //Initial delay 0 milliseconds
+				  Duration.create(ResourceDistributionValues.TIME_BETWEEN_DISTRIBUTION_IN_SECONDS, TimeUnit.SECONDS),     //Frequency 30 minutes
+				  DistributionActor.actor,
+				  new StartDistributionMessage()
 				);
 	}
 	
