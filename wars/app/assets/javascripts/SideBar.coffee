@@ -2,8 +2,8 @@ class ArWars.SideBar
 	
 	places: []
 	
-	constructor: (@playerPositionManager, @conquerManager, @mapInfoManger) ->
-		@map = playerPositionManager.getMap()
+	constructor: (@conquerManager, @mapInfoManger) ->
+		@map = mapInfoManger.getMap()
 
 	loadResourcesOfPlayer: () ->
 		$.getJSON "/resource/getResourcesOfPlayer", (data) =>
@@ -116,7 +116,7 @@ class ArWars.SideBar
 		place = @places[placeId]
 		newLocation = new google.maps.LatLng place.lat, place.lng
 
-		@map.setZoom(19)
+		@map.setZoom(18)
 		@map.panTo newLocation
 		@mapInfoManger.setInfowindow(placeId, @mapInfoManger.places[placeId], @mapInfoManger.placeMarkers[placeId])
 		
