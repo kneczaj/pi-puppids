@@ -33,7 +33,7 @@ $(document).ready ->
 		if alertNode?
 			alertNode.remove()
 
-	factionClickHandler = ->
+	factionClickHandler = =>
 		factionId = $("input[name=factionId]:checked").val()
 		cityId = $("select[name=cityId]").val()
 
@@ -44,10 +44,11 @@ $(document).ready ->
 		$.ajax
 			url : "/team/joinFactionAndCity"
 			data : data
-			success : (response, textStatus, jqXHR) ->
+			success : (response, textStatus, jqXHR) =>
 				if response is 'ok'
 					hideError()
 					$("#chooseFactionModal").modal('hide')
+					loadContents()
 				else
 					showError 'Please revise your data'
 			
@@ -63,41 +64,44 @@ $(document).ready ->
 		$("#chooseFactionModal").modal 'hide'
 		return false
 		
-	$("button[name=save]", "#chooseFactionModal").bind 'click', factionClickHandler
+	$("button[name=save]", "#chooseFactionModal").bind 'click', @factionClickHandler
 	$("button[name=back]", "#chooseFactionModal").bind 'click', factionBackToInvitationsClickHandler
 	$("#chooseFactionModal form").submit factionClickHandler	
+
+	loadContents = =>
+		conquerManager = new window.ArWars.ConquerManager()
+		layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
+		playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails'), conquerManager
+		deleteMemberConfirmationModal = new window.ArWars.DeleteMemberConfirmationModal
+		notificationsManager = new window.ArWars.NotificationsManager conquerManager, playerPositionManager
+		
+		conquerManager.setPlayerPositionManager playerPositionManager
+		conquerManager.setNotificationsManager notificationsManager
+
+		mapInfoManger = new window.ArWars.MapInfoManager playerPositionManager
+		mapInfoManger.loadConqueredPlaces()
+		
+		sidebar = new window.ArWars.SideBar playerPositionManager, conquerManager, mapInfoManger
+		sidebar.loadResourceSourcesOfPlayer()
+		sidebar.loadResourcesOfPlayer()
+		sidebar.loadResourcesOfTeam()
+		sidebar.loadUnitsOfPlayer()
+		notificationsManager.loadNotifications()
+		
+		$("button#btnDeploy").click () => 
+			sidebar.deployUnitsClickHandler()
+			return false
+			
+		$("button#btnBuild").click () => 
+			sidebar.buildUnitsClickHandler()
+			return false
+
+		webSocket = new window.ArWars.WebSocketManager playerPositionManager, conquerManager, notificationsManager
+		webSocket.establishWebSocket window.ArWars.webSocketURL
 
 	if window.ArWars.factionHasToBeChosen is true 
 		$("#chooseFactionModal").modal
 			backdrop: "static"
 			keyboard: false
-
-	
-	conquerManager = new window.ArWars.ConquerManager
-	layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
-	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails'), conquerManager
-	deleteMemberConfirmationModal = new window.ArWars.DeleteMemberConfirmationModal
-	notificationsManager = new window.ArWars.NotificationsManager conquerManager, playerPositionManager
-	
-	conquerManager.setPlayerPositionManager playerPositionManager
-	
-	mapInfoManger = new window.ArWars.MapInfoManager playerPositionManager
-	mapInfoManger.loadConqueredPlaces()
-	
-	sidebar = new window.ArWars.SideBar playerPositionManager, conquerManager, mapInfoManger
-	sidebar.loadResourceSourcesOfPlayer()
-	sidebar.loadResourcesOfPlayer()
-	sidebar.loadResourcesOfTeam()
-	sidebar.loadUnitsOfPlayer()
-	notificationsManager.loadNotifications()
-	
-	$("button#btnDeploy").click () => 
-		sidebar.deployUnitsClickHandler()
-		return false
-		
-	$("button#btnBuild").click () => 
-		sidebar.buildUnitsClickHandler()
-		return false
-
-	webSocket = new window.ArWars.WebSocketManager playerPositionManager, conquerManager, notificationsManager
-	webSocket.establishWebSocket window.ArWars.webSocketURL
+	else
+		loadContents()
