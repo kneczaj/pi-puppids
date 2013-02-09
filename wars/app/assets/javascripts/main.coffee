@@ -77,6 +77,7 @@ $(document).ready ->
 	layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
 	playerPositionManager = new window.ArWars.PlayerPositionManager $(window.ArWars.mapSelector)[0], $('#playerDetails'), conquerManager
 	deleteMemberConfirmationModal = new window.ArWars.DeleteMemberConfirmationModal
+	notificationsManager = new window.ArWars.NotificationsManager conquerManager, playerPositionManager
 	
 	conquerManager.setPlayerPositionManager playerPositionManager
 	
@@ -88,7 +89,7 @@ $(document).ready ->
 	sidebar.loadResourcesOfPlayer()
 	sidebar.loadResourcesOfTeam()
 	sidebar.loadUnitsOfPlayer()
-	sidebar.loadNotifications()
+	notificationsManager.loadNotifications()
 	
 	$("button#btnDeploy").click () => 
 		sidebar.deployUnitsClickHandler()
@@ -98,5 +99,5 @@ $(document).ready ->
 		sidebar.buildUnitsClickHandler()
 		return false
 
-	webSocket = new window.ArWars.WebSocketManager playerPositionManager, conquerManager
+	webSocket = new window.ArWars.WebSocketManager playerPositionManager, conquerManager, notificationsManager
 	webSocket.establishWebSocket window.ArWars.webSocketURL

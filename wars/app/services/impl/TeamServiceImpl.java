@@ -8,7 +8,6 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
-import models.Unit;
 import services.api.TeamService;
 import services.api.error.TeamServiceException;
 
