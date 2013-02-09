@@ -7,36 +7,6 @@ class ArWars.PlayerPositionManager
 
 	MAX_UNCERTAINTY: 200
 
-	@mapOptions = 
-		center : new google.maps.LatLng 48.133, 11.566
-		zoom : 11
-		mapTypeId : google.maps.MapTypeId.ROADMAP
-		mapTypeControl: false
-		streetViewControl: false
-		styles: [
-			stylers: [
-				invert_lightness: true
-			,
-				saturation: -80
-			]
-		,
-			featureType: "road"
-			elementType: "geometry"
-			stylers: [color: "#646464"]
-		,
-			featureType: "road"
-			elementType: "labels.icon"
-			stylers: [visibility: "off"]
-		,
-			featureType: "poi"
-			elementType: "labels"
-			stylers: [
-				color: "#faa732"
-			,
-				weight: 0.1
-			]
-		]
-
 	@locationOptions = 
 		enableHighAccuracy : false
 		timeout : 300
@@ -54,17 +24,14 @@ class ArWars.PlayerPositionManager
 	players: []
 	placeMarkers: []
 
-	constructor: (@mapNode, @infoPanel, @conquerManager) ->
-		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
+	constructor: (@infoPanel, @conquerManager, @mapInfoManager) ->
+		@map = @mapInfoManager.getMap()
 		@bounds = new google.maps.LatLngBounds()
 
 		# load information for the current player
 		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
 			@players[window.ArWars.playerId] = responseData
 			@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
-		
-	getMap: () ->
-		@map
 
 	# Removes a player from the map (removes the circle and the marker)
 	removeFromMap: (pId) ->
