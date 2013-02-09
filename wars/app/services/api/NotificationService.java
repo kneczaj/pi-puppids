@@ -37,12 +37,42 @@ public interface NotificationService {
 	public void saveUndeliveredNotifications(Notification notification, List<Player> absentPlayers);
 	
 	/**
-	 * Returns the list of undelivered notifications, and removes 
-	 * them from undeliveredNotifications collection 
+	 * Number of undelivered notifications
+	 * @param player
+	 * @return
+	 */
+	public long countUndeliveredNotifications(Player player);
+	
+	/**
+	 * Returns the list of undelivered notifications 
 	 * 
 	 * @param player
 	 * @return list of undelivered notifications
 	 */
-	public List<Notification> takeUndeliveredNotifications(Player player);
-
+	public List<Notification> takeUndeliveredNotifications(Player player, int count);
+	
+	/**
+	 * Marks notifications as read
+	 * 
+	 * @param player
+	 * @param notifications
+	 * @return
+	 */
+	public void markAsRead(Player player, List<Notification> notifications);
+	
+	/**
+	 * Marks all undelivered notifications for given player as read
+	 * 
+	 * @param player
+	 */
+	public void markAllUndeliveredAsRead(Player player);
+	
+	/**
+	 * Creates entry in db for notification
+	 * @param title
+	 * @param message
+	 * @param type
+	 * 		type for pnotify
+	 */
+	public void createNotificationEntry(Player player, String title, String message, String type);
 }
