@@ -1,6 +1,6 @@
 class ArWars.NotificationsManager
 
-	constructor: (@conquerManager, @playerPositionManager) ->
+	constructor: (@conquerManager, @mapInfoManger) ->
 		@notificationNode = $("#notifications .accordion-inner")
 		@notificationTable = $("#notificationsTable")
 		
@@ -85,7 +85,7 @@ class ArWars.NotificationsManager
 		# Jump to fighting place
 		$(noticeNode).find("#place").click () => 
 			newLocation = new google.maps.LatLng data.lat, data.lng
-			@playerPositionManager.getMap().panTo newLocation
+			@mapInfoManger.getMap().panTo newLocation
 	
 		$.pnotify
 			text: $(noticeNode).html()

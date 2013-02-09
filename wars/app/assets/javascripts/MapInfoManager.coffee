@@ -2,12 +2,45 @@ class ArWars.MapInfoManager
 	
 	places: []
 	placeMarkers: []
+	
+	@mapOptions = 
+		center : new google.maps.LatLng 48.133, 11.566
+		zoom : 11
+		mapTypeId : google.maps.MapTypeId.ROADMAP
+		mapTypeControl: false
+		streetViewControl: false
+		styles: [
+			stylers: [
+				invert_lightness: true
+			,
+				saturation: -80
+			]
+		,
+			featureType: "road"
+			elementType: "geometry"
+			stylers: [color: "#646464"]
+		,
+			featureType: "road"
+			elementType: "labels.icon"
+			stylers: [visibility: "off"]
+		,
+			featureType: "poi"
+			elementType: "labels"
+			stylers: [
+				color: "#faa732"
+			,
+				weight: 0.1
+			]
+		]
 
-	constructor: (@playerPositionManager, @conquerManager) ->
-		@map = @playerPositionManager.getMap()
-		
+	constructor: (@mapNode) ->
+		@map = new google.maps.Map @mapNode, ArWars.MapInfoManager.mapOptions
+
 		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
 			@player = responseData
+			
+	getMap: () ->
+		@map
 	
 	loadConqueredPlaces: () ->
 		$.getJSON "/mapinfo/getConqueredPlaces", (data) =>
