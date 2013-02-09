@@ -25,10 +25,10 @@ class ArWars.WebSocketManager
 				@playerPositionManager.push2Map data.id, data.latitude, data.longitude, data.accuracy
 
 			when "ConqueringInvitation" 
-				@notificationsManager.notifyConqueringInvitation data
+				@notificationsManager.notifyConquerInvitation data
 
 			when "ParticipantJoinedConquer" 
-				@notificationsManager.notifyParticipantJoined data
+				@notificationsManager.notifyConquerParticipantJoined data
 
 			when "ConquerPossible"
 				@notificationsManager.notifyConquerPossible data

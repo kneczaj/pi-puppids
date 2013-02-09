@@ -94,7 +94,7 @@ class ArWars.NotificationsManager
 			
 		# Click on join conquer button
 		$("button[name='join']").click () =>
-			@conquerManager invitation.conqueringAttemptId
+			@conquerManager.joinConquer invitation.conqueringAttemptId
 			
 	notifyConquerParticipantJoined: (data) ->
 		@notify 'Participant joined', "#{data.participantName} joined conquer", 'info'

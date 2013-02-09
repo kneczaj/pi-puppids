@@ -143,33 +143,27 @@ public class TeamServiceImpl implements TeamService {
 	public Player joinTeam(Player player, Team team) {
 
 		Team oldTeam = player.getTeam();
-		if (oldTeam != null) {
-
-			oldTeam.removePlayer(player);
-			if (oldTeam.getPlayers().isEmpty()) {
-				
-				// not so easy to delete... there are several tables that have
-				// references to a team
-				// if it is deleted we get tons of NPE's!
-				//
-				// the references need also be deleted or we just leave the team
-				// in the db
-				
-				// deletes all invitations to the old team - I think that's all the references
-				Query<Invitation> query = invitationDAO.createQuery().field("team").equal(oldTeam);
-				invitationDAO.deleteByQuery(query);
-				teamDAO.delete(oldTeam);
-			} else {
-				oldTeam.refindTeamMaster();
-				teamDAO.save(oldTeam);
-			}
-		}
-
+		
 		player.setTeam(team);
 		playerDAO.save(player);
 
 		team.addPlayer(player);
 		teamDAO.save(team);
+		
+		if (oldTeam != null) {
+
+			oldTeam.removePlayer(player);
+			if (oldTeam.getPlayers().isEmpty()) {
+				Query<Invitation> query = invitationDAO.createQuery().field("team").equal(oldTeam);
+				invitationDAO.deleteByQuery(query);
+				
+				// Deleting the team breaks the system
+				//teamDAO.delete(oldTeam);
+			} else {
+				oldTeam.refindTeamMaster();
+				teamDAO.save(oldTeam);
+			}
+		}
 
 		return player;
 	}
