@@ -114,7 +114,6 @@ public class GuicePlugin extends InjectPlugin {
 		// inject
 		for (Class<Object> clazz : injectables) {
 			try {
-				Logger.debug("injection for " + clazz.getName());
 				injector.injectMembers(createOrGetInstane(clazz));
 			} catch (java.lang.IllegalArgumentException ex) {
 				Logger.debug("skipping injection for " + clazz.getName());
