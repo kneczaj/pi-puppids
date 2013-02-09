@@ -14,7 +14,7 @@ import com.google.code.morphia.annotations.Reference;
 import com.google.common.collect.Lists;
 
 @Entity("notifications")
-public class Notification extends TimeStampedModel {
+public abstract class Notification extends TimeStampedModel {
 
 	@Reference
 	private List<Player> players = Lists.newLinkedList();
@@ -30,8 +30,12 @@ public class Notification extends TimeStampedModel {
 	/**
 	 * Has to be overwritten in subclasses of Notification
 	 */
-	public ObjectNode toJson() {
-		return Json.newObject();
+	public abstract ObjectNode toJson(); 
+	
+	protected final ObjectNode getInitialJson() {
+		ObjectNode notification = Json.newObject();
+		notification.put("time", getCreationDateTimeString());
+		return notification;
 	}
 	
 }

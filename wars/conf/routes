@@ -34,6 +34,8 @@ GET     /mapinfo/getConqueredPlaces					controllers.MapInfoController.loadConque
 
 # NotificationController
 GET		/notifications/getHistory					controllers.NotificationController.getHistory(offset, count)
+GET		/notifications/getUndelivered				controllers.NotificationController.getUndeliveredNotifications(numberOfFullNotifications)
+GET		/notifications/addHistoryEntry				controllers.NotificationController.addHistoryEntry(title, message, notType)
 
 # UnitController
 GET     /unit/getUnitsOfPlayer						controllers.UnitController.getUnitsOfPlayer()

@@ -1,10 +1,12 @@
 package services.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import models.Player;
 import models.notifications.Notification;
+import models.notifications.SimpleNotificationMessage;
 import models.notifications.UndeliveredNotification;
 import services.api.NotificationService;
 import services.api.WebSocketCommunicationService;
@@ -42,6 +44,21 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 	
 	@Override
+	public void createNotificationEntry(Player player, String title, String message, String type) {
+		SimpleNotificationMessage notification = new SimpleNotificationMessage();
+		notification.setTitle(title);
+		notification.setMessage(message);
+		notification.setType(type);
+		
+		List<Player> playerList = new ArrayList<Player>();
+    	playerList.add(player);
+		notification.setPlayers(playerList);
+		
+		// Cannot uncoment this line
+//		saveNotification(notification);
+	}
+	
+	@Override
 	public List<Notification> getNotificationHistoryOfPlayer(Player player,
 			int offset, int count) {
 		
@@ -58,8 +75,15 @@ public class NotificationServiceImpl implements NotificationService {
 
 	}
 	
-	public List<Notification> takeUndeliveredNotifications(Player player) {
+	public long countUndeliveredNotifications(Player player) {
 		Query<UndeliveredNotification> q = undeliveredNotificationDAO.createQuery().field("player").equal(player);
+		return q.countAll();
+	}
+	
+	
+	@Override
+	public List<Notification> takeUndeliveredNotifications(Player player, int count) {
+		Query<UndeliveredNotification> q = undeliveredNotificationDAO.createQuery().field("player").equal(player).limit(count);
 		List<UndeliveredNotification> pairs = undeliveredNotificationDAO.find(q).asList();
 		
 		List<Notification> notifications = new LinkedList<Notification>();
@@ -68,7 +92,22 @@ public class NotificationServiceImpl implements NotificationService {
 		}
 		
 		undeliveredNotificationDAO.deleteByQuery(q);
+		
 		return notifications;
 	}
 	
+	public void markAsRead(Player player, List<Notification> notifications) {
+		Query<UndeliveredNotification> q = undeliveredNotificationDAO.createQuery();
+		q.and(
+			q.criteria("player").equal(player),
+			q.criteria("notification").hasAnyOf(notifications)
+		);
+		undeliveredNotificationDAO.deleteByQuery(q);
+	}
+	
+	
+	public void markAllUndeliveredAsRead(Player player) {
+		Query<UndeliveredNotification> q = undeliveredNotificationDAO.createQuery().field("player").equal(player);
+		undeliveredNotificationDAO.deleteByQuery(q);
+	}
 }
