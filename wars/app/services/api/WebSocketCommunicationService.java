@@ -15,6 +15,13 @@ public interface WebSocketCommunicationService {
      * @param player
      */
     public void sendHi(Player player);
+    
+    /**
+	 * Creates simple text notification and sends to recipients
+	 * @param recipients
+	 */
+	public void sendSimpleNotification(String title, String message, List<Player> recipients);
+	public void sendSimpleNotification(String title, String message, Player recipient);
 
     public void sendConqueringInvitation(ConqueringAttempt ca,
                 List<Player> onlinePlayersOfTeam);

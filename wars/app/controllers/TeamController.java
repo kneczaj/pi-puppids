@@ -103,6 +103,7 @@ public class TeamController extends Controller {
 	@SecureSocial.SecuredAction
 	public static Result acceptInvitation(String token) throws TeamServiceException {
 		
+		Player loggedPlayer = authenticationService.getPlayer();
 		Invitation invitation;
 		try {
 			invitation = teamService.getInvitation(token);
@@ -110,7 +111,7 @@ public class TeamController extends Controller {
 			return ok(message.render("Given invitation token is invalid"));
 		}
 		
-		Player loggedPlayer = authenticationService.getPlayer();
+		
 		
 		try {
 			teamService.acceptInvitation(invitation, loggedPlayer);
@@ -119,8 +120,9 @@ public class TeamController extends Controller {
 			switch (e.getMessage()) {
 			
 			case "validationFailed":
-				return ok(message.render("Your city or faction doesn't match the invitation's one." +
-						"You can change them in our shop ;)"));
+				webSocketCommunicationService.sendSimpleNotification("Error", "Your city or faction doesn't match the invitation's one." +
+						"You can change them in our shop ;)", loggedPlayer);
+				return redirect("/");
 				
 			case "playerNotRegistered":
 				
@@ -141,6 +143,8 @@ public class TeamController extends Controller {
 			}
 		}
 		
-		return ok(message.render("You have successfully joined " + invitation.getTeam().getName() + " team"));
+		webSocketCommunicationService.sendSimpleNotification("Team changed", 
+				"You have successfully joined " + invitation.getTeam().getName() + " team", loggedPlayer);
+		return redirect("/");
 	}
 }

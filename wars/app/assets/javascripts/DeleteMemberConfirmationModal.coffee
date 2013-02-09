@@ -1,7 +1,7 @@
 class ArWars.DeleteMemberConfirmationModal
 	
 	# needed to have access to the class as well as the queried object
-	# in showModal()
+	# in show()
 	`var that`
 
 	constructor: () ->
