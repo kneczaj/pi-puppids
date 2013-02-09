@@ -101,6 +101,7 @@ class ArWars.PlayerPositionManager
 			position: place.geometry.location
 			animation: google.maps.Animation.DROP
 			icon: iconUrl
+			zIndex: 1
 		
 		marker = new google.maps.Marker markerOpts
 		@placeMarkers[place.id] = marker
