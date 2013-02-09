@@ -78,7 +78,7 @@ $(document).ready ->
 		conquerManager.setPlayerPositionManager playerPositionManager
 		conquerManager.setNotificationsManager notificationsManager
 
-		mapInfoManger = new window.ArWars.MapInfoManager playerPositionManager
+		mapInfoManger = new window.ArWars.MapInfoManager playerPositionManager, conquerManager
 		mapInfoManger.loadConqueredPlaces()
 		
 		sidebar = new window.ArWars.SideBar playerPositionManager, conquerManager, mapInfoManger

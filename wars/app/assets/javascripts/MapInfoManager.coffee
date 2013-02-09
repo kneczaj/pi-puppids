@@ -3,7 +3,7 @@ class ArWars.MapInfoManager
 	places: []
 	placeMarkers: []
 
-	constructor: (@playerPositionManager) ->
+	constructor: (@playerPositionManager, @conquerManager) ->
 		@map = @playerPositionManager.getMap()
 		
 		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
@@ -44,13 +44,16 @@ class ArWars.MapInfoManager
 		if @player.team.name is place.team 
 			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" name=\"btnDeploy\" placeId=\"#{pid}\">Deploy units</button>"
 		else if not (@player.faction.name is place.faction) 
-			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" placeId=\"#{pid}\">Conquer</button>"
+			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" name=\"btnConquer\" placeId=\"#{pid}\" reference=\"#{place.reference}\">Conquer</button>"
 		
 		@infowindow.setContent content
 		@infowindow.open @map, marker
 		$("button[placeId=#{pid}][name=\"btnDeploy\"]").click () -> 
 				$("#deployAt").val pid 
 				$("#deployUnitsModal").modal 'show'
+
+		$("button[placeId='#{pid}'][name=\"btnConquer\"]").click () =>
+			@conquerManager.conquer pid, place.reference
 		
 	notify: (title, text, type) ->
 		$.pnotify
