@@ -14,11 +14,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.Logger;
-import play.libs.Akka;
 import play.libs.F.Callback0;
 import play.mvc.WebSocket;
 import akka.actor.ActorRef;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 import com.google.common.collect.Lists;
@@ -38,8 +36,7 @@ public class ClientPushActor extends UntypedActor {
 	/**
 	 * Create a static actor instance
 	 */
-	public static ActorRef actor = Akka.system().actorOf(
-			new Props(ClientPushActor.class));
+	public static ActorRef actor;
 
 	/**
 	 * Map that holds the registrations. Maps player IDs to a WebSocket channel.

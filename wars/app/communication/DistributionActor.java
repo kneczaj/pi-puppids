@@ -3,15 +3,17 @@ package communication;
 import java.util.List;
 
 import models.Player;
+import play.Application;
 import play.Logger;
 import play.libs.Akka;
+import plugins.GuicePlugin;
 import services.api.ResourceService;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.routing.RoundRobinRouter;
 
-import com.google.inject.Inject;
+import com.google.inject.Injector;
 import communication.messages.DistributionResultMessage;
 import communication.messages.ResourceDistributionMessage;
 import communication.messages.StartDistributionMessage;
@@ -20,22 +22,37 @@ import daos.PlayerDAO;
 
 public class DistributionActor extends UntypedActor {
 
-	@Inject
 	private static PlayerDAO playerDAO;
 
-	@Inject
 	private static ResourceService resourceService;
 
-	private final static int NUMBER_OF_ACTORS = 100;
+	private final static int NUMBER_OF_ACTORS = 5;
+	
+	public static ActorRef actor = null;
+	private ActorRef router = null;
 
-	public static ActorRef actor = Akka.system().actorOf(
-			new Props(DistributionActor.class));
-
-	private ActorRef router = this.getContext().actorOf(
-			new Props(DistributionActor.class).withRouter(new RoundRobinRouter(
-					NUMBER_OF_ACTORS)), "router");
+//	public static ActorRef actor = Akka.system().actorOf(
+//			new Props(DistributionActor.class));
+//
+//	private ActorRef router = this.getContext().actorOf(
+//			new Props(DistributionActor.class).withRouter(new RoundRobinRouter(
+//					NUMBER_OF_ACTORS)), "router");
 
 	private long distributionCounter = 0;
+	
+	private static Application application;
+	
+	public static void setApplication(Application app) {
+		application = app;
+	}
+	
+	public static void doManualInjection() {
+		GuicePlugin gp = application.plugin(GuicePlugin.class);
+	    Injector injector = gp.getInjector();
+	    
+	    playerDAO = injector.getInstance(PlayerDAO.class);
+	    resourceService = injector.getInstance(ResourceService.class);
+	}
 
 	@Override
 	public void onReceive(Object message) throws Exception {
