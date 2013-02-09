@@ -5,15 +5,13 @@ import models.conquer.ConqueringAttempt;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-import play.libs.Json;
-
 public class ParticipantJoinedConquerMessage extends Notification {
 	
 	public Player participant;
 	public ConqueringAttempt conqueringAttempt;
 	
 	public ObjectNode toJson() {
-		ObjectNode joinMessage = Json.newObject();
+		ObjectNode joinMessage = getInitialJson();
 		
 		joinMessage.put("messageType", "ParticipantJoinedConquer");
 		joinMessage.put("conqueringAttemptId", conqueringAttempt.getId().toString());

@@ -1,5 +1,6 @@
 package services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.Player;
@@ -44,42 +45,54 @@ public class WebSocketCommunicationServiceImpl implements
 	
 	
     public void sendHi(Player player) {
-            SimpleNotificationMessage testNotification = new SimpleNotificationMessage();
-            testNotification.setPlayers(player.getTeammates());
-           
-            tellActor(testNotification);
+    	sendSimpleNotification("", "Hi!", player.getTeammates());
+    }
+    
+    public void sendSimpleNotification(String title, String message, Player recipient) {
+    	List<Player> playerList = new ArrayList<Player>();
+    	playerList.add(recipient);
+    	sendSimpleNotification(title, message, playerList);
+    }
+    
+    public void sendSimpleNotification(String title, String message, List<Player> recipients) {
+    	SimpleNotificationMessage notification = new SimpleNotificationMessage();
+		notification.setPlayers(recipients);
+		notification.setMessage(message);
+		notification.setTitle(title);
+		
+		tellActor(notification);
     }
    
     public void sendConqueringInvitation(ConqueringAttempt ca,
                     List<Player> onlinePlayersOfTeam) {
            
-            ConqueringInvitationMessage ci = new ConqueringInvitationMessage();
-            ci.conqueringAttempt = ca;
-            ci.setPlayers(onlinePlayersOfTeam);
-           
-            tellActor(ci);
+	    ConqueringInvitationMessage ci = new ConqueringInvitationMessage();
+	    ci.conqueringAttempt = ca;
+	    ci.setPlayers(onlinePlayersOfTeam);
+	   
+	    tellActor(ci);
     }
    
     public void conquerParticipantJoined(Player participant, ConqueringAttempt conqueringAttempt) {
-            ParticipantJoinedConquerMessage pm = new ParticipantJoinedConquerMessage();
-            pm.setPlayers(Lists.newArrayList(conqueringAttempt.getInitiator()));
-            pm.participant = participant;
-            pm.conqueringAttempt = conqueringAttempt;
-           
-            tellActor(pm);
+        ParticipantJoinedConquerMessage pm = new ParticipantJoinedConquerMessage();
+        pm.setPlayers(Lists.newArrayList(conqueringAttempt.getInitiator()));
+        pm.participant = participant;
+        pm.conqueringAttempt = conqueringAttempt;
+       
+        tellActor(pm);
     }
 
     public void sendConquerPossible(ConqueringAttempt conqueringAttempt) {
-            ConquerPossibleMessage cpm = new ConquerPossibleMessage();
-            cpm.setPlayers(Lists.newArrayList(conqueringAttempt.getInitiator()));
-            cpm.conqueringAttempt = conqueringAttempt;
-           
-            tellActor(cpm);
+        ConquerPossibleMessage cpm = new ConquerPossibleMessage();
+        cpm.setPlayers(Lists.newArrayList(conqueringAttempt.getInitiator()));
+        cpm.conqueringAttempt = conqueringAttempt;
+       
+        tellActor(cpm);
     }
     
 
     public void playerLocationChanged(PlayerLocation playerLocation) {
-            tellActor(new PlayerLocationChangedMessage(playerLocation));
+        tellActor(new PlayerLocationChangedMessage(playerLocation));
     }
 
 

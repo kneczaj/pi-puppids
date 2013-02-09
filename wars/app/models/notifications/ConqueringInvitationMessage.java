@@ -5,8 +5,6 @@ import models.conquer.ConqueringAttempt;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-import play.libs.Json;
-
 public class ConqueringInvitationMessage extends Notification {
 
 	public int numberOfConquerors;
@@ -14,7 +12,7 @@ public class ConqueringInvitationMessage extends Notification {
 	public ConqueringAttempt conqueringAttempt;
 
 	public ObjectNode toJson() {
-		ObjectNode invitation = Json.newObject();
+		ObjectNode invitation = getInitialJson();
 
 		Player initiator = conqueringAttempt.getInitiator();
 		String uuid = conqueringAttempt.getUuid();
