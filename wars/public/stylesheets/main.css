@@ -47,6 +47,10 @@ a:hover {
   color: #2f2f2f;
 }
 
+.infowindowTitle {
+	font-weight: bold;
+}
+
 .popover {
 	background-color: #444;
 }

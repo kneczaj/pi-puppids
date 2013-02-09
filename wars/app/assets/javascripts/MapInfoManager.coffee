@@ -35,6 +35,7 @@ class ArWars.MapInfoManager
 
 	constructor: (@mapNode) ->
 		@map = new google.maps.Map @mapNode, ArWars.MapInfoManager.mapOptions
+		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 
 		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
 			@player = responseData
@@ -44,7 +45,6 @@ class ArWars.MapInfoManager
 	
 	loadConqueredPlaces: () ->
 		$.getJSON "/mapinfo/getConqueredPlaces", (data) =>
-			@infowindow = new google.maps.InfoWindow(content: "Loading...")
 			$.each data, (key, val) =>
 				@places[key] = val
 				@createMarker key, val
@@ -65,6 +65,7 @@ class ArWars.MapInfoManager
 			@setInfowindow pid, place, marker
 			
 	setInfowindow: (pid, place, marker) =>
+		typeCap = (place.type.split('_').map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
 		buttonClass = ""
 		switch place.faction
 		  when "red"
@@ -72,7 +73,7 @@ class ArWars.MapInfoManager
 		  when "blue"
 		    buttonClass = "primary"
 		    
-		content = "#{place.name}<br/>Type: #{place.type}<br/>Resources: #{place.resAmount} <img src=\"/assets/images/resources/#{place.resource.toLowerCase()}_#{place.faction}.png\"><br/>Units: #{place.units}<br/>Conquered by: #{place.team} (#{place.faction} faction)"
+		content = "<span class=\"infowindowTitle\">#{place.name}</span><br/>Type: #{typeCap}<br/>Resources: #{place.resAmount} <img src=\"/assets/images/resources/#{place.resource.toLowerCase()}_#{place.faction}.png\"><br/>Units: #{place.units}<br/>Conquered by: #{place.team} (#{place.faction})"
 		
 		if @player.team.name is place.team 
 			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" name=\"btnDeploy\" placeId=\"#{pid}\">Deploy units</button>"

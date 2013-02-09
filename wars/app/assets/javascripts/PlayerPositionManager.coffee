@@ -60,7 +60,6 @@ class ArWars.PlayerPositionManager
 			location: 	new google.maps.LatLng(lat, lng)
 			radius:		150
 			
-		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 		service = new google.maps.places.PlacesService(@map)
 		service.nearbySearch(request, @onNearbySearchResult)
 
@@ -107,10 +106,11 @@ class ArWars.PlayerPositionManager
 		@placeMarkers[place.id] = marker
 
 		google.maps.event.addListener marker, "click", () =>
-			type = place.types[0]
-			content = "#{place.name}<br/>#{place.vicinity}<br/>Type:#{type}<br/>Resource: <img src=\"#{marker.icon}\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
-			@infowindow.setContent content
-			@infowindow.open @map, marker
+			type = (place.types[0].split('_').map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
+			resourceIcon = marker.icon.replace /marker/, "orange"
+			content = "<span class=\"infowindowTitle\">#{place.name}</span><br/>Type: #{type}<br/>Resource: <img src=\"#{resourceIcon}\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
+			@mapInfoManager.infowindow.setContent content
+			@mapInfoManager.infowindow.open @map, marker
 			$("button[placeId=#{place.id}]").click () => 
 				@conquerManager.initiateConquer place.id, place.reference
 
