@@ -33,7 +33,7 @@ class ArWars.MapInfoManager
 			]
 		]
 
-	constructor: (@mapNode) ->
+	constructor: (@mapNode, @conquerManager) ->
 		@map = new google.maps.Map @mapNode, ArWars.MapInfoManager.mapOptions
 
 		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
