@@ -203,6 +203,10 @@ public class Player {
 		return notifications;
 	}
 	
+	public void clearNotificationsList() {
+		notifications.clear();
+	}
+	
 	
 	public List<Place> getConquered() {
 		return conquered;

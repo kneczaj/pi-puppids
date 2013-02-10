@@ -89,9 +89,10 @@ public class NotificationServiceImpl implements NotificationService {
 		List<Notification> notifications = new LinkedList<Notification>();
 		for (UndeliveredNotification n : pairs) {
 			notifications.add(n.getNotification());
+			undeliveredNotificationDAO.delete(n);
 		}
 		
-		undeliveredNotificationDAO.deleteByQuery(q);
+//		undeliveredNotificationDAO.deleteByQuery(q);
 		
 		return notifications;
 	}
@@ -109,5 +110,25 @@ public class NotificationServiceImpl implements NotificationService {
 	public void markAllUndeliveredAsRead(Player player) {
 		Query<UndeliveredNotification> q = undeliveredNotificationDAO.createQuery().field("player").equal(player);
 		undeliveredNotificationDAO.deleteByQuery(q);
+	}
+	
+	public void deletePlayersNotifications(Player player) {
+		
+		// delete undelivered references
+		Query<UndeliveredNotification> un = undeliveredNotificationDAO.createQuery().field("player").equal(player);
+		undeliveredNotificationDAO.deleteByQuery(un);
+		
+		// delete base notifications
+		List<Notification> notifications = player.getNotificationsList();
+		for (Notification n: notifications) {
+			n.removePlayer(player);
+			if (n.getPlayers().isEmpty())
+				notificationDAO.delete(n);
+			else
+				notificationDAO.save(n);
+		}
+		
+		player.clearNotificationsList();
+		playerDAO.save(player);
 	}
 }
