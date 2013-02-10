@@ -98,7 +98,6 @@ class ArWars.PlayerPositionManager
 		markerOpts = 
 			map: @map
 			position: place.geometry.location
-			animation: google.maps.Animation.DROP
 			icon: iconUrl
 			zIndex: 1
 		
