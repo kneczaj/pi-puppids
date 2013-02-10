@@ -194,6 +194,7 @@ class ArWars.PlayerPositionManager
 			position: pos
 			draggable: false
 			icon: '/assets/images/player.png'
+			zIndex: google.maps.Marker.MAX_ZINDEX
 
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map
