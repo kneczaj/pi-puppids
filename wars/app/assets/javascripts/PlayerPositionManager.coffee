@@ -22,7 +22,6 @@ class ArWars.PlayerPositionManager
 	playerMarkers: []
 	circles: []
 	players: []
-	placeMarkers: []
 
 	constructor: (@infoPanel, @conquerManager, @mapInfoManager) ->
 		@map = @mapInfoManager.getMap()
@@ -65,54 +64,14 @@ class ArWars.PlayerPositionManager
 
 	onNearbySearchResult: (results, status, pagination) =>
 		if status is google.maps.places.PlacesServiceStatus.OK
-			@createMarker(i) for i in results
+			@mapInfoManager.createUnconqueredMarker(i) for i in results
 		
 		if pagination.hasNextPage
     		pagination.nextPage()
     		
-		for k,v of @placeMarkers
+		for k,v of @mapInfoManager.unconqueredPlaceMarkers
 			@bounds.extend v.position
 		@map.fitBounds @bounds
-
-	createMarker: (place) ->
-		placeLoc = place.geometry.location
-		iconUrl = undefined
-		switch place.types[0]
-		  when "atm", "bank", "casino", "dentist", "doctor", "electrician", "establishment", "finance", "florist", "insurance_agency", "jewelry_store", "lawyer"
-		    iconUrl = "/assets/images/resources/credits_marker.png"
-		  when "bakery", "bar", "cafe", "food", "liquor_store", "meal_delivery", "meal_takeaway", "restaurant", "shopping_mall", "store"
-		    iconUrl = "/assets/images/resources/food_marker.png"
-		  when "book_store", "library", "school", "university"
-		    iconUrl = "/assets/images/resources/knowledge_marker.png"
-		  when "campground", "cemetery", "church", "city_hall", "courthouse", "embassy", "fire_station", "hindu_temple", "local_government_office", "mosque", "place_of_worship", "police", "stadium", "synagogue", "zoo"
-		    iconUrl = "/assets/images/resources/special_marker.png"
-		  when "amusement_park", "aquarium", "art_gallery", "beauty_salon", "bowling_alley", "movie_rental", "movie_theater", "moving_company", "museum", "night_club", "park"
-		    iconUrl = "/assets/images/resources/cultural_marker.png"
-		  when "bicycle_store", "clothing_store", "convenience_store", "department_store", "electronics_store", "funeral_home", "furniture_store", "gas_station", "general_contractor", "grocery_or_supermarket", "gym", "hair_care", "hardware_store", "health", "home_goods_store", "hospital", "laundry", "locksmith", "lodging", "painter", "pet_store", "pharmacy", "physiotherapist", "plumber", "post_office", "real_estate_agency", "roofing_contractor", "rv_park", "shoe_store", "spa", "storage"
-		    iconUrl = "/assets/images/resources/material_marker.png"
-		  when "bus_station", "car_dealer", "car_rental", "car_repair", "car_wash", "parking", "subway_station", "taxi_stand", "train_station", "travel_agency", "veterinary_care"
-		    iconUrl = "/assets/images/resources/transportation_marker.png"
-		  else
-		    return
-		
-		markerOpts = 
-			map: @map
-			position: place.geometry.location
-			icon: iconUrl
-			zIndex: 1
-		
-		marker = new google.maps.Marker markerOpts
-		@placeMarkers[place.id] = marker
-
-		google.maps.event.addListener marker, "click", () =>
-			type = (place.types[0].split('_').map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
-			resourceIcon = marker.icon.replace /marker/, "orange"
-			content = "<span class=\"infowindowTitle\">#{place.name}</span><br/>Type: #{type}<br/>Resource: <img src=\"#{resourceIcon}\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
-			@mapInfoManager.infowindow.setContent content
-			@mapInfoManager.infowindow.open @map, marker
-			$("button[placeId=#{place.id}]").click () => 
-				@conquerManager.initiateConquer place.id, place.reference
-
 	
 	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>

@@ -130,7 +130,7 @@ class ArWars.SideBar
 
 		@map.setZoom(18)
 		@map.panTo newLocation
-		@mapInfoManger.setInfowindow(placeId, @mapInfoManger.places[placeId], @mapInfoManger.placeMarkers[placeId])
+		@mapInfoManger.setInfowindow(placeId, @mapInfoManger.conqueredPlaces[placeId], @mapInfoManger.conqueredPlaceMarkers[placeId])
 		
 	buildUnitsClickHandler: () ->
 		gruntAmount = $("input#gruntBuildAmount").val()
