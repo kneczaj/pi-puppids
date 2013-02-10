@@ -33,7 +33,7 @@ class ArWars.MapInfoManager
 			]
 		]
 
-	constructor: (@mapNode) ->
+	constructor: (@mapNode, @conquerManager) ->
 		@map = new google.maps.Map @mapNode, ArWars.MapInfoManager.mapOptions
 		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 
