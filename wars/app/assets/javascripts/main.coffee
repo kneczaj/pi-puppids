@@ -73,7 +73,7 @@ $(document).ready ->
 			range: "min"
 			value: 0
 			min: 0
-			max: 10
+			max: 0
 			slide: (event, ui) ->
 				$("#gruntBuildAmount").val ui.value
 
@@ -82,7 +82,7 @@ $(document).ready ->
 			range: "min"
 			value: 0
 			min: 0
-			max: 10
+			max: 0
 			slide: (event, ui) ->
 				$("#infantryBuildAmount").val ui.value
 
