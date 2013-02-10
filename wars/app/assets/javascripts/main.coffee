@@ -68,9 +68,48 @@ $(document).ready ->
 	$("button[name=back]", "#chooseFactionModal").bind 'click', factionBackToInvitationsClickHandler
 	$("#chooseFactionModal form").submit factionClickHandler	
 
+	setupSliders = ->
+		$("#gruntBuildSlider").slider
+			range: "min"
+			value: 0
+			min: 0
+			max: 10
+			slide: (event, ui) ->
+				$("#gruntBuildAmount").val ui.value
+
+		$("#gruntBuildAmount").val $("#gruntBuildSlider").slider("value")
+		$("#infantryBuildSlider").slider
+			range: "min"
+			value: 0
+			min: 0
+			max: 10
+			slide: (event, ui) ->
+				$("#infantryBuildAmount").val ui.value
+
+		$("#infantryBuildAmount").val $("#infantryBuildSlider").slider("value")
+		$("#gruntDeploySlider").slider
+			range: "min"
+			value: 0
+			min: 0
+			max: 0
+			slide: (event, ui) ->
+				$("#gruntDeployAmount").val ui.value
+
+		$("#gruntDeployAmount").val $("#gruntDeploySlider").slider("value")
+		$("#infantryDeploySlider").slider
+			range: "min"
+			value: 0
+			min: 0
+			max: 0
+			slide: (event, ui) ->
+				$("#infantryDeployAmount").val ui.value
+
+		$("#infantryDeployAmount").val $("#infantryDeploySlider").slider("value")
+
 	loadContents = =>
 		conquerManager = new window.ArWars.ConquerManager()
 		layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
+		setupSliders()
 		
 		mapInfoManger = new window.ArWars.MapInfoManager $(window.ArWars.mapSelector)[0], conquerManager
 		mapInfoManger.loadConqueredPlaces()
