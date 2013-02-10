@@ -52,9 +52,9 @@ public class NotificationController extends Controller {
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result getUndeliveredNotifications(String numberOfFullNotifications) {
 
+		int num = Integer.valueOf(numberOfFullNotifications);
 		Player p = authenticationService.getPlayer();
-		List<Notification> toSend = notificationService
-				.takeUndeliveredNotifications(p, Integer.valueOf(numberOfFullNotifications));
+		List<Notification> toSend = notificationService.takeUndeliveredNotifications(p, num);
 		
 		ArrayNode fullNotificationsArray = Json.newObject().arrayNode();
 		
@@ -63,15 +63,34 @@ public class NotificationController extends Controller {
 		
 		ObjectNode reply = Json.newObject();
 		reply.put("notifications", fullNotificationsArray);
-		reply.put("undeliveredNumber", notificationService.countUndeliveredNotifications(p));
+		long othersNumber = notificationService.countUndeliveredNotifications(p) - toSend.size();
+		if (othersNumber < 0)
+			othersNumber = 0;
+		reply.put("othersNumber", othersNumber);
+		
+		String json = reply.toString();
 		
 		return ok(reply.toString());
+	}
+	
+	@SecureSocial.SecuredAction(ajaxCall = true)
+	public static Result markAllUndeliveredAsRead() {
+		Player p = authenticationService.getPlayer();
+		notificationService.markAllUndeliveredAsRead(p);
+		return ok();
 	}
 	
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result addHistoryEntry(String title, String message, String notType) {
 		Player loggedPlayer = authenticationService.getPlayer();
 		notificationService.createNotificationEntry(loggedPlayer, title, message, notType);
+		return ok();
+	}
+	
+	@SecureSocial.SecuredAction(ajaxCall = true)
+	public static Result deletePlayersNotifications() {
+		Player loggedPlayer = authenticationService.getPlayer();
+		notificationService.deletePlayersNotifications(loggedPlayer);
 		return ok();
 	}
 	

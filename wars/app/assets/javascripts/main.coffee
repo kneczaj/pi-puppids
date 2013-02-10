@@ -87,7 +87,7 @@ $(document).ready ->
 		sidebar.loadResourcesOfPlayer()
 		sidebar.loadResourcesOfTeam()
 		sidebar.loadUnitsOfPlayer()
-		notificationsManager.loadNotifications()
+		notificationsManager.showUndeliveredNotifications()
 		
 		$("button#btnDeploy").click () => 
 			sidebar.deployUnitsClickHandler()

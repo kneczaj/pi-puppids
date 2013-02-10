@@ -45,20 +45,21 @@ public class WebSocketCommunicationServiceImpl implements
 	
 	
     public void sendHi(Player player) {
-    	sendSimpleNotification("", "Hi!", player.getTeammates());
+    	sendSimpleNotification("from player " + player.getUsername(), "Hi!", "info", player.getTeammates());
     }
     
-    public void sendSimpleNotification(String title, String message, Player recipient) {
+    public void sendSimpleNotification(String title, String message, String type, Player recipient) {
     	List<Player> playerList = new ArrayList<Player>();
     	playerList.add(recipient);
-    	sendSimpleNotification(title, message, playerList);
+    	sendSimpleNotification(title, message, type, playerList);
     }
     
-    public void sendSimpleNotification(String title, String message, List<Player> recipients) {
+    public void sendSimpleNotification(String title, String message, String type, List<Player> recipients) {
     	SimpleNotificationMessage notification = new SimpleNotificationMessage();
 		notification.setPlayers(recipients);
 		notification.setMessage(message);
 		notification.setTitle(title);
+		notification.setType(type);
 		
 		tellActor(notification);
     }

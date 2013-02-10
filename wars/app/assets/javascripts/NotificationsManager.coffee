@@ -3,42 +3,58 @@ class ArWars.NotificationsManager
 	constructor: (@conquerManager, @mapInfoManger) ->
 		@notificationNode = $("#notifications .accordion-inner")
 		@notificationTable = $("#notificationsTable")
+		$("#clearNotifications").bind 'click', @clearNotifications
+		$("#notificationsTab").bind 'click', @onNotificationsTabOpened
 		
 	showUndeliveredNotifications: () ->
 		
 		params =
 			numberOfFullNotifications: 3
 			
-		$.getJSON 'notifications/getHistory', params, (responseData) =>
+		$.getJSON 'notifications/getUndelivered', params, (responseData) =>
 			for notification in responseData.notifications
 				switch notification.messageType 
 					when "ConqueringInvitation" 
-						@notifyConqueringInvitation data
+						@notifyConqueringInvitation notification
 
 					when "ParticipantJoinedConquer" 
-						@notifyParticipantJoined data
+						@notifyParticipantJoined notification
 
 					when "ConquerPossible"
-						@notifyConquerPossible data
+						@notifyConquerPossible notification
 				
 					when "OtherNotification"
-						@notify data.title, data.message, data.type
-						
-			num = responseData.undeliveredNumber
-			@notify 'Others', 'You have <a name=\"notificationsTabLink\">#{num} other undelivered notifications.</a>', 'info'
-			#TODO: the link should open notifications tab and mark all notifications as read
+						@notify notification.title, notification.message, notification.type
+			
+			if responseData.othersNumber > 0			
+				num = responseData.othersNumber
+				@notify 'Notifications', 'You have <a id="notificationsTabLink" name=\"notificationsTabLink\"> '+num+' other not read notifications.</a>', 'info'
+				$("#notificationsTabLink").bind 'click', @openNotificationsTab
+				
+	notificationsMarkAsRead: () ->
+		$.ajax
+			url : "/notifications/markAllUndeliveredAsRead"
+				
+	openNotificationsTab: () =>
+		# TODO: here the tab should acctually toggle
+		$("a[href='#notifications']").parent().next().collapse('show')
+		@onNotificationsTabOpened
+		
+	onNotificationsTabOpened: () =>
+		@notificationsMarkAsRead()
+		@reloadNotifications()
 
-	loadNotifications: () ->
+	reloadNotifications: () =>
 
 		params = 
 			offset: 0
 			count: 100
 
 		$.getJSON 'notifications/getHistory', params, (responseData) =>
-			if responseData.isEmpty
+			if responseData.length is 0
 				 @notificationNode.html "You don't have any notifications"
 				 return
-			@notificationTable.html = ''
+			@notificationTable.html ''
 			@notificationTable.append "<tbody>"
 			$.each responseData, (index, notification) =>
 				switch notification.messageType 
@@ -51,6 +67,12 @@ class ArWars.NotificationsManager
 					when 'OtherNotification'
 						@renderOtherNotification notification
 			@notificationTable.append "</tbody>"
+			
+	clearNotifications: () =>
+		$.ajax
+			url : "/notifications/deletePlayersNotifications"
+			success : (response, textStatus, jqXHR) =>
+				@reloadNotifications()
 			
 #-----------	ARCHIVE RENDERING	-------------------
 
@@ -72,10 +94,10 @@ class ArWars.NotificationsManager
 	renderOtherNotification: (notification) ->
 		@renderTableRow notification.time, notification.message
 		
-	renderTableRow: (time, content) ->
+	renderTableRow: (time, content) =>
 		@notificationTable.append "<tr><td>" + time + "</td><td>" + content + "</td></tr>"
 		
-#------------	LIVE RENDERING	---------------------
+#------------	LIVE RENDERING	(bubbles) ---------------------
 
 	notifyConquerInvitation: (invitation) ->
 		noticeNode = $ "#conqueringInvitationNotice"
@@ -107,6 +129,9 @@ class ArWars.NotificationsManager
 	notifyConquerCancelled: (data) ->
 		@notifyAndStore 'Canceled Conquer', 'The conquering attempt was canceled', 'success'
 		
+#	its a question whether this function will stay here
+#	notifications should rather be generated and stored directly at server side
+# 	not by javascript
 	notifyAndStore: (title, text, type) ->
 		data = 
 			title: title
