@@ -16,6 +16,18 @@ class ArWars.SideBar
 						trigger: "hover"
 						placement: "bottom"
 						content: $("#p" + key).parent().attr("data-content") + val
+					
+				maxGrunt = Math.floor(Math.min(data['Credits'] / window.ArWars.gruntCreditCost, data['Material'] / window.ArWars.gruntMaterialCost))
+				$("#gruntBuildSlider").slider "option", 
+					max: maxGrunt
+					value: 0
+				$("#gruntBuildAmount").val '0'
+				
+				maxInfantry = Math.floor(Math.min(data['Credits'] / window.ArWars.infantryCreditCost, data['Material'] / window.ArWars.infantryMaterialCost))
+				$("#infantryBuildSlider").slider "option", 
+					max: maxInfantry
+					value: 0
+				$("#infantryBuildAmount").val '0'
 
 	loadResourcesOfTeam: () ->
 		$.getJSON "/resource/getResourcesOfTeam", (data) =>

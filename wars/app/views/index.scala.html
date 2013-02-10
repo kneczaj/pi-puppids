@@ -24,7 +24,11 @@
 		mapSelector: '#map_canvas',
 		factionHasToBeChosen: factionHasToBeChosen,
 		showSentInvitations: showSentInvitations, 
-		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)"
+		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)",
+		gruntCreditCost: @unitCostMap(UnitType.GRUNT)(ResourceType.Credits),
+		gruntMaterialCost: @unitCostMap(UnitType.GRUNT)(ResourceType.Material),
+		infantryCreditCost: @unitCostMap(UnitType.INFANTRY)(ResourceType.Credits),
+		infantryMaterialCost: @unitCostMap(UnitType.INFANTRY)(ResourceType.Material)
 	};
 	
 	function tryInvite() {
