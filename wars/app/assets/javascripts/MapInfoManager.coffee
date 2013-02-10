@@ -36,6 +36,11 @@ class ArWars.MapInfoManager
 		
 	@mcOptions =
 		maxZoom: 16
+		styles: [
+			url: "./assets/images/cluster_orange.png",
+			height: 56,
+			width: 56
+			]
 
 	constructor: (@mapNode, @conquerManager) ->
 		@map = new google.maps.Map @mapNode, ArWars.MapInfoManager.mapOptions
