@@ -1,5 +1,6 @@
 package models;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,6 +128,11 @@ public class Player {
 
 	public Date getDateOfBirth() {
 		return dateOfBirth;
+	}
+	
+	public String getDateOfBirthString() {
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		return format.format(dateOfBirth);
 	}
 
 	public void setDateOfBirth(Date dateOfBirth) {
