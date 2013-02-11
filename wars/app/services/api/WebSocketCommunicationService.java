@@ -1,9 +1,11 @@
 package services.api;
 
 import java.util.List;
+import java.util.Map;
 
 import models.Player;
 import models.PlayerLocation;
+import models.ResourceType;
 import models.conquer.ConqueringAttempt;
 
 public interface WebSocketCommunicationService {
@@ -38,6 +40,6 @@ public interface WebSocketCommunicationService {
      */
     public void playerLocationChanged(PlayerLocation playerLocation);
     
-    public void sendPlayerResourcesChanged(Player player);
+    public void sendResourcesChanged(Player player, Map<ResourceType, Integer> teamResources);
 
 }

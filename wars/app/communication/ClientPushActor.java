@@ -9,7 +9,7 @@ import models.notifications.ConquerPossibleMessage;
 import models.notifications.ConqueringInvitationMessage;
 import models.notifications.Notification;
 import models.notifications.ParticipantJoinedConquerMessage;
-import models.notifications.PlayerResourcesChangedMessage;
+import models.notifications.ResourcesChangedMessage;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -112,8 +112,8 @@ public class ClientPushActor extends UntypedActor {
 			registered.putIfAbsent(registration.getId(),
 					registration.getChannel());
 
-		} else if (message instanceof PlayerResourcesChangedMessage) {
-			PlayerResourcesChangedMessage prcm = (PlayerResourcesChangedMessage) message;
+		} else if (message instanceof ResourcesChangedMessage) {
+			ResourcesChangedMessage prcm = (ResourcesChangedMessage) message;
 			sendToPlayers(prcm.toJson(), Lists.newArrayList(prcm.player));
 			
 		} else if (message instanceof PlayerLocationChangedMessage) {

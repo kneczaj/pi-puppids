@@ -20,17 +20,21 @@ class ArWars.WebSocketManager
 		if data.hasOwnProperty "notification-message" and data.hasOwnProperty "notification-title" 
 			@notify(data.notification-title, notification-message)
 
+			
 		switch data.messageType
 			when "PlayerLocationChange" 
 				@playerPositionManager.push2Map data.id, data.latitude, data.longitude, data.accuracy
 
-			when "PlayerResourcesChanged"
-				$.each data.data, (key, val) ->
+			when "ResourcesChanged"
+				$.each data.player, (key, val) ->
 					$("#p" + key).text val
 					$("#p" + key).parent().popover
 						trigger: "hover"
 						placement: "bottom"
 						content: $("#p" + key).parent().attr("data-content") + val
+
+				$.each data.team, (key, val) ->
+					$("#t" + key).text val
 
 			when "ConqueringInvitation" 
 				@notificationsManager.notifyConquerInvitation data
