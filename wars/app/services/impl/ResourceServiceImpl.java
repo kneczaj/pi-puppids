@@ -74,7 +74,16 @@ public class ResourceServiceImpl implements ResourceService {
 	 */
 	@Override
 	public Map<ResourceType, Integer> getResourcesOfPlayer(Player player) {
-		return player.getResourceDepot();
+		Map<ResourceType, Integer> resources = player.getResourceDepot();
+		if (resources.size() > 0) {
+			return resources;
+		}
+		
+		for (ResourceType type : ResourceType.values()) {
+			resources.put(type, 0);
+		}
+		
+		return resources;
 	}
 
 	/**

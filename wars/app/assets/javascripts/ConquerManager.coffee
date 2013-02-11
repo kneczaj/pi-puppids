@@ -1,8 +1,9 @@
 class ArWars.ConquerManager
 
-	playerPositionManager = null
+	constructor: () ->
 
-	constructor: (@notificationsManager) ->
+	setNotificationsManager: (nm) ->
+		@notificationsManager = nm
 
 	setPlayerPositionManager: (pm) ->
 		@playerPositionManager = pm

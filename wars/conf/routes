@@ -36,6 +36,8 @@ GET     /mapinfo/getConqueredPlaces					controllers.MapInfoController.loadConque
 GET		/notifications/getHistory					controllers.NotificationController.getHistory(offset, count)
 GET		/notifications/getUndelivered				controllers.NotificationController.getUndeliveredNotifications(numberOfFullNotifications)
 GET		/notifications/addHistoryEntry				controllers.NotificationController.addHistoryEntry(title, message, notType)
+GET		/notifications/markAllUndeliveredAsRead		controllers.NotificationController.markAllUndeliveredAsRead()
+GET		/notifications/deletePlayersNotifications	controllers.NotificationController.deletePlayersNotifications()
 
 # UnitController
 GET     /unit/getUnitsOfPlayer						controllers.UnitController.getUnitsOfPlayer()
@@ -45,6 +47,9 @@ GET     /unit/deployUnits							controllers.UnitController.deployUnits(gruntAmou
 # Player profile
 GET     /profile                    				controllers.Application.profile()
 GET		/getPlayer									controllers.Application.getPlayer(playerId)
+
+# PlayerController
+GET		/profile/changeProfile						controllers.PlayerController.changeProfile(firstname, lastname, email, hometown, birthday)
 
 # testing
 GET		/sendHi										controllers.TeamController.sendHi()

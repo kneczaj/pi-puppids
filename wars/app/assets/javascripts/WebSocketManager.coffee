@@ -25,16 +25,20 @@ class ArWars.WebSocketManager
 				@playerPositionManager.push2Map data.id, data.latitude, data.longitude, data.accuracy
 
 			when "ConqueringInvitation" 
-				@notificationsManager.notifyConqueringInvitation data
+				@notificationsManager.notifyConquerInvitation data
+				@notificationsManager.reloadNotifications()
 
 			when "ParticipantJoinedConquer" 
-				@notificationsManager.notifyParticipantJoined data
+				@notificationsManager.notifyConquerParticipantJoined data
+				@notificationsManager.reloadNotifications()
 
 			when "ConquerPossible"
 				@notificationsManager.notifyConquerPossible data
+				@notificationsManager.reloadNotifications()
 				
 			when "OtherNotification"
-				@notificationsManager.notify data.title, data.message, "info"								
+				@notificationsManager.notify data.title, data.message, "info"
+				@notificationsManager.reloadNotifications()								
 
 	establishWebSocket: (url) ->
 		socket = new @wsInstance url 

@@ -6,9 +6,11 @@ import java.util.UUID;
 import models.City;
 import models.Faction;
 import models.Invitation;
+import models.Place;
 import models.Player;
 import models.Team;
 import services.api.TeamService;
+import services.api.WebSocketCommunicationService;
 import services.api.error.TeamServiceException;
 
 import com.google.code.morphia.query.Query;
@@ -19,6 +21,7 @@ import com.typesafe.plugin.MailerPlugin;
 import daos.CityDAO;
 import daos.FactionDAO;
 import daos.InvitationDAO;
+import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.TeamDAO;
 
@@ -37,12 +40,18 @@ public class TeamServiceImpl implements TeamService {
 
 	@Inject
 	private CityDAO cityDAO;
+	
+	@Inject
+	private PlaceDAO placeDAO;
 
 	@Inject
 	private InvitationDAO invitationDAO;
 
 	@Inject
 	private FactionDAO factionDAO;
+	
+	@Inject
+	private WebSocketCommunicationService webSocketCommunicationService;
 
 	@Override
 	public Team createTeam(City city, String name) {
@@ -143,33 +152,34 @@ public class TeamServiceImpl implements TeamService {
 	public Player joinTeam(Player player, Team team) {
 
 		Team oldTeam = player.getTeam();
-		if (oldTeam != null) {
-
-			oldTeam.removePlayer(player);
-			if (oldTeam.getPlayers().isEmpty()) {
-				
-				// not so easy to delete... there are several tables that have
-				// references to a team
-				// if it is deleted we get tons of NPE's!
-				//
-				// the references need also be deleted or we just leave the team
-				// in the db
-				
-				// deletes all invitations to the old team - I think that's all the references
-				Query<Invitation> query = invitationDAO.createQuery().field("team").equal(oldTeam);
-				invitationDAO.deleteByQuery(query);
-				teamDAO.delete(oldTeam);
-			} else {
-				oldTeam.refindTeamMaster();
-				teamDAO.save(oldTeam);
-			}
-		}
-
+		
 		player.setTeam(team);
 		playerDAO.save(player);
 
 		team.addPlayer(player);
 		teamDAO.save(team);
+		
+		if (oldTeam != null) {
+
+			oldTeam.removePlayer(player);
+			
+			// delete player from conquered places
+			for (Place place: player.getConquered()) {
+				place.removePlayerFromConquerors(player);
+				placeDAO.save(place);
+			}
+			
+			if (oldTeam.getPlayers().isEmpty()) {
+				Query<Invitation> query = invitationDAO.createQuery().field("team").equal(oldTeam);
+				invitationDAO.deleteByQuery(query);
+				
+				// Deleting the team breaks the system
+				//teamDAO.delete(oldTeam);
+			} else {
+				oldTeam.refindTeamMaster();
+				teamDAO.save(oldTeam);
+			}
+		}
 
 		return player;
 	}
@@ -285,8 +295,8 @@ public class TeamServiceImpl implements TeamService {
 		newTeam.setCity(team.getCity());
 		newTeam.setFaction(team.getFaction());
 		
-		// TODO: add the notification to removed player
-		
 		joinTeam(player, newTeam);
+		webSocketCommunicationService.sendSimpleNotification(
+				"Team changed", "You were deleted from team " + team.getName(), "info", player);
 	}
 }

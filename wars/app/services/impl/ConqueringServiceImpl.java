@@ -32,7 +32,6 @@ import assets.constants.PlaceMappings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
-import communication.ClientPushActor;
 
 import daos.ConqueringAttemptDAO;
 import daos.PlaceDAO;
@@ -62,7 +61,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 	@Inject
 	private VictoryStrategy victoryStrategy;
-	
+
 	@Inject
 	private WebSocketCommunicationService webSocketCommunicationService;
 
@@ -74,6 +73,28 @@ public class ConqueringServiceImpl implements ConqueringService {
 						reference, 150));
 
 		return teamMembersNearby;
+	}
+
+	public Integer calculateDemandPerPlayer(Integer demand, int playerCount) {
+		return new Integer((int) Math.floor(demand / playerCount));
+	}
+
+	public void withdrawResourceDemandFromPlayers(Place p, List<Player> players) {
+		Map<ResourceType, Integer> resourceDemand = PlaceMappings.PLACE_TO_RESOURCE_DEMAND_MAP
+				.get(p.getType());
+
+		for (Entry<ResourceType, Integer> demand : resourceDemand.entrySet()) {
+			if (demand.getValue().intValue() == 0) {
+				continue;
+			}
+
+			Integer demandPerPlayer = calculateDemandPerPlayer(
+					demand.getValue(), players.size());
+			for (Player player : players) {
+				player.withdrawFromResourceDepot(demand.getKey(),
+						demandPerPlayer);
+			}
+		}
 	}
 
 	@Override
@@ -96,8 +117,8 @@ public class ConqueringServiceImpl implements ConqueringService {
 		for (Entry<ResourceType, Integer> resourceDemand : resourceDemands
 				.entrySet()) {
 
-			float resourceDemandPerPlayer = resourceDemand.getValue()
-					/ players.size();
+			Integer resourceDemandPerPlayer = calculateDemandPerPlayer(
+					resourceDemand.getValue(), players.size());
 			for (Player p : players) {
 				// ignore players with insufficient resources
 				if (p.getResourceDepot(resourceDemand.getKey()) < resourceDemandPerPlayer) {
@@ -229,7 +250,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			if (p.getId().equals(player.getId()))
 				playerNearby = true;
 		}
-		
+
 		if (!playerNearby) {
 			result.setConqueringStatus(ConqueringStatus.PLAYER_NOT_NEARBY);
 			return result;
@@ -245,8 +266,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			if (p.getId().equals(player.getId()))
 				playerIsWealthy = true;
 		}
-		
-		
+
 		if (!playerIsWealthy) {
 			result.setConqueringStatus(ConqueringStatus.PLAYER_HAS_INSUFFICIENT_RESOURCES);
 			return result;
@@ -296,7 +316,8 @@ public class ConqueringServiceImpl implements ConqueringService {
 			return status;
 		}
 
-		ConqueringAttempt ca = conqueringAttemptDAO.get(new ObjectId(conqueringAttemptId));
+		ConqueringAttempt ca = conqueringAttemptDAO.get(new ObjectId(
+				conqueringAttemptId));
 
 		Place place = placeDAO.findOne("uuid", ca.getUuid());
 		List<Player> participants = result.getParticipants();
@@ -316,30 +337,34 @@ public class ConqueringServiceImpl implements ConqueringService {
 		if (place != null) {
 			place.setConqueredBy(participants);
 			placeDAO.updateConquerors(place, participants);
+
 		} else {
 			GPlace gPlace = gPlaceService.details(ca.getReference());
-			Place newPlace = new Place();
-			newPlace.setName(gPlace.getName());
-			newPlace.setLat(gPlace.getLatitude());
-			newPlace.setLng(gPlace.getLongitude());
-			newPlace.setUuid(gPlace.getUuid());
+			place = new Place();
+			place.setName(gPlace.getName());
+			place.setLat(gPlace.getLatitude());
+			place.setLng(gPlace.getLongitude());
+			place.setUuid(gPlace.getUuid());
 
 			PlaceType type = PlaceType.valueOf(gPlace.getTypes().get(0));
-			newPlace.setType(type);
+			place.setType(type);
 
 			AmountType amount = PlaceMappings.PLACE_TO_AMOUNT_MAP.get(type);
-			newPlace.setAmount(PlaceMappings.AMOUNT_TYPE_TO_VALUE_MAP
+			place.setAmount(PlaceMappings.AMOUNT_TYPE_TO_VALUE_MAP
 					.get(amount));
-			newPlace.setResource(PlaceMappings.PLACE_TO_RESOURCE_MAP.get(type));
+			place.setResource(PlaceMappings.PLACE_TO_RESOURCE_MAP.get(type));
 
 			// TODO: Set Resource Demand correct
-			Map<ResourceType, Integer> resourceDemands = PlaceMappings.PLACE_TO_RESOURCE_DEMAND_MAP.get(type);
-			newPlace.setResourceDemand(resourceDemands);
+			Map<ResourceType, Integer> resourceDemands = PlaceMappings.PLACE_TO_RESOURCE_DEMAND_MAP
+					.get(type);
+			place.setResourceDemand(resourceDemands);
 
-			placeDAO.save(newPlace);
-			newPlace.setConqueredBy(participants);
-			placeDAO.updateConquerors(newPlace, participants);
+			placeDAO.save(place);
+			place.setConqueredBy(participants);
+			placeDAO.updateConquerors(place, participants);
 		}
+		
+		withdrawResourceDemandFromPlayers(place, participants);
 
 		return ConqueringStatus.SUCCESSFUL;
 	}
@@ -358,7 +383,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 		String placeName;
 		Double placeLat;
 		Double placeLng;
-		
+
 		if (place != null && place.getConqueredBy().size() > 0) {
 			Faction factionOfPlayer = player.getTeam().getFaction();
 			Player conqueror = place.getConqueredBy().get(0);
@@ -368,7 +393,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 				return new InitiateConquerResult(
 						InitiateConquerResult.Type.PLACE_ALREADY_BELONGS_TO_FACTION);
 			}
-			
+
 			placeName = place.getName();
 			placeLat = place.getLat();
 			placeLng = place.getLng();
@@ -380,13 +405,13 @@ public class ConqueringServiceImpl implements ConqueringService {
 		}
 
 		Set<Player> membersNearby = getTeamMembersNearby(player, reference);
-		
+
 		boolean playerNearby = false;
 		for (Player p : membersNearby) {
 			if (p.getId().equals(player.getId()))
 				playerNearby = true;
 		}
-		
+
 		if (!playerNearby) {
 			return new InitiateConquerResult(
 					InitiateConquerResult.Type.PLAYER_NOT_NEARBY);
@@ -415,30 +440,21 @@ public class ConqueringServiceImpl implements ConqueringService {
 					"Could not find conquering attempt");
 		}
 
-		// Currently all online team members are notified
 		// TODO: filter players by distance
-		List<String> onlinePlayerIds = ClientPushActor.getReachablePlayers();
-		if (onlinePlayerIds == null || onlinePlayerIds.size() == 0) {
-			return;
-		}
-		
-		List<Player> playersToInvite = Lists.newArrayList();
 		String initiatorId = ca.getInitiator().getId().toString();
-		
-		List<Player> teamMates = ca.getInitiator().getTeam().getPlayers();
-		for (String entry : onlinePlayerIds) {
-			if (entry.equals(initiatorId)) {
+		List<Player> playersToInvite = Lists.newArrayList();
+		List<Player> teamMembers = ca.getInitiator().getTeam().getPlayers();
+
+		for (Player p : teamMembers) {
+			if (p.getId().toString().equals(initiatorId)) {
 				continue;
 			}
-			
-			for (Player p : teamMates) {
-				if (entry.equals(p.getId().toString())) {
-					playersToInvite.add(p);
-				}
-			}
+
+			playersToInvite.add(p);
 		}
-		
-		webSocketCommunicationService.sendConqueringInvitation(ca, playersToInvite);
+
+		webSocketCommunicationService.sendConqueringInvitation(ca,
+				playersToInvite);
 	}
 
 }

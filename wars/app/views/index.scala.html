@@ -24,7 +24,11 @@
 		mapSelector: '#map_canvas',
 		factionHasToBeChosen: factionHasToBeChosen,
 		showSentInvitations: showSentInvitations, 
-		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)"
+		webSocketURL: "@routes.WebSocketController.connect(player.getId().toString()).webSocketURL(request)",
+		gruntCreditCost: @unitCostMap(UnitType.GRUNT)(ResourceType.Credits),
+		gruntMaterialCost: @unitCostMap(UnitType.GRUNT)(ResourceType.Material),
+		infantryCreditCost: @unitCostMap(UnitType.INFANTRY)(ResourceType.Credits),
+		infantryMaterialCost: @unitCostMap(UnitType.INFANTRY)(ResourceType.Material)
 	};
 	
 	function tryInvite() {
@@ -61,52 +65,6 @@
 		$('#accordion2 div:visible:first > .accordion-body').addClass('in');
 		$('.container').addClass('container-fluid');
 		$('.container-fluid').removeClass('container');
-			
-			$(function() {
-				$( "#gruntBuildSlider" ).slider({
-					range: "min",
-					value: 0,
-					min: 0,
-					max: 10,
-					slide: function( event, ui ) {
-						$( "#gruntBuildAmount" ).val( ui.value );
-					}
-				});
-				$( "#gruntBuildAmount" ).val( $( "#gruntBuildSlider" ).slider( "value" ) );
-
-				$( "#infantryBuildSlider" ).slider({
-					range: "min",
-					value: 0,
-					min: 0,
-					max: 10,
-					slide: function( event, ui ) {
-						$( "#infantryBuildAmount" ).val( ui.value );
-					}
-				});
-				$( "#infantryBuildAmount" ).val( $( "#infantryBuildSlider" ).slider( "value" ) );
-				
-				$( "#gruntDeploySlider" ).slider({
-					range: "min",
-					value: 0,
-					min: 0,
-					max: 10,
-					slide: function( event, ui ) {
-						$( "#gruntDeployAmount" ).val( ui.value );
-					}
-				});
-				$( "#gruntDeployAmount" ).val( $( "#gruntDeploySlider" ).slider( "value" ) );
-
-				$( "#infantryDeploySlider" ).slider({
-					range: "min",
-					value: 0,
-					min: 0,
-					max: 10,
-					slide: function( event, ui ) {
-						$( "#infantryDeployAmount" ).val( ui.value );
-					}
-				});
-				$( "#infantryDeployAmount" ).val( $( "#infantryDeploySlider" ).slider( "value" ) );
-			});
 	});
 </script>
 <script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
@@ -240,12 +198,13 @@
 				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#notifications"><i class="icon-envelope icon-white"></i> Notifications </a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" id="notificationsTab" href="#notifications"><i class="icon-envelope icon-white"></i> Notifications </a>
 					</div>
 					<div id="notifications" class="accordion-body collapse">
 						<div class="accordion-inner">
 							<table id="notificationsTable" class="table table-striped" cellpadding="0" cellspacing="0" border="0">
 							</table>
+							<button id="clearNotifications" class="btn btn-warning">Clear</button>
 						</div>
 					</div>
 				</div>

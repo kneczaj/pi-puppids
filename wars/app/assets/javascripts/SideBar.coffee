@@ -2,8 +2,8 @@ class ArWars.SideBar
 	
 	places: []
 	
-	constructor: (@playerPositionManager, @conquerManager, @mapInfoManger) ->
-		@map = playerPositionManager.getMap()
+	constructor: (@conquerManager, @mapInfoManger) ->
+		@map = mapInfoManger.getMap()
 
 	loadResourcesOfPlayer: () ->
 		$.getJSON "/resource/getResourcesOfPlayer", (data) =>
@@ -16,6 +16,18 @@ class ArWars.SideBar
 						trigger: "hover"
 						placement: "bottom"
 						content: $("#p" + key).parent().attr("data-content") + val
+					
+				maxGrunt = Math.floor(Math.min(data['Credits'] / window.ArWars.gruntCreditCost, data['Material'] / window.ArWars.gruntMaterialCost))
+				$("#gruntBuildSlider").slider "option", 
+					max: maxGrunt
+					value: 0
+				$("#gruntBuildAmount").val '0'
+				
+				maxInfantry = Math.floor(Math.min(data['Credits'] / window.ArWars.infantryCreditCost, data['Material'] / window.ArWars.infantryMaterialCost))
+				$("#infantryBuildSlider").slider "option", 
+					max: maxInfantry
+					value: 0
+				$("#infantryBuildAmount").val '0'
 
 	loadResourcesOfTeam: () ->
 		$.getJSON "/resource/getResourcesOfTeam", (data) =>
@@ -116,9 +128,9 @@ class ArWars.SideBar
 		place = @places[placeId]
 		newLocation = new google.maps.LatLng place.lat, place.lng
 
-		@map.setZoom(19)
+		@map.setZoom(18)
 		@map.panTo newLocation
-		@mapInfoManger.setInfowindow(placeId, @mapInfoManger.places[placeId], @mapInfoManger.placeMarkers[placeId])
+		@mapInfoManger.setInfowindow(placeId, @mapInfoManger.conqueredPlaces[placeId], @mapInfoManger.conqueredPlaceMarkers[placeId])
 		
 	buildUnitsClickHandler: () ->
 		gruntAmount = $("input#gruntBuildAmount").val()

@@ -1,5 +1,6 @@
 package models;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -128,6 +129,11 @@ public class Player {
 	public Date getDateOfBirth() {
 		return dateOfBirth;
 	}
+	
+	public String getDateOfBirthString() {
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		return format.format(dateOfBirth);
+	}
 
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
@@ -203,6 +209,10 @@ public class Player {
 		return notifications;
 	}
 	
+	public void clearNotificationsList() {
+		notifications.clear();
+	}
+	
 	
 	public List<Place> getConquered() {
 		return conquered;
@@ -231,9 +241,19 @@ public class Player {
 	public Map<ResourceType, Integer> getResourceDepot() {
 		return resourceDepot;
 	}
-
-	public void setResourceDepot(Map<ResourceType, Integer> resourceDepot) {
-		this.resourceDepot = resourceDepot;
+	
+	public void withdrawFromResourceDepot(ResourceType type, Integer amount) {
+		Integer newValue = getResourceDepot(type) - amount;
+		resourceDepot.put(type, newValue);
+	}
+	
+	public void depositToResourceDepot(ResourceType type, Integer amount) {
+		Integer newValue = getResourceDepot(type) + amount;
+		resourceDepot.put(type, newValue);
+	}
+	
+	public void setResourceDepot(Map<ResourceType, Integer> depot) {
+		this.resourceDepot = depot;
 	}
 	
 	public Boolean isTeamMaster() {

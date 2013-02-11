@@ -7,36 +7,6 @@ class ArWars.PlayerPositionManager
 
 	MAX_UNCERTAINTY: 200
 
-	@mapOptions = 
-		center : new google.maps.LatLng 48.133, 11.566
-		zoom : 11
-		mapTypeId : google.maps.MapTypeId.ROADMAP
-		mapTypeControl: false
-		streetViewControl: false
-		styles: [
-			stylers: [
-				invert_lightness: true
-			,
-				saturation: -80
-			]
-		,
-			featureType: "road"
-			elementType: "geometry"
-			stylers: [color: "#646464"]
-		,
-			featureType: "road"
-			elementType: "labels.icon"
-			stylers: [visibility: "off"]
-		,
-			featureType: "poi"
-			elementType: "labels"
-			stylers: [
-				color: "#faa732"
-			,
-				weight: 0.1
-			]
-		]
-
 	@locationOptions = 
 		enableHighAccuracy : false
 		timeout : 300
@@ -52,19 +22,15 @@ class ArWars.PlayerPositionManager
 	playerMarkers: []
 	circles: []
 	players: []
-	placeMarkers: []
 
-	constructor: (@mapNode, @infoPanel, @conquerManager) ->
-		@map = new google.maps.Map @mapNode, ArWars.PlayerPositionManager.mapOptions
+	constructor: (@infoPanel, @conquerManager, @mapInfoManager) ->
+		@map = @mapInfoManager.getMap()
 		@bounds = new google.maps.LatLngBounds()
 
 		# load information for the current player
 		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
 			@players[window.ArWars.playerId] = responseData
 			@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
-		
-	getMap: () ->
-		@map
 
 	# Removes a player from the map (removes the circle and the marker)
 	removeFromMap: (pId) ->
@@ -93,59 +59,19 @@ class ArWars.PlayerPositionManager
 			location: 	new google.maps.LatLng(lat, lng)
 			radius:		150
 			
-		@infowindow = new google.maps.InfoWindow(content: "Loading...")
 		service = new google.maps.places.PlacesService(@map)
 		service.nearbySearch(request, @onNearbySearchResult)
 
 	onNearbySearchResult: (results, status, pagination) =>
 		if status is google.maps.places.PlacesServiceStatus.OK
-			@createMarker(i) for i in results
+			@mapInfoManager.createUnconqueredMarker(i) for i in results
 		
 		if pagination.hasNextPage
     		pagination.nextPage()
     		
-		for k,v of @placeMarkers
+		for k,v of @mapInfoManager.unconqueredPlaceMarkers
 			@bounds.extend v.position
 		@map.fitBounds @bounds
-
-	createMarker: (place) ->
-		placeLoc = place.geometry.location
-		iconUrl = undefined
-		switch place.types[0]
-		  when "atm", "bank", "casino", "dentist", "doctor", "electrician", "establishment", "finance", "florist", "insurance_agency", "jewelry_store", "lawyer"
-		    iconUrl = "/assets/images/resources/credits_marker.png"
-		  when "bakery", "bar", "cafe", "food", "liquor_store", "meal_delivery", "meal_takeaway", "restaurant", "shopping_mall", "store"
-		    iconUrl = "/assets/images/resources/food_marker.png"
-		  when "book_store", "library", "school", "university"
-		    iconUrl = "/assets/images/resources/knowledge_marker.png"
-		  when "campground", "cemetery", "church", "city_hall", "courthouse", "embassy", "fire_station", "hindu_temple", "local_government_office", "mosque", "place_of_worship", "police", "stadium", "synagogue", "zoo"
-		    iconUrl = "/assets/images/resources/special_marker.png"
-		  when "amusement_park", "aquarium", "art_gallery", "beauty_salon", "bowling_alley", "movie_rental", "movie_theater", "moving_company", "museum", "night_club", "park"
-		    iconUrl = "/assets/images/resources/cultural_marker.png"
-		  when "bicycle_store", "clothing_store", "convenience_store", "department_store", "electronics_store", "funeral_home", "furniture_store", "gas_station", "general_contractor", "grocery_or_supermarket", "gym", "hair_care", "hardware_store", "health", "home_goods_store", "hospital", "laundry", "locksmith", "lodging", "painter", "pet_store", "pharmacy", "physiotherapist", "plumber", "post_office", "real_estate_agency", "roofing_contractor", "rv_park", "shoe_store", "spa", "storage"
-		    iconUrl = "/assets/images/resources/material_marker.png"
-		  when "bus_station", "car_dealer", "car_rental", "car_repair", "car_wash", "parking", "subway_station", "taxi_stand", "train_station", "travel_agency", "veterinary_care"
-		    iconUrl = "/assets/images/resources/transportation_marker.png"
-		  else
-		    return
-		
-		markerOpts = 
-			map: @map
-			position: place.geometry.location
-			animation: google.maps.Animation.DROP
-			icon: iconUrl
-		
-		marker = new google.maps.Marker markerOpts
-		@placeMarkers[place.id] = marker
-
-		google.maps.event.addListener marker, "click", () =>
-			type = place.types[0]
-			content = "#{place.name}<br/>#{place.vicinity}<br/>Type:#{type}<br/>Resource: <img src=\"#{marker.icon}\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
-			@infowindow.setContent content
-			@infowindow.open @map, marker
-			$("button[placeId=#{place.id}]").click () => 
-				@conquerManager.initiateConquer place.id, place.reference
-
 	
 	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>
@@ -226,6 +152,7 @@ class ArWars.PlayerPositionManager
 			position: pos
 			draggable: false
 			icon: '/assets/images/player.png'
+			zIndex: google.maps.Marker.MAX_ZINDEX
 
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map

@@ -124,6 +124,10 @@ public class Place {
 	public void setNumberOfConquerors(Integer numberOfConquerors) {
 		this.numberOfConquerors = numberOfConquerors;
 	}
+	
+	public void removePlayerFromConquerors(Player player) {
+		this.conqueredBy.remove(player);
+	}
 
 	@Override
 	public String toString() {

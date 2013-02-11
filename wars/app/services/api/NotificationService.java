@@ -75,4 +75,11 @@ public interface NotificationService {
 	 * 		type for pnotify
 	 */
 	public void createNotificationEntry(Player player, String title, String message, String type);
+	
+	/**
+	 * Deletes all notifications of the given player
+	 * 
+	 * @param player
+	 */
+	public void deletePlayersNotifications(Player player);
 }
