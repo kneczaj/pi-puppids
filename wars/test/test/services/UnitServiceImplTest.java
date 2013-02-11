@@ -69,6 +69,7 @@ public class UnitServiceImplTest {
 		// give the player some resources
 		player.getResourceDepot().put(ResourceType.Credits, 1000);
 		player.getResourceDepot().put(ResourceType.Material, 1500);
+		player.getResourceDepot().put(ResourceType.Food, 10);
 
 		playerDAO.save(player);
 
@@ -92,6 +93,7 @@ public class UnitServiceImplTest {
 				player.getResourceDepot(ResourceType.Credits));
 		Assert.assertEquals(new Integer(1500),
 				player.getResourceDepot(ResourceType.Material));
+		Assert.assertEquals(new Integer(10), player.getResourceDepot(ResourceType.Food));
 		Assert.assertEquals(1, player.getConquered().size());
 	}
 
@@ -101,7 +103,6 @@ public class UnitServiceImplTest {
 		try {
 			unitService.buildUnit(player, UnitType.GRUNT, 5);
 		} catch (UnitServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -124,7 +125,6 @@ public class UnitServiceImplTest {
 		try {
 			unitService.buildUnit(player, UnitType.GRUNT, 5);
 		} catch (UnitServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
