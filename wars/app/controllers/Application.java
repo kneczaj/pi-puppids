@@ -24,6 +24,7 @@ import services.api.NotificationService;
 import services.api.TeamService;
 import views.html.index;
 import views.html.profile;
+import views.html.help;
 
 import assets.constants.UnitMappings;
 
@@ -101,6 +102,10 @@ public class Application extends Controller {
 	public static Result profile() {
 		Player player = authenticationService.getPlayer();
 		return ok(profile.render(player));
+	}
+	
+	public static Result help() {
+		return ok(help.render());
 	}
 
 }

@@ -5,6 +5,9 @@
 # Home page
 GET     /                           				controllers.Application.index()
 
+# Help page
+GET     /help                          				controllers.Application.help()
+
 # ResourceController
 GET     /resource/getResourceSourcesOfPlayer		controllers.ResourceController.getResourceSourcesOfPlayer()
 GET     /resource/getResourcesOfPlayer				controllers.ResourceController.getResourcesOfPlayer()
