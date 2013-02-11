@@ -24,7 +24,7 @@ public interface WebSocketCommunicationService {
 	public void sendSimpleNotification(String title, String message, String type, Player recipient);
 
     public void sendConqueringInvitation(ConqueringAttempt ca,
-                List<Player> onlinePlayersOfTeam);
+                List<Player> players);
 
     public void conquerParticipantJoined(Player participant, ConqueringAttempt conqueringAttempt);
 

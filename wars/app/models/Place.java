@@ -127,7 +127,6 @@ public class Place {
 	
 	public void removePlayerFromConquerors(Player player) {
 		this.conqueredBy.remove(player);
-		this.numberOfConquerors--;
 	}
 
 	@Override
