@@ -38,6 +38,7 @@ public class ResourceServiceTest {
 	private Team team;
 	private Place creditPlace;
 	private Place materialPlace;
+	private Place foodPlace;
 
 	@BeforeClass
 	public static void startUp() {
@@ -66,7 +67,7 @@ public class ResourceServiceTest {
 		Map<ResourceType, Integer> depot = Maps.newHashMap();
 		depot.put(ResourceType.Credits, 1000);
 		depot.put(ResourceType.Material, 2000);
-		depot.put(ResourceType.Food, 3000);
+		depot.put(ResourceType.Food, 0);
 		bob.setResourceDepot(depot);
 		
 		alice = new Player();
@@ -78,7 +79,7 @@ public class ResourceServiceTest {
 		depot = Maps.newHashMap();
 		depot.put(ResourceType.Credits, 1000);
 		depot.put(ResourceType.Material, 2000);
-		depot.put(ResourceType.Food, 3000);
+		depot.put(ResourceType.Food, 0);
 		alice.setResourceDepot(depot);
 		
 		playerDAO.save(bob);
@@ -112,9 +113,16 @@ public class ResourceServiceTest {
 		materialPlace.setName("MaterialPlace");
 
 		placeDAO.save(materialPlace);
+		
+		foodPlace = new Place();
+		foodPlace.setResource(ResourceType.Food);
+		foodPlace.setAmount(100);
+		foodPlace.setConqueredBy(conqueredBy);
+		foodPlace.setName("FoodPlace");
 
 		bob.getConquered().add(creditPlace);
 		bob.getConquered().add(materialPlace);
+		bob.getConquered().add(foodPlace);
 
 		playerDAO.save(bob);
 		playerDAO.save(alice);
@@ -143,7 +151,7 @@ public class ResourceServiceTest {
 				resourceMap.get(ResourceType.Credits));
 		Assert.assertEquals(new Integer(2000),
 				resourceMap.get(ResourceType.Material));
-		Assert.assertEquals(new Integer(3000),
+		Assert.assertEquals(new Integer(0),
 				resourceMap.get(ResourceType.Food));
 	}
 
@@ -153,7 +161,7 @@ public class ResourceServiceTest {
 		Map<Place, ResourceType> map = resourceService
 				.getResourceSourcesOfPlayer(bob);
 
-		Assert.assertEquals(2, map.size());
+		Assert.assertEquals(3, map.size());
 	}
 
 	@Test
@@ -168,7 +176,7 @@ public class ResourceServiceTest {
 				teamResourceMap.get(ResourceType.Credits));
 		Assert.assertEquals(new Integer(4000),
 				teamResourceMap.get(ResourceType.Material));
-		Assert.assertEquals(new Integer(6000),
+		Assert.assertEquals(new Integer(0),
 				teamResourceMap.get(ResourceType.Food));
 	}
 	
@@ -176,11 +184,13 @@ public class ResourceServiceTest {
 	public void distributeResourcesTest() throws ResourceServiceException {
 		Integer creditAmount = bob.getResourceDepot(ResourceType.Credits) + creditPlace.getAmount();
 		Integer materialAmount = bob.getResourceDepot(ResourceType.Material) + materialPlace.getAmount();
+		Integer foodAmount = foodPlace.getAmount();
 		
 		Map<ResourceType, Integer> depot = resourceService.distributeResourcesToPlayer(bob);
 		
 		Assert.assertEquals(creditAmount, depot.get(ResourceType.Credits));
 		Assert.assertEquals(materialAmount, depot.get(ResourceType.Material));
+		Assert.assertEquals(foodAmount, depot.get(ResourceType.Food));
 	}
 
 	/**
