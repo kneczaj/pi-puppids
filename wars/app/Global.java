@@ -14,7 +14,9 @@ import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
 import communication.ClientPushActor;
 import communication.DistributionActor;
 import communication.DistributionSupervisionActor;
-import communication.messages.StartDistributionMessage;
+import communication.ScoreActor;
+import communication.ScoreSupervisionActor;
+import communication.messages.StartCalculationMessage;
 
 /**
  * Global settings for the play framework. Do not move this file! play assumes
@@ -60,11 +62,40 @@ public class Global extends GlobalSettings {
 		Akka.system()
 				.scheduler()
 				.schedule(
-						Duration.create(5000, TimeUnit.MILLISECONDS), // Initial delay in milliseconds
+						Duration.create(5000, TimeUnit.MILLISECONDS), // Initial
+																		// delay
+																		// in
+																		// milliseconds
 						Duration.create(
-								TimeConstants.TIME_BETWEEN_DISTRIBUTION_IN_SECONDS,
-								TimeUnit.SECONDS),
+								TimeConstants.TIME_BETWEEN_DISTRIBUTION_IN_MILLISECONDS,
+								TimeUnit.MILLISECONDS),
 						DistributionSupervisionActor.actor,
-						new StartDistributionMessage());
+						new StartCalculationMessage());
+
+		Logger.info("Starting ScoreActor");
+		ScoreSupervisionActor.setApplication(app);
+		ScoreSupervisionActor.doManualInjection();
+
+		ScoreActor.setApplication(app);
+		ScoreActor.doManualInjection();
+
+		ScoreSupervisionActor.actor = Akka.system().actorOf(
+				new Props(ScoreSupervisionActor.class));
+		ScoreSupervisionActor.router = Akka.system().actorOf(
+				new Props(ScoreActor.class).withRouter(new RoundRobinRouter(
+						ScoreSupervisionActor.NUMBER_OF_CALCULATORS)));
+		
+		Akka.system()
+		.scheduler()
+		.schedule(
+				Duration.create(5000, TimeUnit.MILLISECONDS), // Initial
+																// delay
+																// in
+																// milliseconds
+				Duration.create(
+						TimeConstants.TIME_BETWEEN_SCORE_CALCULATION_IN_MILLISECONDS,
+						TimeUnit.MILLISECONDS),
+				ScoreSupervisionActor.actor,
+				new StartCalculationMessage());
 	}
 }

@@ -17,22 +17,32 @@ import services.api.error.ScoreServiceException;
 public class ScoreServiceDummyImpl implements ScoreService {
 
 	@Override
-	public Integer getPlayerScore(Player player) throws ScoreServiceException {
+	public Integer calculatePlayerScore(Player player) throws ScoreServiceException {
 		Random rnd = new Random();
 		return rnd.nextInt(1024);
 	}
 
 	@Override
-	public Integer getTeamScore(Team team) throws ScoreServiceException {
+	public Integer calculateTeamScore(Team team) throws ScoreServiceException {
 		Random rnd = new Random();
 		return (rnd.nextInt(8192)+4096);
 	}
 
 	@Override
-	public Integer getFactionScore(Faction faction)
+	public Integer calculateFactionScore(Faction faction)
 			throws ScoreServiceException {
 		Random rnd = new Random();
 		return (rnd.nextInt(100000)+40096);
+	}
+
+	@Override
+	public Integer calculateScoreForAllTeams() throws ScoreServiceException {
+		return 10 * calculateTeamScore(new Team());
+	}
+
+	@Override
+	public Integer calculateScoreForAllFactions() throws ScoreServiceException {
+		return 2 * calculateFactionScore(new Faction());
 	}
 
 }

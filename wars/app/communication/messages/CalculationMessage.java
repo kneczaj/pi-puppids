@@ -6,11 +6,11 @@ import models.Player;
  * @author michi
  *
  */
-public class ResourceDistributionMessage {
+public class CalculationMessage {
 	
 	private Player player;
 	
-	public ResourceDistributionMessage(Player player) {
+	public CalculationMessage(Player player) {
 		this.player = player;
 	}
 

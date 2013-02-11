@@ -6,30 +6,31 @@ import models.Player;
 import play.Application;
 import play.Logger;
 import plugins.GuicePlugin;
+import services.api.ScoreService;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
 import com.google.inject.Injector;
-import communication.messages.CalculationResultMessage;
 import communication.messages.CalculationMessage;
+import communication.messages.CalculationResultMessage;
 import communication.messages.StartCalculationMessage;
 
 import daos.PlayerDAO;
 
-public class DistributionSupervisionActor extends UntypedActor {
+public class ScoreSupervisionActor extends UntypedActor {
 
-	public static int NUMBER_OF_DISTRIBUTEES = 5;
-
-	private static PlayerDAO playerDAO;
-
+	public final static int NUMBER_OF_CALCULATORS = 5;
+	
 	public static ActorRef actor = null;
 	public static ActorRef router = null;
-
-	private long distributionCounter = 0;
-	private long distributionTarget = 0;
-
+	
+	private static PlayerDAO playerDAO;
 	private static Application application;
-
+	private static ScoreService scoreService;
+	
+	private int calculationCounter = 0;
+	private int calculationTarget = 0;
+	
 	public static void setApplication(Application app) {
 		application = app;
 	}
@@ -39,18 +40,19 @@ public class DistributionSupervisionActor extends UntypedActor {
 		Injector injector = gp.getInjector();
 
 		playerDAO = injector.getInstance(PlayerDAO.class);
+		scoreService = injector.getInstance(ScoreService.class);
 	}
-
+	
 	@Override
 	public void onReceive(Object message) throws Exception {
 		if (message instanceof StartCalculationMessage) {
 
-			Logger.info("Resource distribution started.");
-			distributionCounter = 0;
+			Logger.info("Score calculation started.");
+			calculationCounter = 0;
 			List<Player> players = playerDAO.find().asList();
-			Logger.info("Distributing to " + players.size() + " players.");
-			distributionTarget = players.size();
-			if (distributionTarget > 0) {
+			Logger.info("Calculation score for " + players.size() + " players.");
+			calculationTarget = players.size();
+			if (calculationTarget > 0) {
 				for (Player player : players) {
 					router.tell(new CalculationMessage(player),
 							getSelf());
@@ -59,15 +61,16 @@ public class DistributionSupervisionActor extends UntypedActor {
 
 		}
 		if (message instanceof CalculationResultMessage) {
-			distributionCounter++;
-			if (distributionCounter >= distributionTarget) {
-				Logger.info("Distribution finished.");
-				distributionTarget = 0;
+			calculationCounter++;
+			if (calculationCounter >= calculationTarget) {
+				scoreService.calculateScoreForAllTeams();
+				scoreService.calculateScoreForAllFactions();
+				Logger.info("Score calculation finished.");
+				calculationTarget = 0;
 			}
 		} else {
 			unhandled(message);
 		}
-
 	}
 
 }
