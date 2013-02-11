@@ -36,8 +36,9 @@ class ArWars.NotificationsManager
 			url : "/notifications/markAllUndeliveredAsRead"
 				
 	openNotificationsTab: () =>
-		# TODO: here the tab should acctually toggle
-		$("a[href='#notifications']").parent().next().collapse('show')
+		# TODO: not tested
+		$(".accordion-body .in").collapse('hide')
+		$("#notifications").collapse('show')
 		@onNotificationsTabOpened
 		
 	onNotificationsTabOpened: () =>
