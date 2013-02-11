@@ -92,8 +92,6 @@ public class NotificationServiceImpl implements NotificationService {
 			undeliveredNotificationDAO.delete(n);
 		}
 		
-//		undeliveredNotificationDAO.deleteByQuery(q);
-		
 		return notifications;
 	}
 	
@@ -114,7 +112,7 @@ public class NotificationServiceImpl implements NotificationService {
 	
 	public void deletePlayersNotifications(Player player) {
 		
-		// delete undelivered references
+		// delete references of undelivered ones
 		Query<UndeliveredNotification> un = undeliveredNotificationDAO.createQuery().field("player").equal(player);
 		undeliveredNotificationDAO.deleteByQuery(un);
 		
