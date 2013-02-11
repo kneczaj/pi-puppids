@@ -123,6 +123,7 @@ $(document).ready ->
 		sidebar.loadResourcesOfPlayer()
 		sidebar.loadResourcesOfTeam()
 		sidebar.loadUnitsOfPlayer()
+		sidebar.loadStatistics()
 
 		conquerManager.setMapInfoManager mapInfoManager
 		conquerManager.setNotificationsManager notificationsManager

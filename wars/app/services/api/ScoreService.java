@@ -1,5 +1,7 @@
 package services.api;
 
+import java.util.List;
+
 import models.Faction;
 import models.Player;
 import models.Team;
@@ -29,6 +31,14 @@ public interface ScoreService extends Service {
 	public Integer calculateTeamScore(Team team) throws ScoreServiceException;
 
 	public Integer calculateScoreForAllTeams() throws ScoreServiceException;
+	
+	public List<Player> getTopPlayers(int limit);
+	
+	public List<Team> getTopTeams(int limit);
+	
+	public long getPlayerRank(Player p);
+	
+	public long getTeamRank(Team t);
 	
 	/**
 	 * Calculates the score for a faction

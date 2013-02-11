@@ -75,7 +75,30 @@ class ArWars.SideBar
 				$("#resourceSources a[name='jumpToPlace']").bind 'click', (event) =>
 					target = event.target or event.srcElement
 					@jumpToPlace $(target).parent().attr("placeId")
-					
+
+	loadStatistics: () ->
+		$.getJSON '/scores/getTopTeamsAndPlayers', (data) ->
+			items = []
+			$.each data.players, (key, val) ->
+				items.push "<li>#{key}: #{val.score}</li>"
+
+			$(items.join('')).appendTo '#playerScoreList'
+
+			items = []
+			$.each data.teams, (key, val) ->
+				items.push "<li>#{key}: #{val.score}</li>"
+
+			$(items.join('')).appendTo '#teamScoreList'
+
+			if data.ownRank?
+				i = "Your personal rank: #{data.ownRank} (score: #{data.ownScore})<br />"
+
+			if data.ownTeamRank?
+				i = "#{i}Your team's rank: #{data.ownTeamRank} (score: #{data.ownTeamScore})<br /><br />"
+
+			if data.ownRank or data.ownTeamRank
+				$('#statistics .accordion-inner').prepend i
+
 	reloadResourceSourcesOfPlayer: () ->
 		$('#resourceSources').dataTable().fnClearTable()
 		$('#resourceSources').dataTable().fnDestroy()

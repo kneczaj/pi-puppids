@@ -54,6 +54,9 @@ GET		/getPlayer									controllers.Application.getPlayer(playerId)
 # PlayerController
 GET		/profile/changeProfile						controllers.PlayerController.changeProfile(firstname, lastname, email, hometown, birthday)
 
+# ScoreController
+GET		/scores/getTopTeamsAndPlayers				controllers.ScoreController.getTopTeamsAndPlayers()
+
 # testing
 GET		/sendHi										controllers.TeamController.sendHi()
 

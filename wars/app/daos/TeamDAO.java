@@ -1,5 +1,7 @@
 package daos;
 
+import java.util.List;
+
 import models.City;
 import models.Faction;
 import models.Team;
@@ -44,4 +46,12 @@ public class TeamDAO extends AbstractDAO<Team, ObjectId> {
 		this.update(selection, update);
 	}
 
+	public List<Team> findTopKScorers(int k) {
+		Query<Team> query = this.createQuery().order("-score").limit(k);
+		return this.find(query).asList();
+	}
+	
+	public long getRankOfTeam(Team t) {
+		return this.createQuery().filter("score > ", t.getScore()).countAll()+1;
+	}
 }
