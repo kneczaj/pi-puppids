@@ -48,6 +48,9 @@ GET     /unit/deployUnits							controllers.UnitController.deployUnits(gruntAmou
 GET     /profile                    				controllers.Application.profile()
 GET		/getPlayer									controllers.Application.getPlayer(playerId)
 
+# PlayerController
+GET		/profile/changeProfile						controllers.PlayerController.changeProfile(firstname, lastname, email, hometown, birthday)
+
 # testing
 GET		/sendHi										controllers.TeamController.sendHi()
 
