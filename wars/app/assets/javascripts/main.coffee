@@ -124,7 +124,7 @@ $(document).ready ->
 		sidebar.loadResourcesOfTeam()
 		sidebar.loadUnitsOfPlayer()
 
-		conquerManager.setPlayerPositionManager playerPositionManager
+		conquerManager.setMapInfoManager mapInfoManager
 		conquerManager.setNotificationsManager notificationsManager
 		conquerManager.setSideBar sidebar
 

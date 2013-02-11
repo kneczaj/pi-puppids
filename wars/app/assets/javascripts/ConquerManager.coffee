@@ -5,8 +5,8 @@ class ArWars.ConquerManager
 	setNotificationsManager: (nm) ->
 		@notificationsManager = nm
 
-	setPlayerPositionManager: (pm) ->
-		@playerPositionManager = pm
+	setMapInfoManager: (mim) ->
+		@mapInfoManager = mim
 
 	setSideBar: (sb) ->
 		@sidebar = sb
@@ -44,6 +44,7 @@ class ArWars.ConquerManager
 				@sidebar.reloadResourceSourcesOfPlayer()
 				@sidebar.loadResourcesOfTeam()
 				@sidebar.reloadUnitsOfPlayer()
+				@mapInfoManger.loadConqueredPlaces
 
 				@notificationsManager.notify 'Conquering successful', 'Conquering attempt was successful', 'success'
 
