@@ -5,14 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import play.Logger;
-
 import models.GPlace;
 import models.Location;
 import models.Place;
 import models.Player;
 import models.PlayerLocation;
 import models.Team;
+import play.Logger;
 import services.api.MapInfoService;
 import services.google.places.api.GPlaceService;
 import services.google.places.api.GPlaceServiceException;

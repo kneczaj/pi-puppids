@@ -11,6 +11,7 @@ import models.Player;
 import models.ResourceType;
 import models.Team;
 import services.api.ResourceService;
+import services.api.WebSocketCommunicationService;
 import services.api.error.ResourceServiceException;
 import assets.constants.PlaceMappings;
 
@@ -31,6 +32,9 @@ public class ResourceServiceDummyImpl implements ResourceService {
 
 	@Inject
 	private TeamDAO teamDAO;
+	
+	@Inject
+	private WebSocketCommunicationService webSocketCommunicationService;
 
 	/**
 	 * Get a listing of the sources which generate resources for a given player.
@@ -177,6 +181,8 @@ public class ResourceServiceDummyImpl implements ResourceService {
 		
 		load.setResourceDepot(resourceDepot);
 		playerDAO.save(load);
+		
+		webSocketCommunicationService.sendResourcesChanged(load, this.getResourcesOfTeam(load.getTeam()));
 		
 		return resourceDepot;
 	}
