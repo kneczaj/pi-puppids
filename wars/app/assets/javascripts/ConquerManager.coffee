@@ -8,12 +8,20 @@ class ArWars.ConquerManager
 	setPlayerPositionManager: (pm) ->
 		@playerPositionManager = pm
 
+	setSideBar: (sb) ->
+		@sidebar = sb
+
 	conquer: (conqueringAttemptId) ->
 		data = 
 			conqueringAttemptId: conqueringAttemptId
 
 		$.getJSON '/conquer/conquer', data, (responseData) => 
 			if responseData == 'LOST'
+				@sidebar.loadResourcesOfPlayer()
+				@sidebar.reloadResourceSourcesOfPlayer()
+				@sidebar.loadResourcesOfTeam()
+				@sidebar.reloadUnitsOfPlayer()
+				
 				@notificationsManager.notify 'Conquer lost', 'Your conquering attempt was unsuccessful', 'info'
 
 			if responseData == 'PLAYER_NOT_NEARBY'
@@ -31,7 +39,12 @@ class ArWars.ConquerManager
 			if responseData == 'PLAYER_HAS_INSUFFICIENT_RESOURCES'
 				@notificationsManager.notify 'Conquer', 'Your teammates have inssufficient resources to attack this place', 'info'
 
-			if responseData == 'SUCCESSFUL' # TODO: update places list
+			if responseData == 'SUCCESSFUL' 
+				@sidebar.loadResourcesOfPlayer()
+				@sidebar.reloadResourceSourcesOfPlayer()
+				@sidebar.loadResourcesOfTeam()
+				@sidebar.reloadUnitsOfPlayer()
+
 				@notificationsManager.notify 'Conquering successful', 'Conquering attempt was successful', 'success'
 
 	joinConquer: (conqueringAttemptId) ->
