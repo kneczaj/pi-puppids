@@ -129,7 +129,6 @@ class ArWars.PlayerPositionManager
 	# Pushes the location of a player to the Google Map
 	push2Map: (pId, latitude, longitude, uncertainty) ->
 		if not pId? then return
-		log "playerId: #{pId}, lat: #{latitude}, lng: #{longitude}, uncertainty: #{uncertainty}"
 
 		if uncertainty >= @MAX_UNCERTAINTY and pId is window.ArWars.playerId
 			# was there a notification in the last 30 seconds? then don't show it again
