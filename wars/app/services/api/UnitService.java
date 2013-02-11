@@ -33,6 +33,35 @@ public interface UnitService extends Service {
 	public List<Unit> getUndeployedUnits(Player player, UnitType unitType);
 	
 	/**
+	 * Get a list of undeployed Units of a player
+	 * @param player
+	 * @return
+	 */
+	public List<Unit> getUndeployedUnits(Player player);
+	
+	/**
+	 * Get all deployed units of a player
+	 * @param player
+	 * @return
+	 */
+	public List<Unit> getDeployedUnits(Player player);
+	
+	/**
+	 * Get all deployed units of a player with a certain type
+	 * @param player
+	 * @param unitType
+	 * @return
+	 */
+	public List<Unit> getDeployedUnits(Player player, UnitType unitType);
+	
+	/**
+	 * Get all units on the way to their place
+	 * @param player
+	 * @return
+	 */
+	public List<Unit> getRunningDeployments(Player player);
+	
+	/**
 	 * Get the total number of all undeployed units of a player
 	 * @param player
 	 * @return
