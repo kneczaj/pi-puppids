@@ -43,7 +43,7 @@ public class Player {
 	private Integer score;
 	private String authenticationProvider;
 	private String secureSocialIdentifier;
-	private Map<ResourceType, Integer> resourceDepot = Maps.newHashMap();
+	private Map<ResourceType, Integer> resourceDepot = initializeResourceDepots();
 	
 	@Reference
 	private List<Place> conquered = Lists.newLinkedList();
@@ -384,6 +384,14 @@ public class Player {
 		} else if (!username.equals(other.username))
 			return false;
 		return true;
+	}
+	
+	private Map<ResourceType, Integer> initializeResourceDepots() {
+		Map<ResourceType, Integer> depots = Maps.newHashMap();
+		for (ResourceType type : ResourceType.values()) {
+			depots.put(type, 0);
+		}
+		return depots;
 	}
 
 	@Override

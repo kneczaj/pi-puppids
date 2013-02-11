@@ -173,6 +173,11 @@ public class UnitServiceImpl implements UnitService {
 				.getResourcesOfPlayer(loadedPlayer);
 		Map<ResourceType, Integer> unitCosts = units.get(0).getCosts();
 
+		// Throw an exception if no food is left
+		int foodNeeded = player.getUnits().size() + amount;
+		if (player.getResourceDepot(ResourceType.Food) < foodNeeded)
+			throw new UnitServiceException("Insufficient food!");
+		
 		// Check funds
 		boolean playerHasFunds = true;
 		for (ResourceType rType : unitCosts.keySet()) {

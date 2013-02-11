@@ -141,19 +141,30 @@ public class ResourceServiceImpl implements ResourceService {
 		}
 
 		// sum up resources for all places
+		// except for special resource, because it's not gained that way
 		for (Place place : load.getConquered()) {
 			ResourceType type = place.getResource();
-			if (type == ResourceType.Material || type == ResourceType.Credits) {
+			if (type != ResourceType.Special) {
 				Integer amount = place.getAmount();
 				resourcesToAdd.put(type, resourcesToAdd.get(type) + amount);
 			}
 		}
 
 		// add resources to the player's depot
+		// replace food, cultural, knowledge and transportation with the new values
 		for (ResourceType type : ResourceType.values()) {
+			Integer amount = resourcesToAdd.get(type);
+			Integer newAmount = resourceDepot.get(type) + amount;
 			if (type == ResourceType.Material || type == ResourceType.Credits) {
-				Integer amount = resourcesToAdd.get(type);
-				resourceDepot.put(type, resourceDepot.get(type) + amount);
+				resourceDepot.put(type, newAmount);
+			} else if (type == ResourceType.Food) {
+				resourceDepot.put(type, amount);
+			} else if (type == ResourceType.Cultural) {
+				resourceDepot.put(type, calculateCulturalCoefficient(amount));
+			} else if (type == ResourceType.Transportation) {
+				resourceDepot.put(type, calculateTransportationCoefficient(amount));
+			} else if (type == ResourceType.Knowledge) {
+				resourceDepot.put(type, calculateKnowledgeCoefficient(amount));
 			}
 		}
 
@@ -161,6 +172,41 @@ public class ResourceServiceImpl implements ResourceService {
 		playerDAO.save(load);
 		
 		return resourceDepot;
+	}
+	
+	private Integer calculateTransportationCoefficient(Integer transportationValue) {
+		double value = transportationValue.doubleValue();
+					
+		if (value <= 0)
+			value = 1f;
+		//The formula is BaseValue * (1 / (2 - 1 / transportationValue))	
+		double coefficient = (1 / (2 - 1 / value)) * 100;
+		
+		return (int) coefficient;
+	}
+	
+	private Integer calculateCulturalCoefficient(Integer cultureValue) {
+		double value = cultureValue.doubleValue();
+		
+		if (value <= 0)
+			value = 1f;
+		
+		//The formula is 2 - 1 / cultureValue
+		double coefficient = (2 - 1 / value) * 100;
+		
+		
+		return (int) coefficient;
+	}
+	
+	private Integer calculateKnowledgeCoefficient(Integer knowledgeValue) {
+		double value = knowledgeValue.doubleValue();
+		
+		if (value <= 0)
+			value = 1f;
+		
+		//The formula is 2 - 1 / knowledgeValue
+		double coefficient = (2 - 1 / knowledgeValue) * 100;
+		return (int) coefficient;
 	}
 
 }
