@@ -9,16 +9,15 @@ import models.notifications.ConquerPossibleMessage;
 import models.notifications.ConqueringInvitationMessage;
 import models.notifications.Notification;
 import models.notifications.ParticipantJoinedConquerMessage;
+import models.notifications.PlayerResourcesChangedMessage;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.Logger;
-import play.libs.Akka;
 import play.libs.F.Callback0;
 import play.mvc.WebSocket;
 import akka.actor.ActorRef;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 import com.google.common.collect.Lists;
@@ -109,14 +108,15 @@ public class ClientPushActor extends UntypedActor {
 	public void onReceive(Object message) throws Exception {
 		if (message instanceof RegistrationMessage) {
 			RegistrationMessage registration = (RegistrationMessage) message;
-			Logger.info("Registering " + registration.getId());
 
 			registered.putIfAbsent(registration.getId(),
 					registration.getChannel());
 
-		} else if (message instanceof PlayerLocationChangedMessage) {
+		} else if (message instanceof PlayerResourcesChangedMessage) {
+			PlayerResourcesChangedMessage prcm = (PlayerResourcesChangedMessage) message;
+			sendToPlayers(prcm.toJson(), Lists.newArrayList(prcm.player));
 			
-			Logger.info("pushing out player location change");
+		} else if (message instanceof PlayerLocationChangedMessage) {
 			PlayerLocationChangedMessage msg = (PlayerLocationChangedMessage) message;
 			ObjectNode json = msg.toJson();
 			
@@ -127,16 +127,11 @@ public class ClientPushActor extends UntypedActor {
 			
 		} else if (message instanceof UnregistrationMessage) {
 			UnregistrationMessage quit = (UnregistrationMessage) message;
-
-			Logger.info("Unregistering " + quit.getId());
 			registered.remove(quit.getId());
-
+			
 		} else if (message instanceof ConqueringInvitationMessage) {
 			ConqueringInvitationMessage ci = (ConqueringInvitationMessage) message;
 			ObjectNode json = ci.toJson();
-			Logger.info("Sending invitations to (" + ci.getPlayers().size() + " players): " + json.toString());
-			
-			// Push out the invitation
 			sendToPlayers(json, ci.getPlayers());
 			
 		} else if (message instanceof ParticipantJoinedConquerMessage) {

@@ -17,11 +17,6 @@ class ArWars.ConquerManager
 
 		$.getJSON '/conquer/conquer', data, (responseData) => 
 			if responseData == 'LOST'
-				@sidebar.loadResourcesOfPlayer()
-				@sidebar.reloadResourceSourcesOfPlayer()
-				@sidebar.loadResourcesOfTeam()
-				@sidebar.reloadUnitsOfPlayer()
-				
 				@notificationsManager.notify 'Conquer lost', 'Your conquering attempt was unsuccessful', 'info'
 
 			if responseData == 'PLAYER_NOT_NEARBY'
