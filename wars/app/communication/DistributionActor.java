@@ -5,6 +5,7 @@ import play.Application;
 import play.Logger;
 import plugins.GuicePlugin;
 import services.api.ResourceService;
+import services.api.WebSocketCommunicationService;
 import akka.actor.UntypedActor;
 
 import com.google.inject.Injector;
@@ -16,6 +17,8 @@ public class DistributionActor extends UntypedActor {
 	private static ResourceService resourceService;
 
 	private static Application application;
+	
+	private static WebSocketCommunicationService webSocketCommunicationService;
 
 	public static void setApplication(Application app) {
 		application = app;
@@ -26,6 +29,7 @@ public class DistributionActor extends UntypedActor {
 		Injector injector = gp.getInjector();
 
 		resourceService = injector.getInstance(ResourceService.class);
+		webSocketCommunicationService = injector.getInstance(WebSocketCommunicationService.class);
 	}
 	
 	@Override
@@ -34,6 +38,7 @@ public class DistributionActor extends UntypedActor {
 			Player player = ((ResourceDistributionMessage)message).getPlayer();
 			Logger.info("Distributing to " + player.getUsername());
 			resourceService.distributeResourcesToPlayer(player);
+			webSocketCommunicationService.sendPlayerResourcesChanged(player);
 			getSender().tell(new DistributionResultMessage());
 		} else {
 			unhandled(message);
