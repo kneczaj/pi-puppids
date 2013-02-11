@@ -68,8 +68,6 @@ public class NotificationController extends Controller {
 			othersNumber = 0;
 		reply.put("othersNumber", othersNumber);
 		
-		String json = reply.toString();
-		
 		return ok(reply.toString());
 	}
 	
