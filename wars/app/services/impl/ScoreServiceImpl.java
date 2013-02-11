@@ -9,6 +9,7 @@ import models.ResourceType;
 import models.Team;
 import models.Unit;
 import services.api.ScoreService;
+import services.api.WebSocketCommunicationService;
 import services.api.error.ScoreServiceException;
 import assets.constants.ScoreValues;
 
@@ -34,6 +35,9 @@ public class ScoreServiceImpl implements ScoreService {
 	
 	@Inject
 	private FactionDAO factionDAO;
+	
+	@Inject
+	private WebSocketCommunicationService webSocketCommunicationService;
 	
 	@Override
 	public Integer calculatePlayerScore(Player player) throws ScoreServiceException {
@@ -136,6 +140,26 @@ public class ScoreServiceImpl implements ScoreService {
 		}
 		
 		return score;
+	}
+
+	@Override
+	public List<Player> getTopPlayers(int limit) {
+		return playerDAO.findTopKScorers(limit);
+	}
+
+	@Override
+	public List<Team> getTopTeams(int limit) {
+		return teamDAO.findTopKScorers(limit);
+	}
+
+	@Override
+	public long getPlayerRank(Player p) {
+		return playerDAO.getRankOfPlayer(p);
+	}
+
+	@Override
+	public long getTeamRank(Team t) {
+		return teamDAO.getRankOfTeam(t);
 	}
 
 }
