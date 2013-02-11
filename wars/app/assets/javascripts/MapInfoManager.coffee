@@ -56,8 +56,9 @@ class ArWars.MapInfoManager
 	loadConqueredPlaces: () ->
 		$.getJSON "/mapinfo/getConqueredPlaces", (data) =>
 			$.each data, (key, val) =>
-				@conqueredPlaces[key] = val
-				@createConqueredMarker key, val
+				if not @conqueredPlaces[key]
+					@conqueredPlaces[key] = val
+					@createConqueredMarker key, val
 					
 	createConqueredMarker: (pid, place) ->
 		placeLoc = new google.maps.LatLng place.lat, place.lng
