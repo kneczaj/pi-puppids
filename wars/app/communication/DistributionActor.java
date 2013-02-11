@@ -5,13 +5,10 @@ import java.util.List;
 import models.Player;
 import play.Application;
 import play.Logger;
-import play.libs.Akka;
 import plugins.GuicePlugin;
 import services.api.ResourceService;
 import akka.actor.ActorRef;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
-import akka.routing.RoundRobinRouter;
 
 import com.google.inject.Injector;
 import communication.messages.DistributionResultMessage;
@@ -26,7 +23,7 @@ public class DistributionActor extends UntypedActor {
 
 	private static ResourceService resourceService;
 
-	private final static int NUMBER_OF_ACTORS = 5;
+//	private final static int NUMBER_OF_ACTORS = 5;
 	
 	public static ActorRef actor = null;
 	private ActorRef router = null;
