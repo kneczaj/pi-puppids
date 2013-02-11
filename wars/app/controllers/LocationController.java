@@ -43,8 +43,16 @@ public class LocationController extends Controller {
 		Logger.info("updating the Location of player " + p.getEmail());
 		
 		Location location = new Location(new Double(lng), new Double(lat));
-		Integer sp = (speed == null || speed.equals("")) ? null : new Integer(speed);
-		Integer accuracy = (uncertainty == null || uncertainty.equals("")) ? null : (new Double(uncertainty)).intValue();
+		Integer sp = null;
+		if (speed != null && !speed.equals("") && !speed.equals("NaN")) {
+			sp = new Integer(speed);
+		}
+		
+		Integer accuracy = null;
+		if (uncertainty != null && !uncertainty.equals("") && !uncertainty.equals("NaN")) {
+			accuracy = (new Double(uncertainty)).intValue();
+		}
+		
 		Date timeStamp = new Date(new Long(timestamp));
 		
 		try {

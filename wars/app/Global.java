@@ -2,10 +2,12 @@ import play.Application;
 import play.GlobalSettings;
 import play.Logger;
 import play.libs.Akka;
+
 import akka.actor.Props;
 
 import com.google.code.morphia.logging.MorphiaLoggerFactory;
 import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
+
 import communication.ClientPushActor;
 
 /**
@@ -26,7 +28,7 @@ public class Global extends GlobalSettings {
 	
 	@Override
 	public void onStart(Application app) {
-		Logger.info("Starting ClientPushActor");
+		Logger.info("bla");
 		ClientPushActor.actor = Akka.system().actorOf(
 				new Props(ClientPushActor.class));
 		

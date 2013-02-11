@@ -9,7 +9,7 @@ import models.conquer.ConqueringAttempt;
 public interface WebSocketCommunicationService {
 	
 	/**
-     * Sends "Hi!" message to the teammates
+     * Sends "Hi!" message to the teammates of player
      * for testing purposes
      * 
      * @param player
@@ -20,11 +20,11 @@ public interface WebSocketCommunicationService {
 	 * Creates simple text notification and sends to recipients
 	 * @param recipients
 	 */
-	public void sendSimpleNotification(String title, String message, List<Player> recipients);
-	public void sendSimpleNotification(String title, String message, Player recipient);
+	public void sendSimpleNotification(String title, String message, String type, List<Player> recipients);
+	public void sendSimpleNotification(String title, String message, String type, Player recipient);
 
     public void sendConqueringInvitation(ConqueringAttempt ca,
-                List<Player> onlinePlayersOfTeam);
+                List<Player> players);
 
     public void conquerParticipantJoined(Player participant, ConqueringAttempt conqueringAttempt);
 

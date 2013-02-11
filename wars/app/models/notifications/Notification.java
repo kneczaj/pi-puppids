@@ -26,6 +26,10 @@ public abstract class Notification extends TimeStampedModel {
 	public List<Player> getPlayers() {
 		return this.players;
 	}
+	
+	public boolean removePlayer(Player p) {
+		return players.remove(p);
+	}
 
 	/**
 	 * Has to be overwritten in subclasses of Notification

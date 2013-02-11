@@ -121,12 +121,12 @@ public class TeamController extends Controller {
 			
 			case "validationFailed":
 				webSocketCommunicationService.sendSimpleNotification("Error", "Your city or faction doesn't match the invitation's one." +
-						"You can change them in our shop ;)", loggedPlayer);
+						"You can change them in our shop ;)", "info", loggedPlayer);
 				return redirect("/");
 				
 			case "playerNotRegistered":
 				
-				ctx().flash().put("error", "You are a new player - please make an account");
+				ctx().flash().put("error", "You are a new player - please make the account");
 				return redirect(RoutesHelper.startSignUp());
 				
 			case "playerNotLogged":
@@ -144,7 +144,7 @@ public class TeamController extends Controller {
 		}
 		
 		webSocketCommunicationService.sendSimpleNotification("Team changed", 
-				"You have successfully joined " + invitation.getTeam().getName() + " team", loggedPlayer);
+				"You have successfully joined " + invitation.getTeam().getName() + " team", "info", loggedPlayer);
 		return redirect("/");
 	}
 }
