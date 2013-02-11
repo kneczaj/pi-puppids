@@ -118,14 +118,16 @@ $(document).ready ->
 		deleteMemberConfirmationModal = new window.ArWars.DeleteMemberConfirmationModal
 		notificationsManager = new window.ArWars.NotificationsManager conquerManager, mapInfoManger
 		
-		conquerManager.setPlayerPositionManager playerPositionManager
-		conquerManager.setNotificationsManager notificationsManager
-		
 		sidebar = new window.ArWars.SideBar conquerManager, mapInfoManger
 		sidebar.loadResourceSourcesOfPlayer()
 		sidebar.loadResourcesOfPlayer()
 		sidebar.loadResourcesOfTeam()
 		sidebar.loadUnitsOfPlayer()
+
+		conquerManager.setPlayerPositionManager playerPositionManager
+		conquerManager.setNotificationsManager notificationsManager
+		conquerManager.setSideBar sidebar
+
 		notificationsManager.showUndeliveredNotifications()
 		
 		$("button#btnDeploy").click () => 
