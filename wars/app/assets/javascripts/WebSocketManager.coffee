@@ -24,6 +24,14 @@ class ArWars.WebSocketManager
 			when "PlayerLocationChange" 
 				@playerPositionManager.push2Map data.id, data.latitude, data.longitude, data.accuracy
 
+			when "PlayerResourcesChanged"
+				$.each data.data, (key, val) ->
+					$("#p" + key).text val
+					$("#p" + key).parent().popover
+						trigger: "hover"
+						placement: "bottom"
+						content: $("#p" + key).parent().attr("data-content") + val
+
 			when "ConqueringInvitation" 
 				@notificationsManager.notifyConquerInvitation data
 				@notificationsManager.reloadNotifications()

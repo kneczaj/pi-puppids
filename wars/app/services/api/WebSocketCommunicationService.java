@@ -37,5 +37,7 @@ public interface WebSocketCommunicationService {
      * @param playerLocation
      */
     public void playerLocationChanged(PlayerLocation playerLocation);
+    
+    public void sendPlayerResourcesChanged(Player player);
 
 }

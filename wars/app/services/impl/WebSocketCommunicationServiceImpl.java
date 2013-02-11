@@ -10,6 +10,7 @@ import models.notifications.ConquerPossibleMessage;
 import models.notifications.ConqueringInvitationMessage;
 import models.notifications.Notification;
 import models.notifications.ParticipantJoinedConquerMessage;
+import models.notifications.PlayerResourcesChangedMessage;
 import models.notifications.SimpleNotificationMessage;
 import services.api.NotificationService;
 import services.api.WebSocketCommunicationService;
@@ -90,12 +91,16 @@ public class WebSocketCommunicationServiceImpl implements
        
         tellActor(cpm);
     }
-    
+
+    public void sendPlayerResourcesChanged(Player player) {
+    	PlayerResourcesChangedMessage prcm = new PlayerResourcesChangedMessage();
+    	prcm.player = player;
+    	
+    	tellActor(prcm);
+    }
 
     public void playerLocationChanged(PlayerLocation playerLocation) {
         tellActor(new PlayerLocationChangedMessage(playerLocation));
     }
-
-
 
 }
