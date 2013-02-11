@@ -10,6 +10,8 @@ import models.Team;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
 
+import assets.constants.TimeConstants;
+
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
@@ -132,19 +134,29 @@ public class ResourceServiceImpl implements ResourceService {
 		}
 
 		// sum up resources for all places
+		// except for special resource, because it's not gained that way
 		for (Place place : load.getConquered()) {
 			ResourceType type = place.getResource();
-			if (type == ResourceType.Material || type == ResourceType.Credits) {
+			if (type != ResourceType.Special) {
 				Integer amount = place.getAmount();
 				resourcesToAdd.put(type, resourcesToAdd.get(type) + amount);
 			}
 		}
 
 		// add resources to the player's depot
+		// replace food, cultural, knowledge and transportation with the new values
 		for (ResourceType type : ResourceType.values()) {
+			Integer amount = resourcesToAdd.get(type);
 			if (type == ResourceType.Material || type == ResourceType.Credits) {
-				Integer amount = resourcesToAdd.get(type);
 				resourceDepot.put(type, resourceDepot.get(type) + amount);
+			} else if (type == ResourceType.Food) {
+				resourceDepot.put(type, amount);
+			} else if (type == ResourceType.Cultural) {
+				resourceDepot.put(type, calculateCulturalCoefficient(amount));
+			} else if (type == ResourceType.Transportation) {
+				resourceDepot.put(type, calculateTransportationCoefficient(amount));
+			} else if (type == ResourceType.Knowledge) {
+				resourceDepot.put(type, calculateKnowledgeCoefficient(amount));
 			}
 		}
 
@@ -152,6 +164,27 @@ public class ResourceServiceImpl implements ResourceService {
 		playerDAO.save(load);
 		
 		return resourceDepot;
+	}
+	
+	private Integer calculateTransportationCoefficient(Integer transportationValue) {
+		//The formula is BaseValue * (1 / (2 - 1 / transportationValue))
+		if (transportationValue <= 0)
+			transportationValue = 1;
+		return TimeConstants.BASE_TRAVELLING_TIME * (1 / (2 - 1 / transportationValue));
+	}
+	
+	private Integer calculateCulturalCoefficient(Integer cultureValue) {
+		//The formula is 2 - 1 / cultureValue
+		if (cultureValue <= 0)
+			cultureValue = 1;
+		return 2 - 1 / cultureValue;
+	}
+	
+	private Integer calculateKnowledgeCoefficient(Integer knowledgeValue) {
+		//The formula is 2 - 1 / knowledgeValue
+		if (knowledgeValue <= 0)
+			knowledgeValue = 1;
+		return 2 - 1 / knowledgeValue;
 	}
 
 }
