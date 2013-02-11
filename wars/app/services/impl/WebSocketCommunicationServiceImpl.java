@@ -65,11 +65,11 @@ public class WebSocketCommunicationServiceImpl implements
     }
    
     public void sendConqueringInvitation(ConqueringAttempt ca,
-                    List<Player> onlinePlayersOfTeam) {
+                    List<Player> players) {
            
 	    ConqueringInvitationMessage ci = new ConqueringInvitationMessage();
 	    ci.conqueringAttempt = ca;
-	    ci.setPlayers(onlinePlayersOfTeam);
+	    ci.setPlayers(players);
 	   
 	    tellActor(ci);
     }

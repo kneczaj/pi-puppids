@@ -89,7 +89,7 @@ class ArWars.NotificationsManager
 	renderConquerPossible: (notification) ->
 		aId = notification.conqueringAttemptId
 		@renderTableRow notification.time, "Your conquering attempt for #{notification.placeName} is now possible. <a name=\"conquer-#{aId}\">Conduct it immediately</a>"
-		$("a[name='conquer-#{aId}']").click() =>
+		$("a[name='conquer-#{aId}']").click () =>
 			@conquerManager.conquer aId
 			
 	renderOtherNotification: (notification) ->

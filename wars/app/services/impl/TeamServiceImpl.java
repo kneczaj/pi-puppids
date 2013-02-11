@@ -9,7 +9,6 @@ import models.Invitation;
 import models.Place;
 import models.Player;
 import models.Team;
-import scala.annotation.target.field;
 import services.api.TeamService;
 import services.api.WebSocketCommunicationService;
 import services.api.error.TeamServiceException;

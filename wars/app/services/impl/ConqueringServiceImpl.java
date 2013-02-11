@@ -32,7 +32,6 @@ import assets.constants.PlaceMappings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
-import communication.ClientPushActor;
 
 import daos.ConqueringAttemptDAO;
 import daos.PlaceDAO;
@@ -415,27 +414,17 @@ public class ConqueringServiceImpl implements ConqueringService {
 					"Could not find conquering attempt");
 		}
 
-		// Currently all online team members are notified
 		// TODO: filter players by distance
-		List<String> onlinePlayerIds = ClientPushActor.getReachablePlayers();
-		if (onlinePlayerIds == null || onlinePlayerIds.size() == 0) {
-			return;
-		}
-		
-		List<Player> playersToInvite = Lists.newArrayList();
 		String initiatorId = ca.getInitiator().getId().toString();
+		List<Player> playersToInvite = Lists.newArrayList();
+		List<Player> teamMembers = ca.getInitiator().getTeam().getPlayers();
 		
-		List<Player> teamMates = ca.getInitiator().getTeam().getPlayers();
-		for (String entry : onlinePlayerIds) {
-			if (entry.equals(initiatorId)) {
+		for (Player p : teamMembers) {
+			if (p.getId().toString().equals(initiatorId)) {
 				continue;
 			}
 			
-			for (Player p : teamMates) {
-				if (entry.equals(p.getId().toString())) {
-					playersToInvite.add(p);
-				}
-			}
+			playersToInvite.add(p);
 		}
 		
 		webSocketCommunicationService.sendConqueringInvitation(ca, playersToInvite);
