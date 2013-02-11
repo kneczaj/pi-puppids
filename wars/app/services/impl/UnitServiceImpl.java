@@ -1,6 +1,9 @@
 package services.impl;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import models.Place;
@@ -12,6 +15,7 @@ import services.api.PlaceService;
 import services.api.ResourceService;
 import services.api.UnitService;
 import services.api.error.UnitServiceException;
+import assets.constants.TimeConstants;
 import assets.constants.UnitMappings;
 
 import com.google.common.collect.Lists;
@@ -231,10 +235,17 @@ public class UnitServiceImpl implements UnitService {
 			throw new UnitServiceException(
 					"Not enough units to fulfill request!");
 
+		//Calculate the date the units will arrive at their destination
+		Date now = GregorianCalendar.getInstance(Locale.GERMANY).getTime();
+		double transportationCoefficient = player.getResourceDepot(ResourceType.Transportation) / 100;
+		long travellingTimeInMilliseconds = (long) (TimeConstants.BASE_TRAVELLING_TIME_IN_SECONDS * 1000 * transportationCoefficient);
+		Date arrival = new Date(now.getTime() + travellingTimeInMilliseconds);
+		
 		// Deploy units and persist changes
 		for (int i = 0; i < amount; i++) {
 			Unit unit = deployableUnits.get(i);
 			unit.setDeployedAt(loadedPlace);
+			unit.setDeployementFinishedAt(arrival);
 			loadedPlace.getDeployedUnits().add(unit);
 			unitDAO.save(unit);
 		}

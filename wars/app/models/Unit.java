@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.google.code.morphia.annotations.Entity;
@@ -15,6 +16,7 @@ public class Unit extends BaseModel {
 	private Integer maxStrength;
 	private Double chanceOfFailure;
 	private Map<ResourceType, Integer> costs;
+	private Date deployementFinishedAt;
 	
 	@Reference
 	private Place deployedAt;
@@ -84,6 +86,14 @@ public class Unit extends BaseModel {
 
 	public void setCosts(Map<ResourceType, Integer> costs) {
 		this.costs = costs;
+	}
+
+	public Date getDeployementFinishedAt() {
+		return deployementFinishedAt;
+	}
+
+	public void setDeployementFinishedAt(Date deployementFinishedAt) {
+		this.deployementFinishedAt = deployementFinishedAt;
 	}
 
 	@Override
