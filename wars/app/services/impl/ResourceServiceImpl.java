@@ -10,8 +10,6 @@ import models.Team;
 import services.api.ResourceService;
 import services.api.error.ResourceServiceException;
 
-import assets.constants.TimeConstants;
-
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
@@ -156,8 +154,9 @@ public class ResourceServiceImpl implements ResourceService {
 		// replace food, cultural, knowledge and transportation with the new values
 		for (ResourceType type : ResourceType.values()) {
 			Integer amount = resourcesToAdd.get(type);
+			Integer newAmount = resourceDepot.get(type) + amount;
 			if (type == ResourceType.Material || type == ResourceType.Credits) {
-				resourceDepot.put(type, resourceDepot.get(type) + amount);
+				resourceDepot.put(type, newAmount);
 			} else if (type == ResourceType.Food) {
 				resourceDepot.put(type, amount);
 			} else if (type == ResourceType.Cultural) {
@@ -176,24 +175,38 @@ public class ResourceServiceImpl implements ResourceService {
 	}
 	
 	private Integer calculateTransportationCoefficient(Integer transportationValue) {
-		//The formula is BaseValue * (1 / (2 - 1 / transportationValue))
-		if (transportationValue <= 0)
-			transportationValue = 1;
-		return TimeConstants.BASE_TRAVELLING_TIME * (1 / (2 - 1 / transportationValue));
+		double value = transportationValue.doubleValue();
+					
+		if (value <= 0)
+			value = 1f;
+		//The formula is BaseValue * (1 / (2 - 1 / transportationValue))	
+		double coefficient = (1 / (2 - 1 / value)) * 100;
+		
+		return (int) coefficient;
 	}
 	
 	private Integer calculateCulturalCoefficient(Integer cultureValue) {
+		double value = cultureValue.doubleValue();
+		
+		if (value <= 0)
+			value = 1f;
+		
 		//The formula is 2 - 1 / cultureValue
-		if (cultureValue <= 0)
-			cultureValue = 1;
-		return 2 - 1 / cultureValue;
+		double coefficient = (2 - 1 / value) * 100;
+		
+		
+		return (int) coefficient;
 	}
 	
 	private Integer calculateKnowledgeCoefficient(Integer knowledgeValue) {
+		double value = knowledgeValue.doubleValue();
+		
+		if (value <= 0)
+			value = 1f;
+		
 		//The formula is 2 - 1 / knowledgeValue
-		if (knowledgeValue <= 0)
-			knowledgeValue = 1;
-		return 2 - 1 / knowledgeValue;
+		double coefficient = (2 - 1 / knowledgeValue) * 100;
+		return (int) coefficient;
 	}
 
 }
