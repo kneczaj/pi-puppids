@@ -111,14 +111,14 @@ $(document).ready ->
 		layoutResizer = new window.ArWars.LayoutResizer $("#map_canvas"), $("#map_container_mobile"), $("#map_container_desktop"), $("#playerDetails")
 		setupSliders()
 		
-		mapInfoManger = new window.ArWars.MapInfoManager $(window.ArWars.mapSelector)[0], conquerManager
-		mapInfoManger.loadConqueredPlaces()
+		mapInfoManager = new window.ArWars.MapInfoManager $(window.ArWars.mapSelector)[0], conquerManager
+		mapInfoManager.loadConqueredPlaces()
 		
-		playerPositionManager = new window.ArWars.PlayerPositionManager $('#playerDetails'), conquerManager, mapInfoManger
+		playerPositionManager = new window.ArWars.PlayerPositionManager $('#playerDetails'), conquerManager, mapInfoManager
 		deleteMemberConfirmationModal = new window.ArWars.DeleteMemberConfirmationModal
-		notificationsManager = new window.ArWars.NotificationsManager conquerManager, mapInfoManger
+		notificationsManager = new window.ArWars.NotificationsManager conquerManager, mapInfoManager
 		
-		sidebar = new window.ArWars.SideBar conquerManager, mapInfoManger
+		sidebar = new window.ArWars.SideBar conquerManager, mapInfoManager
 		sidebar.loadResourceSourcesOfPlayer()
 		sidebar.loadResourcesOfPlayer()
 		sidebar.loadResourcesOfTeam()
