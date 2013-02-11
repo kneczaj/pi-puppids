@@ -7,20 +7,35 @@ class ArWars.ProfileEditor
 		`that = this`
 		$("#saveButton").bind 'click', @updateProfile
 		
-		$("#inputFirstname").bind 'change keyup', @validateMandatoryWord
-		$("#inputLastname").bind 'change keyup', @validateMandatoryWord
-		$("#inputEmail").bind 'change keyup', @validateEmail
-		$("#inputHometown").bind 'change keyup', @validateOptionalWord
-		$("#inputBirthday").bind 'change keyup', @validateDate
+		@fields =
+			'firstname':$("#inputFirstname"),
+			'lastname':	$("#inputLastname"),
+			'email':	$("#inputEmail"),
+			'hometown':	$("#inputHometown"),
+			'birthday':	$("#inputBirthday")
+			
+		@validationMethods =
+			'mandatoryWord':@validateMandatoryWord,
+			'optionalWord':	@validateOptionalWord
+			'email':		@validateEmail
+			'date':			@validateDate
+			
+		@validationAssociations = {}
+		
+		for key of @fields
+			fieldId = @fields[key]
+			methodKey = $(fieldId).attr "validation"
+			validationMethod = @validationMethods[methodKey] 
+			@validationAssociations[key] = validationMethod
+			$(fieldId).bind 'change keyup', validationMethod
 		
 		@validateAll()
 
-	validateAll: () ->
-		@validateMandatoryWord.call($("#inputFirstname")) and
-		@validateMandatoryWord.call($("#inputLastname")) and
-		@validateEmail.call($("#inputEmail")) and
-		@validateOptionalWord.call($("#inputHometown")) and
-		@validateDate.call($("#inputBirthday"))
+	validateAll: () =>
+		result = true
+		for key of @validationAssociations
+			result = result and @validationAssociations[key].call(@fields[key])
+		result
 		
 	toggleHint: (result, inputField) ->
 		if result is true
@@ -67,14 +82,20 @@ class ArWars.ProfileEditor
 		if @validateAll() is false
 			return false
 		
-		params:
-			firstname: $("#inputFirstname").val()
-			lastname: $("#inputLastname").val()
-			email: $("#inputEmail").val()
-			hometown: $("#inputHometown").val() 
-			birthday: $("#inputBirthday").val()
+		params =
+			firstname: @fields.firstname.val()
+			lastname: @fields.lastname.val()
+			email: @fields.email.val()
+			hometown: @fields.hometown.val() 
+			birthday: @fields.birthday.val()
 		
-		$.ajax
-			url: 'profile/changeProfile'
-			success : (response, textStatus, jqXHR) =>
+		$.getJSON '/profile/changeProfile', params, (responseData) =>
+				
+			# no invalid fields - redirect to the main page
+			if responseData.length is 0
 				parent.location = '/'
+				
+			# mark invalid fields 
+			for item in responseData
+				@toggleHint 0, @fields[item]
+					

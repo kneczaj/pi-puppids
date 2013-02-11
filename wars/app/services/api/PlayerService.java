@@ -1,5 +1,7 @@
 package services.api;
 
+import java.util.Date;
+
 import models.Player;
 import securesocial.core.java.SocialUser;
 import services.api.error.PlayerServiceException;
@@ -26,6 +28,18 @@ public interface PlayerService {
 	public Player register(String authenticationProvider, String email,
 			String firstname, String lastname, String passwordHash,
 			String username) throws PlayerServiceException;
+	
+	/**
+	 * Changes personal data of a player
+	 * @param player
+	 * @param firstname
+	 * @param lastname
+	 * @param email
+	 * @param hometown
+	 * @param birthday
+	 * @return
+	 */
+	public Player setData(Player player, String firstname, String lastname, String email, String hometown, Date birthday);
 	
 	/**
 	 * Register a new Player in the system with help of a SocialUser object.

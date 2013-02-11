@@ -8,6 +8,12 @@
 	$(document).ready(function() {
 		var profileEditor = new window.ArWars.ProfileEditor();
 	});
+	
+	jQuery.extend({
+    postJSON: function( url, data, callback) {
+       return jQuery.post(url, data, callback, "json");
+    }
+    });
 </script>
 <script src="@routes.Assets.at("javascripts/ProfileEditor.js")" type="text/javascript"></script>
 }
@@ -21,41 +27,42 @@
 			<div class="control-group">
 				<label class="control-label" for="inputUsername">Username</label>
 				<div class="controls">
-					<input type="text" id="inputUsername" placehoder="@player.getUsername()" disabled>
+					<!--  <input type="text" id="inputUsername" placehoder="@player.getUsername()" disabled> -->
+					<span id="firsnameHelper" class="help-inline">@player.getUsername()</span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="inputFirstname">First name</label>
 				<div class="controls">
-					<input type="text" required id="inputFirstname" value="@player.getFirstname()">
-					<span id="firsnameHelper" class="help-inline hide">Type a word</span>
+					<input type="text" validation="mandatoryWord" required id="inputFirstname" value="@player.getFirstname()">
+					<span class="help-inline hide">Type a word</span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="inputLastname">Last name</label>
 				<div class="controls">
-					<input type="text" required id="inputLastname" value="@player.getName()">
+					<input type="text" validation="mandatoryWord" id="inputLastname" value="@player.getName()">
 					<span class="help-inline hide">Type a word</span>
 				</div>
 			</div>
-			<div class="control-group error">
+			<div class="control-group">
 				<label class="control-label" for="inputEmail">Email</label>
 				<div class="controls">
-					<input type="email" required id="inputEmail" value="@player.getEmail()">
+					<input type="email" validation="email" id="inputEmail" value="@player.getEmail()">
 					<span class="help-inline hide">Please type a correct email</span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="inputHometown">Hometown</label>
 				<div class="controls">
-					<input type="text" id="inputHometown" value="@player.getHomeTown()">
+					<input type="text" validation="optionalWord" id="inputHometown" value="@player.getHomeTown()">
 					<span class="help-inline hide">Type a word</span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="inputBirthday">Date of birth</label>
 				<div class="controls">
-					<input type="text" id="inputBirthday" value="@player.getDateOfBirth()">
+					<input type="text" validation="date" id="inputBirthday" value="@player.getDateOfBirthString()">
 					<span class="help-inline">Date format: dd.mm.yyyy</span>
 				</div>
 			</div>
@@ -74,7 +81,7 @@
 		<form class="form-horizontal">
 			<div class="control-group">
 				<div class="controls">
-					<button type="submit" class="btn" id="saveButton">Save</button>
+					<button type="button" class="btn" id="saveButton">Save</button>
 					<button type="button" class="btn" onclick="location.href='/'">Cancel</button>
 				</div>
 			</div>
