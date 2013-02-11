@@ -55,8 +55,8 @@ public class UnitServiceImplTest {
 		Assert.assertNotNull(unitDAO);
 		Assert.assertNotNull(unitService);
 	}
-	
-	@Before 
+
+	@Before
 	public void setup() {
 		System.out.println("Setting up");
 		// persist a player
@@ -70,6 +70,7 @@ public class UnitServiceImplTest {
 		player.getResourceDepot().put(ResourceType.Credits, 1000);
 		player.getResourceDepot().put(ResourceType.Material, 1500);
 		player.getResourceDepot().put(ResourceType.Food, 10);
+		player.getResourceDepot().put(ResourceType.Transportation, 80);
 
 		playerDAO.save(player);
 
@@ -79,7 +80,7 @@ public class UnitServiceImplTest {
 		tum.getConqueredBy().add(player);
 
 		placeDAO.save(tum);
-		
+
 		System.out.println("Player: " + player.getId());
 		System.out.println("Tum: " + tum.getId());
 
@@ -93,19 +94,21 @@ public class UnitServiceImplTest {
 				player.getResourceDepot(ResourceType.Credits));
 		Assert.assertEquals(new Integer(1500),
 				player.getResourceDepot(ResourceType.Material));
-		Assert.assertEquals(new Integer(10), player.getResourceDepot(ResourceType.Food));
+		Assert.assertEquals(new Integer(10),
+				player.getResourceDepot(ResourceType.Food));
+		Assert.assertEquals(new Integer(80), player.getResourceDepot(ResourceType.Transportation));
 		Assert.assertEquals(1, player.getConquered().size());
 	}
 
 	@Test
 	public void buildUnitTest() {
-		
+
 		try {
 			unitService.buildUnit(player, UnitType.GRUNT, 5);
 		} catch (UnitServiceException e) {
 			e.printStackTrace();
 		}
-		
+
 		player = playerDAO.findOne("username", "mrbob");
 
 		Assert.assertNotNull(player.getUnits());
@@ -121,19 +124,20 @@ public class UnitServiceImplTest {
 	@Test
 	public void deployableUnitsTest() {
 
-		//Build a few units
+		// Build a few units
 		try {
 			unitService.buildUnit(player, UnitType.GRUNT, 5);
 		} catch (UnitServiceException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("Player: " + player.getId());
 		System.out.println("Tum: " + tum.getId());
 
-		Integer deployableUnits = unitService.getNumberOfUndeployedUnits(player);
-		Integer deployableGrunts = unitService.getNumberOfUndeployedUnits(player,
-				UnitType.GRUNT);
+		Integer deployableUnits = unitService
+				.getNumberOfUndeployedUnits(player);
+		Integer deployableGrunts = unitService.getNumberOfUndeployedUnits(
+				player, UnitType.GRUNT);
 
 		Assert.assertNotNull(player);
 		Assert.assertNotNull(deployableUnits);
@@ -144,7 +148,7 @@ public class UnitServiceImplTest {
 
 	@Test
 	public void deployUnitTest() {
-		//build a few units
+		// build a few units
 		try {
 			unitService.buildUnit(player, UnitType.GRUNT, 5);
 			unitService.deployUnit(player, UnitType.GRUNT, 3, tum);
@@ -162,7 +166,27 @@ public class UnitServiceImplTest {
 		Assert.assertEquals(new Integer(3),
 				unitService.getNumberOfDeployedUnits(player));
 	}
-	
+
+	@Test
+	public void runningDeploymentsTest() {
+		// build a few units
+		try {
+			unitService.buildUnit(player, UnitType.GRUNT, 5);
+			unitService.deployUnit(player, UnitType.GRUNT, 3, tum);
+		} catch (UnitServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		player = playerDAO.findOne("username", "mrbob");
+		Integer runningDeployments = unitService.getRunningDeployments(player).size();
+
+		Assert.assertEquals(new Integer(2),
+				unitService.getNumberOfUndeployedUnits(player));
+		Assert.assertEquals(new Integer(3),
+				runningDeployments);
+	}
+
 	@Test
 	public void retrieveUnitTest() {
 
@@ -174,16 +198,16 @@ public class UnitServiceImplTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		tum = placeDAO.findOne("name", "Technische Universität München");
-		
+
 		Assert.assertEquals(1, tum.getDeployedUnits().size());
 		Assert.assertEquals(new Integer(4),
 				unitService.getNumberOfUndeployedUnits(player));
 		Assert.assertEquals(new Integer(1),
 				unitService.getNumberOfDeployedUnits(player));
 	}
-	
+
 	/**
 	 * Delete all instances from the database
 	 * 
@@ -193,12 +217,12 @@ public class UnitServiceImplTest {
 	public void tearDown() {
 		System.out.println("Tearing down");
 		List<Unit> units = unitDAO.find().asList();
-		
+
 		for (Unit unit : units) {
 			System.out.println("Deleting units..");
 			unitDAO.delete(unit);
 		}
-		
+
 		placeDAO.delete(tum);
 		playerDAO.delete(player);
 	}

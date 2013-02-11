@@ -1,6 +1,9 @@
 package services.impl;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import models.Place;
@@ -12,6 +15,7 @@ import services.api.PlaceService;
 import services.api.ResourceService;
 import services.api.UnitService;
 import services.api.error.UnitServiceException;
+import assets.constants.TimeConstants;
 import assets.constants.UnitMappings;
 
 import com.google.common.collect.Lists;
@@ -81,9 +85,9 @@ public class UnitServiceImpl implements UnitService {
 
 		return undeployedUnits;
 	}
-
+	
 	@Override
-	public Integer getNumberOfUndeployedUnits(Player player) {
+	public List<Unit> getUndeployedUnits(Player player) {
 		Player loadedPlayer = playerDAO.findOne("username",
 				player.getUsername());
 		if (loadedPlayer == null)
@@ -97,29 +101,11 @@ public class UnitServiceImpl implements UnitService {
 				undeployedUnits.add(unit);
 		}
 
-		return undeployedUnits.size();
+		return undeployedUnits;
 	}
-
+	
 	@Override
-	public Integer getNumberOfUndeployedUnits(Player player, UnitType unitType) {
-		Player loadedPlayer = playerDAO.findOne("username",
-				player.getUsername());
-		if (loadedPlayer == null)
-			throw new NullPointerException("Could not find player with name "
-					+ player.getUsername() + ".");
-
-		List<Unit> undeployedUnits = Lists.newLinkedList();
-
-		for (Unit unit : loadedPlayer.getUnits()) {
-			if (unit.getDeployedAt() == null && unit.getType().equals(unitType))
-				undeployedUnits.add(unit);
-		}
-
-		return undeployedUnits.size();
-	}
-
-	@Override
-	public Integer getNumberOfDeployedUnits(Player player) {
+	public List<Unit> getDeployedUnits(Player player) {
 		Player loadedPlayer = playerDAO.findOne("username",
 				player.getUsername());
 		if (loadedPlayer == null)
@@ -133,11 +119,11 @@ public class UnitServiceImpl implements UnitService {
 				deployedUnits.add(unit);
 		}
 
-		return deployedUnits.size();
+		return deployedUnits;
 	}
-
+	
 	@Override
-	public Integer getNumberOfDeployedUnits(Player player, UnitType unitType) {
+	public List<Unit> getDeployedUnits(Player player, UnitType unitType) {
 		Player loadedPlayer = playerDAO.findOne("username",
 				player.getUsername());
 		if (loadedPlayer == null)
@@ -150,6 +136,56 @@ public class UnitServiceImpl implements UnitService {
 			if (unit.getDeployedAt() == null && unit.getType().equals(unitType))
 				deployedUnits.add(unit);
 		}
+
+		return deployedUnits;
+	}
+
+	@Override
+	public List<Unit> getRunningDeployments(Player player) {
+		Player loadedPlayer = playerDAO.findOne("username",
+				player.getUsername());
+		if (loadedPlayer == null)
+			throw new NullPointerException("Could not find player with name "
+					+ player.getUsername() + ".");
+		
+		List<Unit> deployedUnits = getDeployedUnits(player);
+		List<Unit> runningDeployments = Lists.newLinkedList();
+		
+		Date now = GregorianCalendar.getInstance(Locale.GERMANY).getTime();
+		
+		for (Unit unit : deployedUnits) {
+			Date arrival = unit.getDeployementFinishedAt();
+			if (now.getTime() < arrival.getTime())
+				runningDeployments.add(unit);
+		}
+		
+		return runningDeployments;
+	}
+	
+	@Override
+	public Integer getNumberOfUndeployedUnits(Player player) {
+		List<Unit> undeployedUnits = getUndeployedUnits(player);
+
+		return undeployedUnits.size();
+	}
+
+	@Override
+	public Integer getNumberOfUndeployedUnits(Player player, UnitType unitType) {
+		List<Unit> undeployedUnits = getUndeployedUnits(player, unitType);
+
+		return undeployedUnits.size();
+	}
+
+	@Override
+	public Integer getNumberOfDeployedUnits(Player player) {
+		List<Unit> deployedUnits = getDeployedUnits(player);
+
+		return deployedUnits.size();
+	}
+
+	@Override
+	public Integer getNumberOfDeployedUnits(Player player, UnitType unitType) {
+		List<Unit> deployedUnits = getDeployedUnits(player, unitType);
 
 		return deployedUnits.size();
 	}
@@ -231,10 +267,17 @@ public class UnitServiceImpl implements UnitService {
 			throw new UnitServiceException(
 					"Not enough units to fulfill request!");
 
+		//Calculate the date the units will arrive at their destination
+		Date now = GregorianCalendar.getInstance(Locale.GERMANY).getTime();
+		double transportationCoefficient = (double) loadedPlayer.getResourceDepot(ResourceType.Transportation) / 100;
+		long travellingTimeInMilliseconds = (long) (TimeConstants.BASE_TRAVELLING_TIME_IN_SECONDS * 1000 * transportationCoefficient);
+		Date arrival = new Date(now.getTime() + travellingTimeInMilliseconds);
+		
 		// Deploy units and persist changes
 		for (int i = 0; i < amount; i++) {
 			Unit unit = deployableUnits.get(i);
 			unit.setDeployedAt(loadedPlace);
+			unit.setDeployementFinishedAt(arrival);
 			loadedPlace.getDeployedUnits().add(unit);
 			unitDAO.save(unit);
 		}
