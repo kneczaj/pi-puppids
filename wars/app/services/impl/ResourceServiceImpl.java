@@ -211,7 +211,7 @@ public class ResourceServiceImpl implements ResourceService {
 			value = 1f;
 		
 		//The formula is 2 - 1 / knowledgeValue
-		double coefficient = (2 - 1 / knowledgeValue) * 100;
+		double coefficient = (2 - 1 / value) * 100;
 		return (int) coefficient;
 	}
 
