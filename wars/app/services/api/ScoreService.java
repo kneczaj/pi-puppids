@@ -1,5 +1,7 @@
 package services.api;
 
+import java.util.List;
+
 import models.Faction;
 import models.Player;
 import models.Team;
@@ -18,7 +20,7 @@ public interface ScoreService extends Service {
 	 * @return
 	 * @throws ScoreServiceException
 	 */
-	public Integer getPlayerScore(Player player) throws ScoreServiceException;
+	public Integer calculatePlayerScore(Player player) throws ScoreServiceException;
 	
 	/**
 	 * Calculates the score for a team
@@ -26,14 +28,26 @@ public interface ScoreService extends Service {
 	 * @return
 	 * @throws ScoreServiceException
 	 */
-	public Integer getTeamScore(Team team) throws ScoreServiceException;
+	public Integer calculateTeamScore(Team team) throws ScoreServiceException;
 
+	public Integer calculateScoreForAllTeams() throws ScoreServiceException;
+	
+	public List<Player> getTopPlayers(int limit);
+	
+	public List<Team> getTopTeams(int limit);
+	
+	public long getPlayerRank(Player p);
+	
+	public long getTeamRank(Team t);
+	
 	/**
 	 * Calculates the score for a faction
 	 * @param faction
 	 * @return
 	 * @throws ScoreServiceException
 	 */
-	public Integer getFactionScore(Faction faction) throws ScoreServiceException;
+	public Integer calculateFactionScore(Faction faction) throws ScoreServiceException;
+	
+	public Integer calculateScoreForAllFactions() throws ScoreServiceException;
 	
 }

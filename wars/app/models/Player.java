@@ -43,7 +43,7 @@ public class Player implements AvatarInterface {
 	private Integer score;
 	private String authenticationProvider;
 	private String secureSocialIdentifier;
-	private Map<ResourceType, Integer> resourceDepot = Maps.newHashMap();
+	private Map<ResourceType, Integer> resourceDepot = initializeResourceDepots();
 	
 	@Reference
 	private List<Place> conquered = Lists.newLinkedList();
@@ -243,9 +243,19 @@ public class Player implements AvatarInterface {
 	public Map<ResourceType, Integer> getResourceDepot() {
 		return resourceDepot;
 	}
-
-	public void setResourceDepot(Map<ResourceType, Integer> resourceDepot) {
-		this.resourceDepot = resourceDepot;
+	
+	public void withdrawFromResourceDepot(ResourceType type, Integer amount) {
+		Integer newValue = getResourceDepot(type) - amount;
+		resourceDepot.put(type, newValue);
+	}
+	
+	public void depositToResourceDepot(ResourceType type, Integer amount) {
+		Integer newValue = getResourceDepot(type) + amount;
+		resourceDepot.put(type, newValue);
+	}
+	
+	public void setResourceDepot(Map<ResourceType, Integer> depot) {
+		this.resourceDepot = depot;
 	}
 	
 	public Boolean isTeamMaster() {
@@ -376,6 +386,14 @@ public class Player implements AvatarInterface {
 		} else if (!username.equals(other.username))
 			return false;
 		return true;
+	}
+	
+	private Map<ResourceType, Integer> initializeResourceDepots() {
+		Map<ResourceType, Integer> depots = Maps.newHashMap();
+		for (ResourceType type : ResourceType.values()) {
+			depots.put(type, 0);
+		}
+		return depots;
 	}
 
 	@Override

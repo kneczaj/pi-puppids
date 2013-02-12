@@ -9,6 +9,7 @@ import models.ResourceType;
 import models.Team;
 import models.Unit;
 import services.api.ScoreService;
+import services.api.WebSocketCommunicationService;
 import services.api.error.ScoreServiceException;
 import assets.constants.ScoreValues;
 
@@ -35,8 +36,11 @@ public class ScoreServiceImpl implements ScoreService {
 	@Inject
 	private FactionDAO factionDAO;
 	
+	@Inject
+	private WebSocketCommunicationService webSocketCommunicationService;
+	
 	@Override
-	public Integer getPlayerScore(Player player) throws ScoreServiceException {
+	public Integer calculatePlayerScore(Player player) throws ScoreServiceException {
 		
 		Player load = playerDAO.findOne("id", player.getId());
 		if (load == null)
@@ -65,13 +69,14 @@ public class ScoreServiceImpl implements ScoreService {
 		score += load.getResourceDepot(ResourceType.Material);
 		
 		load.setScore(score);
+		load.getResourceDepot().put(ResourceType.Special, score);
 		playerDAO.save(load);
 		
 		return score;
 	}
 
 	@Override
-	public Integer getTeamScore(Team team) throws ScoreServiceException {
+	public Integer calculateTeamScore(Team team) throws ScoreServiceException {
 		
 		Team load = teamDAO.findOne("id", team.getId());
 		if (load == null)
@@ -80,7 +85,7 @@ public class ScoreServiceImpl implements ScoreService {
 		Integer score = 0;
 		
 		for (Player player : load.getPlayers()) {
-			score += this.getPlayerScore(player);
+			score += player.getScore();
 		}
 		
 		load.setScore(score);
@@ -90,7 +95,20 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 	
 	@Override
-	public Integer getFactionScore(Faction faction) throws ScoreServiceException {
+	public Integer calculateScoreForAllTeams() throws ScoreServiceException {
+		List<Team> teams = teamDAO.find().asList();
+		
+		Integer score = 0;
+		
+		for (Team team : teams) {
+			score += calculateTeamScore(team);
+		}
+		
+		return score;
+	}
+	
+	@Override
+	public Integer calculateFactionScore(Faction faction) throws ScoreServiceException {
 		Faction load = factionDAO.findOne("id", faction.getId());
 		if (load == null)
 			throw new ScoreServiceException("Faction with id " + faction.getId() + " not found.");
@@ -103,10 +121,46 @@ public class ScoreServiceImpl implements ScoreService {
 		List<Team> teams = teamDAO.find(teamQuery).asList();
 		
 		for (Team team : teams) {
-			score += getTeamScore(team);
+			score += team.getScore();
+		}
+		
+		load.setScore(score);
+		factionDAO.save(load);
+		
+		return score;
+	}
+	
+	@Override
+	public Integer calculateScoreForAllFactions() throws ScoreServiceException {
+		List<Faction> factions = factionDAO.find().asList();
+		
+		Integer score = 0;
+		
+		for(Faction faction : factions) {
+			score += calculateFactionScore(faction);
 		}
 		
 		return score;
+	}
+
+	@Override
+	public List<Player> getTopPlayers(int limit) {
+		return playerDAO.findTopKScorers(limit);
+	}
+
+	@Override
+	public List<Team> getTopTeams(int limit) {
+		return teamDAO.findTopKScorers(limit);
+	}
+
+	@Override
+	public long getPlayerRank(Player p) {
+		return playerDAO.getRankOfPlayer(p);
+	}
+
+	@Override
+	public long getTeamRank(Team t) {
+		return teamDAO.getRankOfTeam(t);
 	}
 
 }

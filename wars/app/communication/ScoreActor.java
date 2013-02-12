@@ -4,19 +4,18 @@ import models.Player;
 import play.Application;
 import play.Logger;
 import plugins.GuicePlugin;
-import services.api.ResourceService;
+import services.api.ScoreService;
 import akka.actor.UntypedActor;
 
 import com.google.inject.Injector;
-import communication.messages.CalculationResultMessage;
 import communication.messages.CalculationMessage;
+import communication.messages.CalculationResultMessage;
 
-public class DistributionActor extends UntypedActor {
-	
-	private static ResourceService resourceService;
+public class ScoreActor extends UntypedActor {
 
 	private static Application application;
-
+	private static ScoreService scoreService;
+	
 	public static void setApplication(Application app) {
 		application = app;
 	}
@@ -25,7 +24,7 @@ public class DistributionActor extends UntypedActor {
 		GuicePlugin gp = application.plugin(GuicePlugin.class);
 		Injector injector = gp.getInjector();
 
-		resourceService = injector.getInstance(ResourceService.class);
+		scoreService = injector.getInstance(ScoreService.class);
 	}
 	
 	@Override
@@ -33,12 +32,11 @@ public class DistributionActor extends UntypedActor {
 		if (message instanceof CalculationMessage) {
 			Player player = ((CalculationMessage)message).getPlayer();
 			Logger.info("Distributing to " + player.getUsername());
-			resourceService.distributeResourcesToPlayer(player);
+			scoreService.calculatePlayerScore(player);
 			getSender().tell(new CalculationResultMessage());
 		} else {
 			unhandled(message);
 		}
-
 	}
 
 }

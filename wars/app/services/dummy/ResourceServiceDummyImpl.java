@@ -11,8 +11,8 @@ import models.Player;
 import models.ResourceType;
 import models.Team;
 import services.api.ResourceService;
+import services.api.WebSocketCommunicationService;
 import services.api.error.ResourceServiceException;
-
 import assets.constants.PlaceMappings;
 
 import com.google.common.collect.Maps;
@@ -32,6 +32,9 @@ public class ResourceServiceDummyImpl implements ResourceService {
 
 	@Inject
 	private TeamDAO teamDAO;
+	
+	@Inject
+	private WebSocketCommunicationService webSocketCommunicationService;
 
 	/**
 	 * Get a listing of the sources which generate resources for a given player.
@@ -161,13 +164,62 @@ public class ResourceServiceDummyImpl implements ResourceService {
 		
 		//add resources to the player's depot
 		for (ResourceType type : ResourceType.values()) {
-			resourceDepot.put(type, 500);
+			Integer amount = 5000;
+			Integer newAmount = resourceDepot.get(type) + amount;
+			if (type == ResourceType.Material || type == ResourceType.Credits) {
+				resourceDepot.put(type, newAmount);
+			} else if (type == ResourceType.Food) {
+				resourceDepot.put(type, amount);
+			} else if (type == ResourceType.Cultural) {
+				resourceDepot.put(type, calculateCulturalCoefficient(amount));
+			} else if (type == ResourceType.Transportation) {
+				resourceDepot.put(type, calculateTransportationCoefficient(amount));
+			} else if (type == ResourceType.Knowledge) {
+				resourceDepot.put(type, calculateKnowledgeCoefficient(amount));
+			}
 		}
 		
 		load.setResourceDepot(resourceDepot);
 		playerDAO.save(load);
 		
+		webSocketCommunicationService.sendResourcesChanged(load, this.getResourcesOfTeam(load.getTeam()));
+		
 		return resourceDepot;
+	}
+	
+	private Integer calculateTransportationCoefficient(Integer transportationValue) {
+		double value = transportationValue.doubleValue();
+					
+		if (value <= 0)
+			value = 1f;
+		//The formula is BaseValue * (1 / (2 - 1 / transportationValue))	
+		double coefficient = (1 / (2 - 1 / value)) * 100;
+		
+		return (int) coefficient;
+	}
+	
+	private Integer calculateCulturalCoefficient(Integer cultureValue) {
+		double value = cultureValue.doubleValue();
+		
+		if (value <= 0)
+			value = 1f;
+		
+		//The formula is 2 - 1 / cultureValue
+		double coefficient = (2 - 1 / value) * 100;
+		
+		
+		return (int) coefficient;
+	}
+	
+	private Integer calculateKnowledgeCoefficient(Integer knowledgeValue) {
+		double value = knowledgeValue.doubleValue();
+		
+		if (value <= 0)
+			value = 1f;
+		
+		//The formula is 2 - 1 / knowledgeValue
+		double coefficient = (2 - 1 / knowledgeValue) * 100;
+		return (int) coefficient;
 	}
 
 }

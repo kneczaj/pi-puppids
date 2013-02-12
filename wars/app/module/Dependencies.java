@@ -1,7 +1,6 @@
 package module;
 
 
-import play.Play;
 import services.api.AuthenticationService;
 import services.api.AvatarService;
 import services.api.ConqueringService;
@@ -16,8 +15,6 @@ import services.api.TeamService;
 import services.api.UnitService;
 import services.api.VictoryStrategy;
 import services.api.WebSocketCommunicationService;
-import services.dummy.ResourceServiceDummyImpl;
-import services.dummy.ScoreServiceDummyImpl;
 import services.google.places.api.GPlaceService;
 import services.google.places.impl.GPlaceServiceImpl;
 import services.impl.AuthenticationServiceImpl;
@@ -29,6 +26,7 @@ import services.impl.NotificationServiceImpl;
 import services.impl.PlaceServiceImpl;
 import services.impl.PlayerServiceImpl;
 import services.impl.ResourceServiceImpl;
+import services.impl.ScoreServiceImpl;
 import services.impl.TeamServiceImpl;
 import services.impl.UnitServiceImpl;
 import services.impl.VictoryByNumberOfUnitsStategy;
@@ -72,16 +70,10 @@ public class Dependencies implements Module {
 		binder.bind(ConqueringService.class).to(ConqueringServiceImpl.class).in(Singleton.class);
 		binder.bind(VictoryStrategy.class).to(VictoryByNumberOfUnitsStategy.class).in(Singleton.class);
 		binder.bind(WebSocketCommunicationService.class).to(WebSocketCommunicationServiceImpl.class).in(Singleton.class);
-		binder.bind(AvatarService.class).to(AvatarServiceImpl.class).in(Singleton.class);
-		
-		
-		if (Play.isTest()) {
-			binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);	
-		} else {
-			binder.bind(ResourceService.class).to(ResourceServiceDummyImpl.class).in(Singleton.class);
-		}
+		binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);	
+		binder.bind(ScoreService.class).to(ScoreServiceImpl.class).in(Singleton.class);
 
-		binder.bind(ScoreService.class).to(ScoreServiceDummyImpl.class).in(Singleton.class);
+		binder.bind(AvatarService.class).to(AvatarServiceImpl.class).in(Singleton.class);
 		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
 		binder.bind(UnitService.class).to(UnitServiceImpl.class).in(Singleton.class);
 		binder.bind(NotificationService.class).to(NotificationServiceImpl.class).in(Singleton.class);

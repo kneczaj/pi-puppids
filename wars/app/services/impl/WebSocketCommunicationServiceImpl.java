@@ -2,14 +2,17 @@ package services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import models.Player;
 import models.PlayerLocation;
+import models.ResourceType;
 import models.conquer.ConqueringAttempt;
 import models.notifications.ConquerPossibleMessage;
 import models.notifications.ConqueringInvitationMessage;
 import models.notifications.Notification;
 import models.notifications.ParticipantJoinedConquerMessage;
+import models.notifications.ResourcesChangedMessage;
 import models.notifications.SimpleNotificationMessage;
 import services.api.NotificationService;
 import services.api.WebSocketCommunicationService;
@@ -65,11 +68,11 @@ public class WebSocketCommunicationServiceImpl implements
     }
    
     public void sendConqueringInvitation(ConqueringAttempt ca,
-                    List<Player> onlinePlayersOfTeam) {
+                    List<Player> players) {
            
 	    ConqueringInvitationMessage ci = new ConqueringInvitationMessage();
 	    ci.conqueringAttempt = ca;
-	    ci.setPlayers(onlinePlayersOfTeam);
+	    ci.setPlayers(players);
 	   
 	    tellActor(ci);
     }
@@ -90,12 +93,19 @@ public class WebSocketCommunicationServiceImpl implements
        
         tellActor(cpm);
     }
-    
 
     public void playerLocationChanged(PlayerLocation playerLocation) {
         tellActor(new PlayerLocationChangedMessage(playerLocation));
     }
 
-
+	@Override
+	public void sendResourcesChanged(Player player,
+			Map<ResourceType, Integer> teamResources) {
+		ResourcesChangedMessage prcm = new ResourcesChangedMessage();
+    	prcm.player = player;
+    	prcm.teamResources = teamResources;
+    	
+    	tellActor(prcm);
+	}
 
 }

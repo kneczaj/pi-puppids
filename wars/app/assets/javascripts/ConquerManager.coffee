@@ -5,14 +5,24 @@ class ArWars.ConquerManager
 	setNotificationsManager: (nm) ->
 		@notificationsManager = nm
 
-	setPlayerPositionManager: (pm) ->
-		@playerPositionManager = pm
+	setMapInfoManager: (mim) ->
+		@mapInfoManager = mim
+
+	setSideBar: (sb) ->
+		@sidebar = sb
 
 	conquer: (conqueringAttemptId) ->
 		data = 
 			conqueringAttemptId: conqueringAttemptId
 
-		$.getJSON '/conquer/conquer', data
+		$.getJSON '/conquer/conquer', data, (responseData) => 
+
+			if responseData == 'SUCCESSFUL' 
+				@sidebar.loadResourcesOfPlayer()
+				@sidebar.reloadResourceSourcesOfPlayer()
+				@sidebar.loadResourcesOfTeam()
+				@sidebar.reloadUnitsOfPlayer()
+				@mapInfoManager.loadConqueredPlaces()
 
 	joinConquer: (conqueringAttemptId) ->
 		d = 
