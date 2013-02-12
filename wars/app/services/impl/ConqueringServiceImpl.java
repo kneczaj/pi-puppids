@@ -363,6 +363,11 @@ public class ConqueringServiceImpl implements ConqueringService {
 			place.setConqueredBy(participants);
 			placeDAO.updateConquerors(place, participants);
 		}
+		//add the place to the participants
+		for (Player p : participants) {
+			p.getConquered().add(place);
+			playerDAO.save(p);
+		}
 		
 		withdrawResourceDemandFromPlayers(place, participants);
 
