@@ -69,6 +69,7 @@ public class ScoreServiceImpl implements ScoreService {
 		score += load.getResourceDepot(ResourceType.Material);
 		
 		load.setScore(score);
+		load.getResourceDepot().put(ResourceType.Special, score);
 		playerDAO.save(load);
 		
 		return score;
