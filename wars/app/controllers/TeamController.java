@@ -1,14 +1,21 @@
 package controllers;
 
+import java.util.List;
+
 import models.Invitation;
 import models.Player;
+import models.Team;
+
+import org.codehaus.jackson.node.ArrayNode;
+
 import play.Logger;
-import play.mvc.Controller;
+import play.libs.Json;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import securesocial.core.java.SecureSocial.SecuredAction;
 import securesocial.core.providers.utils.RoutesHelper;
 import services.api.AuthenticationService;
+import services.api.AvatarService;
 import services.api.PlayerService;
 import services.api.TeamService;
 import services.api.WebSocketCommunicationService;
@@ -20,8 +27,9 @@ import com.google.inject.Inject;
 
 import daos.InvitationDAO;
 import daos.PlayerDAO;
+import daos.TeamDAO;
 
-public class TeamController extends Controller {
+public class TeamController extends AvatarControler<Team> {
 
 	@Inject
 	private static AuthenticationService authenticationService;
@@ -39,7 +47,13 @@ public class TeamController extends Controller {
 	private static PlayerDAO playerDAO;
 	
 	@Inject
+	private static TeamDAO teamDAO;
+	
+	@Inject
 	private static InvitationDAO invitationDAO;
+	
+	@Inject
+	private static AvatarService avatarService;
 	
 	@SecureSocial.SecuredAction
 	public static Result tryInvite(String invitedUserOrEmail) {
@@ -54,7 +68,13 @@ public class TeamController extends Controller {
 			return ok(e.getMessage());
 		}
 		
+		Player recipient = invitation.getRecipient();
 		teamService.sendInvitation(invitation);
+		
+		if (recipient != null)
+			webSocketCommunicationService.sendSimpleNotification("Invitation", 
+					"You are invited to team \"" + invitation.getTeam().getName() + "\"<br>" +
+					"Check your mailbox", "info", recipient);
 		return ok("ok");
 	}
 	
@@ -81,6 +101,34 @@ public class TeamController extends Controller {
 		Player player = authenticationService.getPlayer();
 		webSocketCommunicationService.sendHi(player);
 		return ok("ok");
+	}
+	
+	/**
+	 * validates and changes team data, consistently to player profile editor
+	 * as the result returns json array with fields with wrong format 
+	 * 
+	 * @param name
+	 * @return
+	 */
+	@SecureSocial.SecuredAction(ajaxCall = true)
+	public static Result changeTeamData(String teamname) {
+		Player loggedPlayer = authenticationService.getPlayer();
+		
+		ArrayNode reply = Json.newObject().arrayNode();
+		
+		if (!loggedPlayer.isTeamMaster()) {
+			webSocketCommunicationService.sendSimpleNotification("Error", 
+					"Only the team master can change the name of the team", "info", loggedPlayer);
+			return ok(reply.toString());
+		}
+		
+		try {
+			teamService.changeTeamData(loggedPlayer.getTeam(), teamname);
+		} catch (TeamServiceException e) {
+			reply.add("teamname");
+		}
+		
+		return ok(reply.toString());
 	}
 	
 	@SecuredAction
@@ -111,8 +159,6 @@ public class TeamController extends Controller {
 			return ok(message.render("Given invitation token is invalid"));
 		}
 		
-		
-		
 		try {
 			teamService.acceptInvitation(invitation, loggedPlayer);
 		} catch (TeamServiceException e) {
@@ -120,7 +166,8 @@ public class TeamController extends Controller {
 			switch (e.getMessage()) {
 			
 			case "validationFailed":
-				webSocketCommunicationService.sendSimpleNotification("Error", "Your city or faction doesn't match the invitation's one." +
+				webSocketCommunicationService.sendSimpleNotification("Error", 
+						"Your city or faction doesn't match the invitation's one." +
 						"You can change them in our shop ;)", "info", loggedPlayer);
 				return redirect("/");
 				
@@ -144,7 +191,25 @@ public class TeamController extends Controller {
 		}
 		
 		webSocketCommunicationService.sendSimpleNotification("Team changed", 
-				"You have successfully joined " + invitation.getTeam().getName() + " team", "info", loggedPlayer);
+				"You have successfully joined \"" + invitation.getTeam().getName() + "\" team", "info", loggedPlayer);
+		
+		List<Player> teammates = invitation.getTeam().getPlayers();
+		teammates.remove(loggedPlayer);
+		
+		webSocketCommunicationService.sendSimpleNotification("New member", 
+				"User " + loggedPlayer.getUsername() + " joined your team", "info", teammates);
 		return redirect("/");
+	}
+	
+	@SecuredAction(ajaxCall=true)
+	public static Result uploadPhoto() {
+		Team team = authenticationService.getPlayer().getTeam();
+		return uploadPhotoTemplate(team, teamDAO);
+	}
+	
+	@SecuredAction(ajaxCall=true)
+	public static Result getAvatar() {
+		Team team = authenticationService.getPlayer().getTeam();
+		return getAvatarTemplate(team);
 	}
 }

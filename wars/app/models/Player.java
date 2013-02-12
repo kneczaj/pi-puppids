@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Entity("players")
-public class Player {
+public class Player implements AvatarInterface {
 
 	@Id
 	private ObjectId id;
@@ -131,6 +131,8 @@ public class Player {
 	}
 	
 	public String getDateOfBirthString() {
+		if (dateOfBirth == null)
+			return "";
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 		return format.format(dateOfBirth);
 	}

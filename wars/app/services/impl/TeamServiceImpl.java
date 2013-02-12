@@ -299,4 +299,14 @@ public class TeamServiceImpl implements TeamService {
 		webSocketCommunicationService.sendSimpleNotification(
 				"Team changed", "You were deleted from team " + team.getName(), "info", player);
 	}
+	
+	public void changeTeamData(Team team, String teamname) throws TeamServiceException {
+		
+		if (teamname.length() == 0) {
+			throw new TeamServiceException("Team name cannot be empty");
+		}
+		
+		team.setName(teamname);
+		teamDAO.save(team);
+	}
 }

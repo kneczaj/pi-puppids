@@ -149,10 +149,15 @@
 					</div>
 					<div id="team" class="accordion-body collapse">
 						<div class="accordion-inner">
-							<div id="teamInfo">
+							<div id="teamInfo" class="control-group">
 								<h5>Team information:</h5>
-								Team name: @player.getTeam().getName()
-								<br>
+								Faction: @if(player.getTeam() != null && player.getTeam().getFaction() != null){
+									@player.getTeam().getFaction().getName()
+								}<br>
+								City: @if(player.getTeam() != null && player.getTeam().getCity() != null){
+									@player.getTeam().getCity().getName()
+								}<br>
+								Team name: @player.getTeam().getName()<br>
 								Team master: @player.getTeam().getTeamMaster().getUsername()
 							</div>
 							<hr>
@@ -280,7 +285,7 @@
 	    <div class="controls">
 	    	<button name="back" class="btn @if(invitationsList.isEmpty()) { hide }">Back</button>
 	    	<button name="save" class="btn btn-warning">Save</button>
-	    	<button name="logout" class="btn" onClick="parent.location='logout'">Cancel and logout</button>
+	    	<button name="logout" class="btn">Cancel and logout</button>
 	    </div>
 	  </div>
 	</form>
@@ -352,7 +357,7 @@
 <!--modal-->
 <div id="deployUnitsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="deployUnitModalLabel" aria-hidden="false">
   <div class="modal-header">
-    <h3 id="chooseFactionModalLabel">Deploy units to your conquered places</h3>
+    <h3 id="deployUnitModalLabel">Deploy units to your conquered places</h3>
   </div>
   <div class="modal-body">
     <form class="form-horizontal">
