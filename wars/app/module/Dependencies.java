@@ -3,6 +3,7 @@ package module;
 
 import play.Play;
 import services.api.AuthenticationService;
+import services.api.AvatarService;
 import services.api.ConqueringService;
 import services.api.LocationTrackingService;
 import services.api.MapInfoService;
@@ -20,6 +21,7 @@ import services.dummy.ScoreServiceDummyImpl;
 import services.google.places.api.GPlaceService;
 import services.google.places.impl.GPlaceServiceImpl;
 import services.impl.AuthenticationServiceImpl;
+import services.impl.AvatarServiceImpl;
 import services.impl.ConqueringServiceImpl;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
@@ -48,8 +50,8 @@ import daos.PlaceDAO;
 import daos.PlayerDAO;
 import daos.PlayerLocationDAO;
 import daos.TeamDAO;
-import daos.UnitDAO;
 import daos.UndeliveredNotificationDAO;
+import daos.UnitDAO;
 
 /**
  * Configures Google Guice to inject the proper implementations for certain interfaces.
@@ -70,6 +72,7 @@ public class Dependencies implements Module {
 		binder.bind(ConqueringService.class).to(ConqueringServiceImpl.class).in(Singleton.class);
 		binder.bind(VictoryStrategy.class).to(VictoryByNumberOfUnitsStategy.class).in(Singleton.class);
 		binder.bind(WebSocketCommunicationService.class).to(WebSocketCommunicationServiceImpl.class).in(Singleton.class);
+		binder.bind(AvatarService.class).to(AvatarServiceImpl.class).in(Singleton.class);
 		
 		
 		if (Play.isTest()) {

@@ -64,9 +64,13 @@ $(document).ready ->
 		$("#chooseFactionModal").modal 'hide'
 		return false
 		
-	$("button[name=save]", "#chooseFactionModal").bind 'click', @factionClickHandler
+	factionLogoutClickHandler = ->
+		window.location.href='logout'
+		return false
+		
+	$("button[name=save]", "#chooseFactionModal").bind 'click', factionClickHandler
 	$("button[name=back]", "#chooseFactionModal").bind 'click', factionBackToInvitationsClickHandler
-	$("#chooseFactionModal form").submit factionClickHandler	
+	$("button[name=logout]", "#chooseFactionModal").bind 'click', factionLogoutClickHandler
 
 	setupSliders = ->
 		$("#gruntBuildSlider").slider

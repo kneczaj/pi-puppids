@@ -9,7 +9,6 @@ import models.Invitation;
 import models.Place;
 import models.Player;
 import models.Team;
-import scala.annotation.target.field;
 import services.api.TeamService;
 import services.api.WebSocketCommunicationService;
 import services.api.error.TeamServiceException;
@@ -299,5 +298,15 @@ public class TeamServiceImpl implements TeamService {
 		joinTeam(player, newTeam);
 		webSocketCommunicationService.sendSimpleNotification(
 				"Team changed", "You were deleted from team " + team.getName(), "info", player);
+	}
+	
+	public void changeTeamData(Team team, String teamname) throws TeamServiceException {
+		
+		if (teamname.length() == 0) {
+			throw new TeamServiceException("Team name cannot be empty");
+		}
+		
+		team.setName(teamname);
+		teamDAO.save(team);
 	}
 }

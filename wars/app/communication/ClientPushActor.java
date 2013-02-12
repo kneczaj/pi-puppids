@@ -14,11 +14,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.Logger;
-import play.libs.Akka;
 import play.libs.F.Callback0;
 import play.mvc.WebSocket;
 import akka.actor.ActorRef;
-import akka.actor.Props;
 import akka.actor.UntypedActor;
 
 import com.google.common.collect.Lists;

@@ -150,5 +150,14 @@ public interface TeamService extends Service {
 	 * @throws exception when given player doesn't belong to given team
 	 */
 	public void removePlayer(Team team, Player player) throws TeamServiceException;
+	
+	/**
+	 * Changes team data
+	 * 
+	 * @param team
+	 * @param teamname
+	 * @throws exception when data doesn't pass the validation
+	 */
+	public void changeTeamData(Team team, String teamname) throws TeamServiceException;
 
 }

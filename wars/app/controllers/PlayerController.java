@@ -7,27 +7,35 @@ import models.Player;
 import org.codehaus.jackson.node.ArrayNode;
 
 import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial.SecuredAction;
 import services.api.AuthenticationService;
+import services.api.AvatarService;
 import services.api.PlayerService;
 import util.Validation;
 
 import com.google.inject.Inject;
+
+import daos.PlayerDAO;
 
 /**
  * 
  * @author kamil
  *
  */
-public class PlayerController extends Controller {
+public class PlayerController extends AvatarControler<Player> {
 	
 	@Inject
 	private static AuthenticationService authenticationService;
 	
 	@Inject
+	private static AvatarService avatarService;
+	
+	@Inject
 	private static PlayerService playerService;
+	
+	@Inject
+	private static PlayerDAO playerDAO;
 	
 	/**
 	 * Validates and saves player's profile
@@ -79,5 +87,17 @@ public class PlayerController extends Controller {
 		playerService.setData(loggedPlayer, firstname, lastname, email, hometown, birthdayDate);
 		
 		return ok(reply.toString());
+	}
+	
+	@SecuredAction(ajaxCall=true)
+	public static Result uploadPhoto() {
+		Player loggedPlayer = authenticationService.getPlayer();
+		return uploadPhotoTemplate(loggedPlayer, playerDAO);
+	}
+	
+	@SecuredAction(ajaxCall=true)
+	public static Result getAvatar() {
+		Player loggedPlayer = authenticationService.getPlayer();
+		return getAvatarTemplate(loggedPlayer);
 	}
 }
