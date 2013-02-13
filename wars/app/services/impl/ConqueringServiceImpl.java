@@ -345,6 +345,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 			place.setLat(gPlace.getLatitude());
 			place.setLng(gPlace.getLongitude());
 			place.setUuid(gPlace.getUuid());
+			place.setReference(ca.getReference());
 
 			PlaceType type = PlaceType.valueOf(gPlace.getTypes().get(0));
 			place.setType(type);

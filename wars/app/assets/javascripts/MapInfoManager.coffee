@@ -89,7 +89,7 @@ class ArWars.MapInfoManager
 		if @player.team.name is place.team 
 			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" name=\"btnDeploy\" placeId=\"#{pid}\">Deploy units</button>"
 		else if not (@player.faction.name is place.faction) 
-			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" name=\"btnConquer\" placeId=\"#{pid}\" reference=\"#{place.reference}\">Conquer</button>"
+			content += "<br/><br/><button class=\"btn btn-block btn-#{buttonClass}\" type=\"button\" name=\"btnConquer\" placeId=\"#{pid}\">Conquer</button>"
 		
 		@infowindow.setContent content
 		@infowindow.open @map, marker
@@ -97,9 +97,9 @@ class ArWars.MapInfoManager
 				$("#deployAt").val pid 
 				$("#deployUnitsModal").modal 'show'
 
-		$("button[placeId='#{pid}'][name=\"btnConquer\"]").click () =>
-			@conquerManager.conquer pid, place.reference
-			
+		$("button[placeId='#{pid}'][name='btnConquer']").click () =>
+			@conquerManager.initiateConquer place.uuid, place.reference
+
 	createUnconqueredMarker: (place) ->
 		placeLoc = place.geometry.location
 		iconUrl = undefined
@@ -133,10 +133,10 @@ class ArWars.MapInfoManager
 		google.maps.event.addListener marker, "click", () =>
 			type = (place.types[0].split('_').map (word) -> word[0].toUpperCase() + word[1..-1].toLowerCase()).join ' '
 			resourceIcon = marker.icon.replace /marker/, "orange"
-			content = "<span class=\"infowindowTitle\">#{place.name}</span><br/>Type: #{type}<br/>Resource: <img src=\"#{resourceIcon}\"><br/><br/><button class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
+			content = "<span class=\"infowindowTitle\">#{place.name}</span><br/>Type: #{type}<br/>Resource: <img src=\"#{resourceIcon}\"><br/><br/><button name=\"btnConquer2\" class=\"btn btn-block btn-warning\" type=\"button\" placeId=\"#{place.id}\">Conquer</button>"
 			@infowindow.setContent content
 			@infowindow.open @map, marker
-			$("button[placeId=#{place.id}]").click () => 
+			$("button[placeId=#{place.id}][name='btnConquer2']").click () => 
 				@conquerManager.initiateConquer place.id, place.reference
 		
 	notify: (title, text, type) ->

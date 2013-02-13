@@ -26,6 +26,7 @@ public class Place {
 	private ResourceType resource;
 	private Map<ResourceType, Integer> resourceDemand;
 	private Integer numberOfConquerors;
+	private String reference;
 	
 	@Reference
 	private List<Player> conqueredBy = Lists.newArrayList();
@@ -148,6 +149,14 @@ public class Place {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 	
 }

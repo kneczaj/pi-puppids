@@ -97,6 +97,7 @@ public class MapInfoController extends Controller {
 				element.put("lat", p.getLat());
 				element.put("lng", p.getLng());
 				element.put("type", p.getType());
+				element.put("reference", p.getReference());
 				element.put("resource", p.getResource().toString());
 				element.put("resAmount", p.getAmount().toString());
 				element.put("units", p.getDeployedUnits().size());
