@@ -114,7 +114,7 @@ public class ClientPushActor extends UntypedActor {
 
 		} else if (message instanceof ResourcesChangedMessage) {
 			ResourcesChangedMessage prcm = (ResourcesChangedMessage) message;
-			sendToPlayers(prcm.toJson(), Lists.newArrayList(prcm.player));
+			sendToPlayer(prcm.toJson(), prcm.player);
 			
 		} else if (message instanceof PlayerLocationChangedMessage) {
 			PlayerLocationChangedMessage msg = (PlayerLocationChangedMessage) message;

@@ -16,23 +16,6 @@ class ArWars.ConquerManager
 			conqueringAttemptId: conqueringAttemptId
 
 		$.getJSON '/conquer/conquer', data, (responseData) => 
-			if responseData == 'LOST'
-				@notificationsManager.notify 'Conquer lost', 'Your conquering attempt was unsuccessful', 'info'
-
-			if responseData == 'PLAYER_NOT_NEARBY'
-				@notificationsManager.notify 'Conquer', 'Could not finish conquering attempt. You have to move towards the place you want to conquer', 'info'
-
-			if responseData == 'PLACE_ALREADY_BELONGS_TO_FACTION'
-				@notificationsManager.notify 'Conquer', 'The place already belongs to your faction', 'info'
-
-			if responseData == 'RESOURCES_DO_NOT_SUFFICE'
-				@notificationsManager.notify 'Conquer', 'Your resources do not suffice the resource demands of this place', 'info'
-
-			if responseData == 'NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE'
-				@notificationsManager.notify 'Conquer', 'The number of teammates you gathered around the place does not suffice', 'info'
-
-			if responseData == 'PLAYER_HAS_INSUFFICIENT_RESOURCES'
-				@notificationsManager.notify 'Conquer', 'Your teammates have inssufficient resources to attack this place', 'info'
 
 			if responseData == 'SUCCESSFUL' 
 				@sidebar.loadResourcesOfPlayer()
@@ -41,8 +24,6 @@ class ArWars.ConquerManager
 				@sidebar.reloadUnitsOfPlayer()
 				@mapInfoManager.infowindow.close()
 				@mapInfoManager.loadConqueredPlaces()
-
-				@notificationsManager.notify 'Conquering successful', 'Conquering attempt was successful', 'success'
 
 	joinConquer: (conqueringAttemptId) ->
 		d = 

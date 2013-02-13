@@ -3,10 +3,12 @@ package services.api;
 import java.util.List;
 import java.util.Map;
 
+
 import models.Player;
 import models.PlayerLocation;
 import models.ResourceType;
 import models.conquer.ConqueringAttempt;
+import models.notifications.ShoppingListMessage;
 
 public interface WebSocketCommunicationService {
 	
@@ -41,5 +43,12 @@ public interface WebSocketCommunicationService {
     public void playerLocationChanged(PlayerLocation playerLocation);
     
     public void sendResourcesChanged(Player player, Map<ResourceType, Integer> teamResources);
+    
+    /**
+     * Sends a message to player to confirm his order 
+     * 
+     * @param shoppingList
+     */
+    public void askToBuy(ShoppingListMessage shoppingList);
 
 }

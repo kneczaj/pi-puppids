@@ -2,6 +2,7 @@ package module;
 
 
 import services.api.AuthenticationService;
+import services.api.AvatarService;
 import services.api.ConqueringService;
 import services.api.LocationTrackingService;
 import services.api.MapInfoService;
@@ -17,6 +18,7 @@ import services.api.WebSocketCommunicationService;
 import services.google.places.api.GPlaceService;
 import services.google.places.impl.GPlaceServiceImpl;
 import services.impl.AuthenticationServiceImpl;
+import services.impl.AvatarServiceImpl;
 import services.impl.ConqueringServiceImpl;
 import services.impl.LocationTrackingServiceImpl;
 import services.impl.MapInfoServiceImpl;
@@ -70,6 +72,8 @@ public class Dependencies implements Module {
 		binder.bind(WebSocketCommunicationService.class).to(WebSocketCommunicationServiceImpl.class).in(Singleton.class);
 		binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);	
 		binder.bind(ScoreService.class).to(ScoreServiceImpl.class).in(Singleton.class);
+
+		binder.bind(AvatarService.class).to(AvatarServiceImpl.class).in(Singleton.class);
 		binder.bind(TeamService.class).to(TeamServiceImpl.class).in(Singleton.class);
 		binder.bind(UnitService.class).to(UnitServiceImpl.class).in(Singleton.class);
 		binder.bind(NotificationService.class).to(NotificationServiceImpl.class).in(Singleton.class);

@@ -3,7 +3,7 @@ class ArWars.WebSocketManager
 	@wsInstance: null
 	@socket: null
 
-	constructor: (@playerPositionManager, @conquerManager, @notificationsManager) ->
+	constructor: (@playerPositionManager, @conquerManager, @notificationsManager, @shoppingManager) ->
 		@wsInstance = if window['MozWebSocket'] then MozWebSocket else WebSocket
 
 	receiveEvent: (event) => 
@@ -50,7 +50,11 @@ class ArWars.WebSocketManager
 				
 			when "OtherNotification"
 				@notificationsManager.notify data.title, data.message, "info"
-				@notificationsManager.reloadNotifications()								
+				@notificationsManager.reloadNotifications()
+				
+			when "FactionCityChangeRequest"
+				@notificationsManager.notifyFactionCityChangeRequest data
+				@notificationsManager.reloadNotifications()	
 
 	establishWebSocket: (url) ->
 		socket = new @wsInstance url 
