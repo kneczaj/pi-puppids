@@ -3,7 +3,7 @@ class ArWars.FormValidator
 	# needed to have access to the class instance pointer from the event handlers
 	`var that`
 	
-	constructor: (@fields, saveButton, @sendURL) ->
+	constructor: (@fields, saveButton, @sendURL, @shoppingManager) ->
 		`that = this`
 		$(saveButton).bind 'click', @updateProfile
 			
@@ -96,10 +96,14 @@ class ArWars.FormValidator
 		$.getJSON @sendURL, params, (responseData) =>
 				
 			# no invalid fields - redirect to the main page
-			if responseData.length is 0
-				parent.location = '/'
+			if responseData.errors is undefined 
+				if responseData.shopping is undefined 
+					parent.location = '/'
+				else
+					@shoppingManager.showShoppingList responseData.shopping
+					return false 
 				
 			# mark invalid fields 
-			for item in responseData
+			for item in responseData.errors
 				@toggleHint 0, @fields[item]
 					

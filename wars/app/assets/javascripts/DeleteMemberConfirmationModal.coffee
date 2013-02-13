@@ -5,7 +5,7 @@ class ArWars.DeleteMemberConfirmationModal
 	`var that`
 
 	constructor: () ->
-		@modal = "#deleteMemberConfirmationModal";
+		@modal = "#deleteMember_confirmationModal";
 		$("button[name=ok]", @modal).bind 'click', this.accept
 		$("button[name=cancel]", @modal).bind 'click', this.cancel
 		$("a[name=playerRemove]", "#teamMembers").bind 'click', this.show
@@ -15,16 +15,16 @@ class ArWars.DeleteMemberConfirmationModal
 		that.username = $(this).attr "player"
 		$("#memberToDelete").html that.username
 		
-		$("#deleteMemberConfirmationModal").modal
+		$(that.modal).modal
 			backdrop: "static"
 			keyboard: false 
 		return false
 		
 	accept: () =>
-		$("#deleteMemberConfirmationModal").modal 'hide'
+		$(@modal).modal 'hide'
 		parent.location="team/deleteMember?member="+@username
 		return false
 	
 	cancel: () =>
-		$("#deleteMemberConfirmationModal").modal 'hide'
+		$(@modal).modal 'hide'
 		return false

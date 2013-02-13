@@ -1,6 +1,6 @@
 class ArWars.NotificationsManager
 
-	constructor: (@conquerManager, @mapInfoManger) ->
+	constructor: (@conquerManager, @mapInfoManger, @shoppingManager) ->
 		@notificationNode = $("#notifications .accordion-inner")
 		@notificationTable = $("#notificationsTable")
 		$("#clearNotifications").bind 'click', @clearNotifications
@@ -25,15 +25,21 @@ class ArWars.NotificationsManager
 				
 					when "OtherNotification"
 						@notify notification.title, notification.message, notification.type
+						
+					when "FactionCityChangeRequest"
+						@notifyFactionCityChangeRequest notification
 			
 			if responseData.othersNumber > 0			
 				num = responseData.othersNumber
 				@notify 'Notifications', 'You have <a id="notificationsTabLink" name=\"notificationsTabLink\"> '+num+' other not read notifications.</a>', 'info'
 				$("#notificationsTabLink").bind 'click', @openNotificationsTab
+				$("#unreadNotificationsLabel").html "(unread: " + responseData.othersNumber + ")"
 				
 	notificationsMarkAsRead: () ->
 		$.ajax
 			url : "/notifications/markAllUndeliveredAsRead"
+			success : (response, textStatus, jqXHR) ->
+				$("#unreadNotificationsLabel").html ""
 				
 	openNotificationsTab: () =>
 		# TODO: not tested
@@ -67,6 +73,8 @@ class ArWars.NotificationsManager
 						@renderConquerPossible notification
 					when 'OtherNotification'
 						@renderOtherNotification notification
+					when "FactionCityChangeRequest"
+						@renderFactionCityChangeRequest notification
 			@notificationTable.append "</tbody>"
 			
 	clearNotifications: () =>
@@ -91,6 +99,12 @@ class ArWars.NotificationsManager
 		@renderTableRow notification.time, "Your conquering attempt for #{notification.placeName} is now possible. <a name=\"conquer-#{aId}\">Conduct it immediately</a>"
 		$("a[name='conquer-#{aId}']").click () =>
 			@conquerManager.conquer aId
+			
+	renderFactionCityChangeRequest: (notification) ->
+		id = notification.id
+		@renderTableRow notification.time, 'Your city or faction doesn\'t match the invitation\'s one. <br> <a id="invitationShop_' + id + '">You can change them in our shop.</a>' 
+		$("#invitationShop_" + id).click () =>
+			@shoppingManager.showShoppingList notification
 			
 	renderOtherNotification: (notification) ->
 		@renderTableRow notification.time, notification.message
@@ -129,6 +143,11 @@ class ArWars.NotificationsManager
 			
 	notifyConquerCancelled: (data) ->
 		@notifyAndStore 'Canceled Conquer', 'The conquering attempt was canceled', 'success'
+		
+	notifyFactionCityChangeRequest: (data) ->
+		@notify 'Invitation status', 'Your city or faction doesn\'t match the invitation\'s one. <br> <a id="invitationShop">You can change them in our shop.</a>', 'info'
+		$("#invitationShop").click () =>
+			@shoppingManager.showShoppingList data
 		
 #	its a question whether this function will stay here
 #	notifications should rather be generated and stored directly at server side

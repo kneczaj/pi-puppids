@@ -55,9 +55,12 @@ GET     /profile                    				controllers.Application.profile()
 GET		/getPlayer									controllers.Application.getPlayer(playerId)
 
 # PlayerController
-GET		/profile/changeProfile						controllers.PlayerController.changeProfile(firstname, lastname, email, hometown, birthday)
+GET		/profile/changeProfile						controllers.PlayerController.changeProfile(firstname, lastname, email, hometown, username)
 POST	/profile/uploadPhoto						controllers.PlayerController.uploadPhoto()
 GET		/profile/getAvatar							controllers.PlayerController.getAvatar()
+
+# Shopping
+POST	/buy										controllers.ShoppingController.buy()
 
 # ScoreController
 GET		/scores/getTopTeamsAndPlayers				controllers.ScoreController.getTopTeamsAndPlayers()

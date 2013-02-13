@@ -1,10 +1,10 @@
 package controllers;
 
-import java.util.Date;
-
 import models.Player;
+import models.notifications.ShoppingListMessage;
 
 import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
 import play.mvc.Result;
@@ -12,6 +12,7 @@ import securesocial.core.java.SecureSocial.SecuredAction;
 import services.api.AuthenticationService;
 import services.api.AvatarService;
 import services.api.PlayerService;
+import services.api.WebSocketCommunicationService;
 import util.Validation;
 
 import com.google.inject.Inject;
@@ -37,6 +38,9 @@ public class PlayerController extends AvatarControler<Player> {
 	@Inject
 	private static PlayerDAO playerDAO;
 	
+	@Inject
+	private static WebSocketCommunicationService webSocketCommunicationService;
+	
 	/**
 	 * Validates and saves player's profile
 	 * @param firstname
@@ -47,44 +51,51 @@ public class PlayerController extends AvatarControler<Player> {
 	 * @return json array with invalid variables
 	 */
 	@SecuredAction(ajaxCall=true)
-	public static Result changeProfile(String firstname, String lastname, String email, String hometown, String birthday) {
-		ArrayNode reply = Json.newObject().arrayNode();
+	public static Result changeProfile(String firstname, String lastname, String email, String hometown, String username) {
+		ArrayNode errorList = Json.newObject().arrayNode();
+		
+		ShoppingListMessage shopping = new ShoppingListMessage();
+		Player loggedPlayer = authenticationService.getPlayer();
+		
+		ObjectNode reply = Json.newObject();
 		
 		boolean isOk = true;
+		if (!Validation.validateMandatoryWord(username))
+		{
+			isOk = false;
+			errorList.add("username");
+		}
+		else if (!username.equals(loggedPlayer.getUsername())) {
+			shopping.addUsernameChange(username);
+		}
 		if (!Validation.validateMandatoryWord(firstname))
 		{
 			isOk = false;
-			reply.add("firstname");
+			errorList.add("firstname");
 		}
 		if (!Validation.validateMandatoryWord(lastname))
 		{
 			isOk = false;
-			reply.add("lastname");
+			errorList.add("lastname");
 		}
 		if (!Validation.validateEmail(email))
 		{
 			isOk = false;
-			reply.add("email");
+			errorList.add("email");
 		}
 		if (!Validation.validateOptionalWord(hometown))
 		{
 			isOk = false;
-			reply.add("hometown");
+			errorList.add("hometown");
 		}
-		Date birthdayDate = null;
-		if (!birthday.isEmpty()) {
-			birthdayDate = Validation.validateDate(birthday);
-			if (birthdayDate == null) {
-				isOk = false;
-				reply.add("birthday");
-			}
-		}
-		if (!isOk)
+		if (!isOk) {
+			reply.put("errors", errorList);
 			return ok(reply.toString());
+		}
 		
-		Player loggedPlayer = authenticationService.getPlayer();
-		
-		playerService.setData(loggedPlayer, firstname, lastname, email, hometown, birthdayDate);
+		playerService.setData(loggedPlayer, firstname, lastname, email, hometown);
+		if (!shopping.isEmpty())
+			reply.put("shopping", shopping.toJson());
 		
 		return ok(reply.toString());
 	}

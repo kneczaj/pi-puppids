@@ -76,6 +76,30 @@
 <script src="@routes.Assets.at("javascripts/MapInfoManager.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("javascripts/DeleteMemberConfirmationModal.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("javascripts/NotificationsManager.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/ShoppingManager.js")" type="text/javascript"></script>
+}
+
+@confirmationModal(id: String, message: Html) = {
+
+<div id="@{id}_confirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
+  	<div class="modal-body">
+		@message <br>
+		<button name="ok" class="btn">Yes</button>
+		<button name="cancel" class="btn">No</button>
+	</div>
+</div>
+
+}
+
+@noticeModal(id:String, message: Html) = {
+
+<div id="@{id}_noticeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
+	<div>
+		@message <br>
+		<button name="ok" class="btn">Ok</button>
+	</div>
+</div>
+
 }
 
 @main(title = player.getUsername() + " - ARWars", scripts) {
@@ -203,7 +227,7 @@
 				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" id="notificationsTab" href="#notifications"><i class="icon-envelope icon-white"></i> Notifications </a>
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" id="notificationsTab" href="#notifications"><i class="icon-envelope icon-white"></i> Notifications <span id="unreadNotificationsLabel"></span></a>
 					</div>
 					<div id="notifications" class="accordion-body collapse">
 						<div class="accordion-inner">
@@ -397,13 +421,8 @@
 </div>
 <!--/conqueringInvitationNotice-->
 
-<!--deleteMemberConfirmation-->
-<div id="deleteMemberConfirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
-  	<div class="modal-body">
-		Do you really want to delete <span id="memberToDelete"></span> from your team?<br>
-		<button name="ok" class="btn">Yes</button>
-		<button name="cancel" class="btn">No</button>
-	</div>
-</div>
-<!--/deleteMemberConfirmation-->
+@confirmationModal("deleteMember", Html("Do you really want to delete <span id=\"memberToDelete\"></span> from your team?"))
+@confirmationModal("shopping", Html("<span id=\"shoppingMessage\"></span><br><span id=\"shoppingList\"></span>"))
+@noticeModal("shopping", Html("Your order was processed"))
+
 }

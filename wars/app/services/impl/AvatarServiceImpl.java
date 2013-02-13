@@ -2,23 +2,14 @@ package services.impl;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
 import models.AvatarInterface;
 import models.Photo;
-import models.Player;
-
-import org.apache.commons.io.FileUtils;
-
-import play.mvc.Result;
-import securesocial.core.java.SecureSocial.SecuredAction;
-import services.api.AuthenticationService;
 import services.api.AvatarService;
 
 public class AvatarServiceImpl implements AvatarService {

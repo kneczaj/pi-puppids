@@ -3,6 +3,8 @@ package services.impl;
 import java.util.List;
 import java.util.Map;
 
+import play.Logger;
+
 import models.Place;
 import models.Player;
 import models.ResourceType;
@@ -137,6 +139,11 @@ public class ResourceServiceImpl implements ResourceService {
 					+ player.getUsername() + ".");
 
 		Map<ResourceType, Integer> resourceDepot = load.getResourceDepot();
+		if (resourceDepot == null) {
+			Logger.error("Resource depot for player " + player.getUsername() 
+					+ " not set. ResourceService.distributeResourcesToPlayer() stopped.");
+			return null;
+		}
 		Map<ResourceType, Integer> resourcesToAdd = Maps.newHashMap();
 
 		// Initialize map
