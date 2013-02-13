@@ -114,7 +114,10 @@ public class TeamController extends Controller {
 		
 		
 		try {
-			teamService.acceptInvitation(invitation, loggedPlayer);
+			Player player = teamService.acceptInvitation(invitation, loggedPlayer);
+			
+			webSocketCommunicationService.sendSimpleNotification("Team changed", 
+					"You have successfully joined " + invitation.getTeam().getName() + " team", "info", player);
 		} catch (TeamServiceException e) {
 			
 			switch (e.getMessage()) {
@@ -143,8 +146,6 @@ public class TeamController extends Controller {
 			}
 		}
 		
-		webSocketCommunicationService.sendSimpleNotification("Team changed", 
-				"You have successfully joined " + invitation.getTeam().getName() + " team", "info", loggedPlayer);
 		return redirect("/");
 	}
 }
