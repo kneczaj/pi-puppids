@@ -40,7 +40,7 @@ public class Player {
 	private Date dateOfBirth;
 	private Integer minStrength;
 	private Integer maxStrength;
-	private Integer score;
+	private Integer score = 0;
 	private String authenticationProvider;
 	private String secureSocialIdentifier;
 	private Map<ResourceType, Integer> resourceDepot = initializeResourceDepots();
