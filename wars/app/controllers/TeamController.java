@@ -27,7 +27,6 @@ import services.api.error.PlayerServiceException;
 import services.api.error.TeamServiceException;
 import views.html.message;
 
-import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
 import daos.InvitationDAO;
@@ -184,6 +183,10 @@ public class TeamController extends AvatarControler<Team> {
 		
 		try {
 			factionCityChangeListMessage = teamService.acceptInvitation(invitation, loggedPlayer);
+			loggedPlayer = playerDAO.get(loggedPlayer.getId());
+			
+			teamService.sendInvitationAcceptanceNotifications(loggedPlayer, invitation);
+			
 		} catch (TeamServiceException e) {
 			
 			switch (e.getMessage()) {
@@ -215,8 +218,7 @@ public class TeamController extends AvatarControler<Team> {
 			webSocketCommunicationService.askToBuy(factionCityChangeListMessage);
 			return redirect("/");
 		}
-		
-		teamService.sendInvitationAcceptanceNotifications(loggedPlayer, invitation);
+
 		return redirect("/");
 	}
 	
