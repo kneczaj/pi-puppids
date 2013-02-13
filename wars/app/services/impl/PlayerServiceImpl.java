@@ -1,7 +1,5 @@
 package services.impl;
 
-import java.util.Date;
-
 import models.City;
 import models.Faction;
 import models.Player;
@@ -68,11 +66,10 @@ public class PlayerServiceImpl implements PlayerService {
 		return p;
 	}
 	
-	public Player setData(Player player, String firstname, String lastname, String email, String hometown, Date birthday) {
+	public Player setData(Player player, String firstname, String lastname, String email, String hometown) {
 		player.setEmail(email);
 		player.setFirstname(firstname);
 		player.setName(lastname);
-		player.setDateOfBirth(birthday);
 		player.setHomeTown(hometown);
 		playerDAO.save(player);
 		return player;
@@ -145,6 +142,13 @@ public class PlayerServiceImpl implements PlayerService {
 		Player p = playerDAO.get(player.getId());
 
 		return p;
+	}
+	
+	@Override
+	public Player setUsername(Player player, String username) {
+		player.setUsername(username);
+		playerDAO.save(player);
+		return player;
 	}
 	
 

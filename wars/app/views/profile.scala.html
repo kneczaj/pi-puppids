@@ -7,6 +7,30 @@
 </script>
 <script src="@routes.Assets.at("javascripts/ProfileEditor.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("javascripts/FormValidator.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/ShoppingManager.js")" type="text/javascript"></script>
+}
+
+@confirmationModal(id: String, message: Html) = {
+
+<div id="@{id}_confirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
+  	<div class="modal-body">
+		@message <br>
+		<button name="ok" class="btn">Yes</button>
+		<button name="cancel" class="btn">No</button>
+	</div>
+</div>
+
+}
+
+@noticeModal(id:String, message: Html) = {
+
+<div id="@{id}_noticeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
+	<div>
+		@message <br>
+		<button name="ok" class="btn">Ok</button>
+	</div>
+</div>
+
 }
 
 @imageSelector(id: String, downloadUrl: String, uploadUrl: String) = {
@@ -74,8 +98,8 @@
 			<div class="control-group">
 				<label class="control-label" for="inputUsername">Username</label>
 				<div class="controls">
-					<!--  <input type="text" id="inputUsername" placehoder="@player.getUsername()" disabled> -->
-					<span class="help-inline">@player.getUsername()</span>
+					<input type="text" validation="mandatoryWord" required id="inputUsername" value="@player.getUsername()">
+					<span class="help-inline hide">Type a word</span>
 				</div>
 			</div>
 			<div class="control-group">
@@ -123,8 +147,8 @@
 </div><!--/row-->
 
 
-@if(player.isTeamMaster()) {
-<div class="row">
+
+<div class="row @if(!player.isTeamMaster()) {hide}">
 	<h2>Edit team</h2>
 	<div class="span6">
 		<form class="form-horizontal">
@@ -150,5 +174,8 @@
 		@imageSelector(id = "team", downloadUrl = "/team/getAvatar", uploadUrl = "/team/uploadPhoto")
 	</div>
 </div><!--/row-->
-}
+
+@confirmationModal("shopping", Html("<span id=\"shoppingMessage\"></span>Click ok to pay for the services below.<br><span id=\"shoppingList\"></span>"))
+@noticeModal("shopping", Html("Your order was processed"))
+
 }

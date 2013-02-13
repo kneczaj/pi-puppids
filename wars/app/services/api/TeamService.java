@@ -7,6 +7,7 @@ import models.Faction;
 import models.Invitation;
 import models.Player;
 import models.Team;
+import models.notifications.ShoppingListMessage;
 import services.api.error.TeamServiceException;
 
 /**
@@ -64,7 +65,7 @@ public interface TeamService extends Service {
 	 * @throws TeamServiceException
 	 * 		with problems encountered in the exception message
 	 */
-	public Player acceptInvitation(Invitation invitation, Player loggedPlayer) 
+	public ShoppingListMessage acceptInvitation(Invitation invitation, Player loggedPlayer) 
 			throws TeamServiceException;
 	
 	/**
@@ -133,16 +134,6 @@ public interface TeamService extends Service {
 //	public void rejectAllInvitations(Player player);
 	
 	/**
-	 * Checks if given player can use the invitation considering his actual 
-	 * city and faction 
-	 * 
-	 * @param invitation
-	 * @param player
-	 * @return
-	 */
-	public Boolean validateInvitation(Invitation invitation, Player player);
-	
-	/**
 	 * Removes a player from a team
 	 * 
 	 * @param team
@@ -159,5 +150,11 @@ public interface TeamService extends Service {
 	 * @throws exception when data doesn't pass the validation
 	 */
 	public void changeTeamData(Team team, String teamname) throws TeamServiceException;
+	
+	public boolean checkFaction(Invitation invitation, Player player);
+	
+	public boolean checkCity(Invitation invitation, Player player);
+	
+	public void sendInvitationAcceptanceNotifications(Player loggedPlayer, Invitation invitation);
 
 }

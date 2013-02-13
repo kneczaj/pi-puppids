@@ -1,18 +1,22 @@
 package controllers;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import models.Invitation;
 import models.Player;
 import models.Team;
+import models.notifications.ShoppingListMessage;
 
 import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import play.Logger;
 import play.libs.Json;
 import play.mvc.Result;
 import securesocial.core.java.SecureSocial;
 import securesocial.core.java.SecureSocial.SecuredAction;
+import securesocial.core.java.SocialUser;
 import securesocial.core.providers.utils.RoutesHelper;
 import services.api.AuthenticationService;
 import services.api.AvatarService;
@@ -23,6 +27,7 @@ import services.api.error.PlayerServiceException;
 import services.api.error.TeamServiceException;
 import views.html.message;
 
+import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
 import daos.InvitationDAO;
@@ -114,19 +119,22 @@ public class TeamController extends AvatarControler<Team> {
 	public static Result changeTeamData(String teamname) {
 		Player loggedPlayer = authenticationService.getPlayer();
 		
-		ArrayNode reply = Json.newObject().arrayNode();
+		ArrayNode errorList = Json.newObject().arrayNode();
 		
 		if (!loggedPlayer.isTeamMaster()) {
 			webSocketCommunicationService.sendSimpleNotification("Error", 
 					"Only the team master can change the name of the team", "info", loggedPlayer);
-			return ok(reply.toString());
+			return ok(errorList.toString());
 		}
 		
 		try {
 			teamService.changeTeamData(loggedPlayer.getTeam(), teamname);
 		} catch (TeamServiceException e) {
-			reply.add("teamname");
+			errorList.add("teamname");
 		}
+		
+		ObjectNode reply = Json.newObject();
+		reply.put("errors", errorList);
 		
 		return ok(reply.toString());
 	}
@@ -148,10 +156,18 @@ public class TeamController extends AvatarControler<Team> {
 		return redirect("/");
 	}
 	
-	@SecureSocial.SecuredAction
+	private static Result on_acceptInvitation_playerNotLogged() {
+		// After logging in try again this action
+		ctx().session().put("securesocial.originalUrl", ctx().request().uri());
+		
+		// redirect to login page with the error message below.
+		ctx().flash().put("error", "You must log in as the recipient of the invitation");
+		return redirect(RoutesHelper.login());
+	}
+	
+	@SecureSocial.UserAwareAction
 	public static Result acceptInvitation(String token) throws TeamServiceException {
 		
-		Player loggedPlayer = authenticationService.getPlayer();
 		Invitation invitation;
 		try {
 			invitation = teamService.getInvitation(token);
@@ -159,17 +175,18 @@ public class TeamController extends AvatarControler<Team> {
 			return ok(message.render("Given invitation token is invalid"));
 		}
 		
+		SocialUser user = SecureSocial.currentUser();
+		if (user == null)
+			return on_acceptInvitation_playerNotLogged();
+		
+		Player loggedPlayer = playerDAO.findOne("email", user.getEmail());
+		ShoppingListMessage factionCityChangeListMessage = new ShoppingListMessage();
+		
 		try {
-			teamService.acceptInvitation(invitation, loggedPlayer);
+			factionCityChangeListMessage = teamService.acceptInvitation(invitation, loggedPlayer);
 		} catch (TeamServiceException e) {
 			
 			switch (e.getMessage()) {
-			
-			case "validationFailed":
-				webSocketCommunicationService.sendSimpleNotification("Error", 
-						"Your city or faction doesn't match the invitation's one." +
-						"You can change them in our shop ;)", "info", loggedPlayer);
-				return redirect("/");
 				
 			case "playerNotRegistered":
 				
@@ -178,26 +195,28 @@ public class TeamController extends AvatarControler<Team> {
 				
 			case "playerNotLogged":
 				
-				// After logging in try again this action
-				ctx().session().put("securesocial.originalUrl", ctx().request().uri());
-				
-				// redirect to login page with the error message below.
-				ctx().flash().put("error", "You must log in as the recipient of the invitation");
-				return redirect(RoutesHelper.login());
+				return on_acceptInvitation_playerNotLogged();
 				
 			default:
 				throw e;
 			}
 		}
 		
-		webSocketCommunicationService.sendSimpleNotification("Team changed", 
-				"You have successfully joined \"" + invitation.getTeam().getName() + "\" team", "info", loggedPlayer);
+		if (!factionCityChangeListMessage.isEmpty()) {
+			factionCityChangeListMessage.setShoppingHeader("Your city or faction doesn't match the invitation's one. <br>" +
+					"To accept invitation buy following services:<br>");
+			factionCityChangeListMessage.setMessageType("FactionCityChangeRequest");
+			
+			List<Player> recipientsList = new LinkedList<Player>();
+			recipientsList.add(loggedPlayer);
+			
+			factionCityChangeListMessage.setPlayers(recipientsList);
+			
+			webSocketCommunicationService.askToBuy(factionCityChangeListMessage);
+			return redirect("/");
+		}
 		
-		List<Player> teammates = invitation.getTeam().getPlayers();
-		teammates.remove(loggedPlayer);
-		
-		webSocketCommunicationService.sendSimpleNotification("New member", 
-				"User " + loggedPlayer.getUsername() + " joined your team", "info", teammates);
+		teamService.sendInvitationAcceptanceNotifications(loggedPlayer, invitation);
 		return redirect("/");
 	}
 	

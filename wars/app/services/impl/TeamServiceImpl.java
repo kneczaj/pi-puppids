@@ -9,6 +9,7 @@ import models.Invitation;
 import models.Place;
 import models.Player;
 import models.Team;
+import models.notifications.ShoppingListMessage;
 import services.api.TeamService;
 import services.api.WebSocketCommunicationService;
 import services.api.error.TeamServiceException;
@@ -113,7 +114,7 @@ public class TeamServiceImpl implements TeamService {
 	}
 
 	@Override
-	public Player acceptInvitation(Invitation invitation, Player loggedPlayer)
+	public ShoppingListMessage acceptInvitation(Invitation invitation, Player loggedPlayer)
 			throws TeamServiceException {
 
 		Player recipient = invitation.getRecipient();
@@ -129,15 +130,31 @@ public class TeamServiceImpl implements TeamService {
 				|| (!loggedPlayer.getUsername().equals(recipient.getUsername())))
 			throw new TeamServiceException("playerNotLogged");
 
+		ShoppingListMessage factionCityChangeListMessage = new ShoppingListMessage();
+		boolean cityNeedsChange = !checkCity(invitation, loggedPlayer);
+		boolean factionNeedsChange = !checkFaction(invitation, loggedPlayer);
+		factionCityChangeListMessage.addFactionCityChange(factionNeedsChange, cityNeedsChange, invitation.getToken());
+		
 		// current Faction or City doesn't match
-		if (!validateInvitation(invitation, loggedPlayer))
-			throw new TeamServiceException("validationFailed");
+		if (!factionCityChangeListMessage.isEmpty())
+			return factionCityChangeListMessage;
 
 		Player player = joinTeam(recipient, invitation.getTeam());
 
 		invitationDAO.delete(invitation);
 
-		return player;
+		return factionCityChangeListMessage;
+	}
+	
+	public void sendInvitationAcceptanceNotifications(Player loggedPlayer, Invitation invitation) {
+		webSocketCommunicationService.sendSimpleNotification("Team changed", 
+				"You have successfully joined \"" + invitation.getTeam().getName() + "\" team", "info", loggedPlayer);
+		
+		List<Player> teammates = invitation.getTeam().getPlayers();
+		teammates.remove(loggedPlayer);
+		
+		webSocketCommunicationService.sendSimpleNotification("New member", 
+				"User " + loggedPlayer.getUsername() + " joined your team", "info", teammates);
 	}
 
 	@Override
@@ -253,36 +270,27 @@ public class TeamServiceImpl implements TeamService {
 	//
 	// invitationDAO.deleteByQuery(q);
 	// }
-
-	public Boolean validateInvitation(Invitation invitation, Player player) {
-
+	
+	public boolean checkFaction(Invitation invitation, Player player) {
 		Team pTeam = player.getTeam();
 		if (pTeam == null)
 			return true;
-		Team iTeam = invitation.getTeam();
-
-		Faction pFaction = pTeam.getFaction();
-		Faction iFaction = iTeam.getFaction();
-
-		City pCity = pTeam.getCity();
-		City iCity = iTeam.getCity();
-
-		if (pFaction == null || iFaction == null || iCity == null
-				|| pCity == null) {
+		
+		if (pTeam.getFaction() == null)
 			return true;
-		}
-
-		String pFactionId = pFaction.getId().toString();
-		String iFactionId = iFaction.getId().toString();
-
-		String pCityId = pCity.getId().toString();
-		String iCityId = iCity.getId().toString();
-
-		if (pFactionId.equals(iFactionId) && pCityId.equals(iCityId)) {
+		
+		return pTeam.getFaction().equals(invitation.getTeam().getFaction());
+	}
+	
+	public boolean checkCity(Invitation invitation, Player player) {
+		Team pTeam = player.getTeam();
+		if (pTeam == null)
 			return true;
-		}
-
-		return false;
+		
+		if (pTeam.getCity() == null)
+			return true;
+		
+		return pTeam.getCity().equals(invitation.getTeam().getCity());
 	}
 	
 	public void removePlayer(Team team, Player player) throws TeamServiceException {

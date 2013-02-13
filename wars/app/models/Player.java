@@ -325,16 +325,6 @@ public class Player implements AvatarInterface {
 				return false;
 		} else if (!authenticationProvider.equals(other.authenticationProvider))
 			return false;
-		if (avatar == null) {
-			if (other.avatar != null)
-				return false;
-		} else if (!avatar.equals(other.avatar))
-			return false;
-		if (dateOfBirth == null) {
-			if (other.dateOfBirth != null)
-				return false;
-		} else if (!dateOfBirth.equals(other.dateOfBirth))
-			return false;
 		if (email == null) {
 			if (other.email != null)
 				return false;
@@ -374,11 +364,6 @@ public class Player implements AvatarInterface {
 			if (other.secureSocialIdentifier != null)
 				return false;
 		} else if (!secureSocialIdentifier.equals(other.secureSocialIdentifier))
-			return false;
-		if (team == null) {
-			if (other.team != null)
-				return false;
-		} else if (!team.equals(other.team))
 			return false;
 		if (username == null) {
 			if (other.username != null)
