@@ -47,7 +47,7 @@ class ArWars.ConquerManager
 
 		$.getJSON '/conquer/cancelConquer', d, (responseData) ->
 			@notificationsManager.notify 'Canceled Conquer', 'The conquering attempt was canceled', 'success'
-
+			
 	initiateConquer: (uuid, reference) ->
 		data = 
 			uuid: uuid
