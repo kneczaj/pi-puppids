@@ -15,6 +15,7 @@ import services.api.WebSocketCommunicationService;
 import services.api.error.TeamServiceException;
 
 import com.google.code.morphia.query.Query;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.typesafe.plugin.MailerAPI;
 import com.typesafe.plugin.MailerPlugin;
@@ -139,7 +140,7 @@ public class TeamServiceImpl implements TeamService {
 		if (!factionCityChangeListMessage.isEmpty())
 			return factionCityChangeListMessage;
 
-		Player player = joinTeam(recipient, invitation.getTeam());
+		joinTeam(recipient, invitation.getTeam());
 
 		invitationDAO.delete(invitation);
 
@@ -185,6 +186,10 @@ public class TeamServiceImpl implements TeamService {
 				place.removePlayerFromConquerors(player);
 				placeDAO.save(place);
 			}
+			
+			// delete conquered places from the player
+			List<Place> emptyPlaceList = Lists.newLinkedList();
+			player.setConquered(emptyPlaceList);
 			
 			if (oldTeam.getPlayers().isEmpty()) {
 				Query<Invitation> query = invitationDAO.createQuery().field("team").equal(oldTeam);
