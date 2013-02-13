@@ -12,7 +12,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @Entity("teams")
-public class Team extends TimeStampedModel {
+public class Team extends TimeStampedModel implements AvatarInterface {
 
 	private String name;
 

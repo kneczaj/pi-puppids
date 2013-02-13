@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.List;
+
 import models.Player;
 import models.conquer.CheckConquerConditionsResult;
 import models.conquer.ConqueringAttempt;
@@ -16,6 +18,7 @@ import services.api.ConqueringService;
 import services.api.ConqueringService.ConqueringStatus;
 import services.api.ConqueringService.JoinConquerResult;
 import services.api.NotificationService;
+import services.api.WebSocketCommunicationService;
 import services.google.places.api.GPlaceServiceException;
 import util.JsonHelper;
 
@@ -36,6 +39,9 @@ public class ConquerController extends Controller {
 
 	@Inject
 	private static NotificationService notificationService;
+	
+	@Inject
+	private static WebSocketCommunicationService webSocketCommunicationService;
 
 	@SecureSocial.SecuredAction(ajaxCall = true)
 	public static Result initiateConquer(String uuid, String reference) {
@@ -96,8 +102,40 @@ public class ConquerController extends Controller {
 			ConqueringStatus conqueringResult = conqueringService.conquer(
 					conqueringAttemptId, p);
 			
-			// TODO: send info about the result of the battle to all
-			// participants
+				List<Player> teamMembers = p.getTeam().getPlayers();
+			
+				if (conqueringResult == ConqueringStatus.LOST)
+					webSocketCommunicationService.sendSimpleNotification("Conquer lost", 
+							"Your conquering attempt was unsuccessful", "info", teamMembers);
+
+				if (conqueringResult == ConqueringStatus.PLAYER_NOT_NEARBY)
+					webSocketCommunicationService.sendSimpleNotification( "Conquer", 
+							"Could not finish conquering attempt. You have to move towards" + 
+							"the place you want to conquer", "info", teamMembers);
+
+				if (conqueringResult == ConqueringStatus.PLACE_ALREADY_BELONGS_TO_FACTION)
+					webSocketCommunicationService.sendSimpleNotification( "Conquer", 
+							"The place already belongs to your faction", "info", teamMembers);
+
+				if (conqueringResult == ConqueringStatus.RESOURCES_DO_NOT_SUFFICE)
+					webSocketCommunicationService.sendSimpleNotification( "Conquer", 
+							"Your resources do not suffice the resource demands of this place", 
+							"info", teamMembers);
+
+				if (conqueringResult == ConqueringStatus.NUMBER_OF_ATTACKERS_DOES_NOT_SUFFICE)
+					webSocketCommunicationService.sendSimpleNotification( "Conquer", 
+							"The number of teammates you gathered around the place does not suffice", 
+							"info", teamMembers);
+
+				if (conqueringResult == ConqueringStatus.PLAYER_HAS_INSUFFICIENT_RESOURCES)
+					webSocketCommunicationService.sendSimpleNotification( "Conquer", 
+							"Your teammates have inssufficient resources to attack this place", 
+							"info", teamMembers);
+
+				if (conqueringResult == ConqueringStatus.SUCCESSFUL) // TODO: update places list
+					webSocketCommunicationService.sendSimpleNotification( "Conquering successful", 
+							"Conquering attempt was successful", "success", teamMembers);
+			
 			return ok(JsonHelper.toJson(conqueringResult));
 		} catch (GPlaceServiceException e) {
 			Logger.info(e.toString() + e.getMessage());
