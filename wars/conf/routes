@@ -18,6 +18,9 @@ GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(
 GET		/invite/:username							controllers.TeamController.tryInvite(username)
 GET		/acceptInvitation/:token					controllers.TeamController.acceptInvitation(token)
 GET		/team/deleteMember							controllers.TeamController.deleteMember(member)
+GET		/team/changeTeamData						controllers.TeamController.changeTeamData(teamname)
+GET		/team/getAvatar								controllers.TeamController.getAvatar()
+POST	/team/uploadPhoto							controllers.TeamController.uploadPhoto()
 
 # ConquerController
 GET		/conquer/initiateConquer					controllers.ConquerController.initiateConquer(uuid, reference)
@@ -52,7 +55,12 @@ GET     /profile                    				controllers.Application.profile()
 GET		/getPlayer									controllers.Application.getPlayer(playerId)
 
 # PlayerController
-GET		/profile/changeProfile						controllers.PlayerController.changeProfile(firstname, lastname, email, hometown, birthday)
+GET		/profile/changeProfile						controllers.PlayerController.changeProfile(firstname, lastname, email, hometown, username)
+POST	/profile/uploadPhoto						controllers.PlayerController.uploadPhoto()
+GET		/profile/getAvatar							controllers.PlayerController.getAvatar()
+
+# Shopping
+POST	/buy										controllers.ShoppingController.buy()
 
 # ScoreController
 GET		/scores/getTopTeamsAndPlayers				controllers.ScoreController.getTopTeamsAndPlayers()

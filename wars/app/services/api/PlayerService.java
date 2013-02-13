@@ -1,7 +1,5 @@
 package services.api;
 
-import java.util.Date;
-
 import models.Player;
 import securesocial.core.java.SocialUser;
 import services.api.error.PlayerServiceException;
@@ -39,7 +37,7 @@ public interface PlayerService {
 	 * @param birthday
 	 * @return
 	 */
-	public Player setData(Player player, String firstname, String lastname, String email, String hometown, Date birthday);
+	public Player setData(Player player, String firstname, String lastname, String email, String hometown);
 	
 	/**
 	 * Register a new Player in the system with help of a SocialUser object.
@@ -76,5 +74,14 @@ public interface PlayerService {
 	 *             if Player, cityId or Player's team is null
 	 */
 	public Player joinCity(Player player, String cityId) throws PlayerServiceException;
+
+	/**
+	 * Changes username of player
+	 * 
+	 * @param player
+	 * @param username
+	 * @return
+	 */
+	Player setUsername(Player player, String username);
 
 }

@@ -1,6 +1,7 @@
 package models.notifications;
 
 import java.util.List;
+import java.util.UUID;
 
 import models.Player;
 import models.TimeStampedModel;
@@ -39,6 +40,7 @@ public abstract class Notification extends TimeStampedModel {
 	protected final ObjectNode getInitialJson() {
 		ObjectNode notification = Json.newObject();
 		notification.put("time", getCreationDateTimeString());
+		notification.put("id", UUID.randomUUID().toString());
 		return notification;
 	}
 	

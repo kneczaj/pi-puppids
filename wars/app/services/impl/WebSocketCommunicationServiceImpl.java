@@ -13,6 +13,7 @@ import models.notifications.ConqueringInvitationMessage;
 import models.notifications.Notification;
 import models.notifications.ParticipantJoinedConquerMessage;
 import models.notifications.ResourcesChangedMessage;
+import models.notifications.ShoppingListMessage;
 import models.notifications.SimpleNotificationMessage;
 import services.api.NotificationService;
 import services.api.WebSocketCommunicationService;
@@ -106,6 +107,11 @@ public class WebSocketCommunicationServiceImpl implements
     	prcm.teamResources = teamResources;
     	
     	tellActor(prcm);
+	}
+	
+	public void askToBuy(ShoppingListMessage shoppingList) {
+		if (!shoppingList.isEmpty())
+			tellActor(shoppingList);
 	}
 
 }

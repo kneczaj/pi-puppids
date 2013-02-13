@@ -60,6 +60,7 @@ public class City {
 		this.longitude = longitude;
 	}
 
+	@Override
 	public String toString() {
 		return Objects.toStringHelper(this.getClass())
 				.add("id", id)
@@ -68,6 +69,22 @@ public class City {
 				.add("latitude", latitude)
 				.add("longitude", longitude)
 				.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		City other = (City) obj;
+		if (!this.getCountry().equals(other.getCountry()))
+			return false;
+		if (!this.getName().equals(other.getName()))
+			return false;
+		return true;
 	}
 
 }

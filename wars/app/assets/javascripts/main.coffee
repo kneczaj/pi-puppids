@@ -64,9 +64,13 @@ $(document).ready ->
 		$("#chooseFactionModal").modal 'hide'
 		return false
 		
-	$("button[name=save]", "#chooseFactionModal").bind 'click', @factionClickHandler
+	factionLogoutClickHandler = ->
+		window.location.href='logout'
+		return false
+		
+	$("button[name=save]", "#chooseFactionModal").bind 'click', factionClickHandler
 	$("button[name=back]", "#chooseFactionModal").bind 'click', factionBackToInvitationsClickHandler
-	$("#chooseFactionModal form").submit factionClickHandler	
+	$("button[name=logout]", "#chooseFactionModal").bind 'click', factionLogoutClickHandler
 
 	setupSliders = ->
 		$("#gruntBuildSlider").slider
@@ -116,7 +120,8 @@ $(document).ready ->
 		
 		playerPositionManager = new window.ArWars.PlayerPositionManager $('#playerDetails'), conquerManager, mapInfoManager
 		deleteMemberConfirmationModal = new window.ArWars.DeleteMemberConfirmationModal
-		notificationsManager = new window.ArWars.NotificationsManager conquerManager, mapInfoManager
+		shoppingManager = new window.ArWars.ShoppingManager()
+		notificationsManager = new window.ArWars.NotificationsManager conquerManager, mapInfoManager, shoppingManager
 		
 		sidebar = new window.ArWars.SideBar conquerManager, mapInfoManager
 		sidebar.loadResourceSourcesOfPlayer()
@@ -139,7 +144,7 @@ $(document).ready ->
 			sidebar.buildUnitsClickHandler()
 			return false
 
-		webSocket = new window.ArWars.WebSocketManager playerPositionManager, conquerManager, notificationsManager
+		webSocket = new window.ArWars.WebSocketManager playerPositionManager, conquerManager, notificationsManager, shoppingManager
 		webSocket.establishWebSocket window.ArWars.webSocketURL
 
 	if window.ArWars.factionHasToBeChosen is true 
