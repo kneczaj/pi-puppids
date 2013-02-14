@@ -48,4 +48,18 @@ public class Faction {
 				.add("name", name)
 				.add("score", score).toString();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Faction other = (Faction) obj;
+		if (!this.getName().equals(other.getName()))
+			return false;
+		return true;
+	}
 }

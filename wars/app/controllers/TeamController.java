@@ -217,6 +217,7 @@ public class TeamController extends AvatarControler<Team> {
 			webSocketCommunicationService.askToBuy(factionCityChangeListMessage);
 			return redirect("/");
 		}
+		teamService.sendInvitationAcceptanceNotifications(loggedPlayer, invitation);
 
 		return redirect("/");
 	}
