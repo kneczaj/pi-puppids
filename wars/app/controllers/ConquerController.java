@@ -99,9 +99,10 @@ public class ConquerController extends Controller {
 		Player p = authenticationService.getPlayer();
 
 		try {
-			ConqueringStatus conqueringResult = conqueringService.conquer(
+				ConqueringStatus conqueringResult = conqueringService.conquer(
 					conqueringAttemptId, p);
-			
+				
+				p = authenticationService.getPlayer();
 				List<Player> teamMembers = p.getTeam().getPlayers();
 			
 				if (conqueringResult == ConqueringStatus.LOST)
