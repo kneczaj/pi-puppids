@@ -27,7 +27,6 @@ import services.api.error.PlayerServiceException;
 import services.api.error.TeamServiceException;
 import views.html.message;
 
-import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
 import daos.InvitationDAO;
@@ -184,6 +183,7 @@ public class TeamController extends AvatarControler<Team> {
 		
 		try {
 			factionCityChangeListMessage = teamService.acceptInvitation(invitation, loggedPlayer);
+			
 		} catch (TeamServiceException e) {
 			
 			switch (e.getMessage()) {
@@ -202,6 +202,8 @@ public class TeamController extends AvatarControler<Team> {
 			}
 		}
 		
+		loggedPlayer = authenticationService.getPlayer();
+		
 		if (!factionCityChangeListMessage.isEmpty()) {
 			factionCityChangeListMessage.setShoppingHeader("Your city or faction doesn't match the invitation's one. <br>" +
 					"To accept invitation buy following services:<br>");
@@ -215,8 +217,7 @@ public class TeamController extends AvatarControler<Team> {
 			webSocketCommunicationService.askToBuy(factionCityChangeListMessage);
 			return redirect("/");
 		}
-		
-		teamService.sendInvitationAcceptanceNotifications(loggedPlayer, invitation);
+
 		return redirect("/");
 	}
 	
