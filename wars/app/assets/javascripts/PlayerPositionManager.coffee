@@ -30,6 +30,7 @@ class ArWars.PlayerPositionManager
 		# load information for the current player
 		$.getJSON '/getPlayer', (playerId: window.ArWars.playerId), (responseData) => 
 			@players[window.ArWars.playerId] = responseData
+			@locationWatchHandle = navigator.geolocation.getCurrentPosition @onFirstPosition, @onPositionError, ArWars.PlayerPositionManager.locationOptions
 			@locationWatchHandle = navigator.geolocation.watchPosition @onPositionChange, @onPositionError, ArWars.PlayerPositionManager.locationOptions
 
 	# Removes a player from the map (removes the circle and the marker)
@@ -72,6 +73,15 @@ class ArWars.PlayerPositionManager
 		for k,v of @mapInfoManager.unconqueredPlaceMarkers
 			@bounds.extend v.position
 		@map.fitBounds @bounds
+		
+	# Called when LocationAPI detects the player location for the first time
+	onFirstPosition: (location) =>
+		latitude = location.coords.latitude
+		longitude = location.coords.longitude
+		pos = new google.maps.LatLng latitude, longitude
+		@bounds.extend pos
+		@map.fitBounds @bounds
+		@onPositionChange location
 	
 	# Called when LocationAPI detects a location change of the current player
 	onPositionChange: (location) =>
@@ -123,8 +133,10 @@ class ArWars.PlayerPositionManager
 	onPositionError: (error) =>
 		if error.code == 1 # permission was denied by user
 			@notify 'Location Error', 'To play ARWars it is strongly recommended that you switch on the location features in your browsers preferences.', 'error'
-		else
+		else if error.code == 0 or error.code == 2
 			@notify 'Location Error', 'Currently, there is no position data available with your device.', 'info'
+		else
+			console.log "geolocation error: timeout because the used device is static/not moving - error code: " + error.code
 
 	# Pushes the location of a player to the Google Map
 	push2Map: (pId, latitude, longitude, uncertainty) ->
@@ -156,8 +168,6 @@ class ArWars.PlayerPositionManager
 		marker = new google.maps.Marker markerOpts
 		marker.setMap @map
 		@playerMarkers[pId] = marker
-		@bounds.extend pos
-		@map.fitBounds @bounds
 
 		player = @players[pId]
 		if not player?
