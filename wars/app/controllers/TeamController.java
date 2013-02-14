@@ -202,6 +202,8 @@ public class TeamController extends AvatarControler<Team> {
 			}
 		}
 		
+		loggedPlayer = authenticationService.getPlayer();
+		
 		if (!factionCityChangeListMessage.isEmpty()) {
 			factionCityChangeListMessage.setShoppingHeader("Your city or faction doesn't match the invitation's one. <br>" +
 					"To accept invitation buy following services:<br>");
