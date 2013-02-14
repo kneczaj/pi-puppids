@@ -1,0 +1,96 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           				controllers.Application.index()
+
+# Help page
+GET     /help                          				controllers.Application.help()
+
+# ResourceController
+GET     /resource/getResourceSourcesOfPlayer		controllers.ResourceController.getResourceSourcesOfPlayer()
+GET     /resource/getResourcesOfPlayer				controllers.ResourceController.getResourcesOfPlayer()
+GET     /resource/getResourcesOfTeam				controllers.ResourceController.getResourcesOfTeam()
+
+# TeamController
+GET		/team/joinFactionAndCity					controllers.TeamController.joinFactionAndCity(factionId, cityId)
+GET		/invite/:username							controllers.TeamController.tryInvite(username)
+GET		/acceptInvitation/:token					controllers.TeamController.acceptInvitation(token)
+GET		/team/deleteMember							controllers.TeamController.deleteMember(member)
+GET		/team/changeTeamData						controllers.TeamController.changeTeamData(teamname)
+GET		/team/getAvatar								controllers.TeamController.getAvatar()
+POST	/team/uploadPhoto							controllers.TeamController.uploadPhoto()
+
+# ConquerController
+GET		/conquer/initiateConquer					controllers.ConquerController.initiateConquer(uuid, reference)
+GET		/conquer/joinConquer						controllers.ConquerController.joinConquer(conqueringAttemptId)
+GET		/conquer/cancelConquer						controllers.ConquerController.cancelConquer(conqueringAttemptId)
+GET		/conquer/conquer							controllers.ConquerController.conquer(conqueringAttemptId)
+
+# LocationController
+GET		/updateLocation								controllers.LocationController.updateLocation(lat, lng, uncertainty, speed, timestamp)
+
+# WebSocketController
+GET     /websocket/connect          				controllers.WebSocketController.connect(playerId)
+
+# MapInfoController
+GET     /mapinfo/playersNearby						controllers.MapInfoController.playersNearby(lat, lng)
+GET     /mapinfo/getConqueredPlaces					controllers.MapInfoController.loadConqueredPlaces()
+
+# NotificationController
+GET		/notifications/getHistory					controllers.NotificationController.getHistory(offset, count)
+GET		/notifications/getUndelivered				controllers.NotificationController.getUndeliveredNotifications(numberOfFullNotifications)
+GET		/notifications/addHistoryEntry				controllers.NotificationController.addHistoryEntry(title, message, notType)
+GET		/notifications/markAllUndeliveredAsRead		controllers.NotificationController.markAllUndeliveredAsRead()
+GET		/notifications/deletePlayersNotifications	controllers.NotificationController.deletePlayersNotifications()
+
+# UnitController
+GET     /unit/getUnitsOfPlayer						controllers.UnitController.getUnitsOfPlayer()
+GET     /unit/buildUnits							controllers.UnitController.buildUnits(gruntAmount, infantryAmount)
+GET     /unit/deployUnits							controllers.UnitController.deployUnits(gruntAmount, infantryAmount, placeId)
+
+# Player profile
+GET     /profile                    				controllers.Application.profile()
+GET		/getPlayer									controllers.Application.getPlayer(playerId)
+
+# PlayerController
+GET		/profile/changeProfile						controllers.PlayerController.changeProfile(firstname, lastname, email, hometown, username)
+POST	/profile/uploadPhoto						controllers.PlayerController.uploadPhoto()
+GET		/profile/getAvatar							controllers.PlayerController.getAvatar()
+
+# Shopping
+POST	/buy										controllers.ShoppingController.buy()
+
+# ScoreController
+GET		/scores/getTopTeamsAndPlayers				controllers.ScoreController.getTopTeamsAndPlayers()
+
+# testing
+GET		/sendHi										controllers.TeamController.sendHi()
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               				controllers.Assets.at(path="/public", file)
+
+###
+# Authentication and Authorization with SecureSocial
+###
+
+# Login page
+GET     /login                      				securesocial.controllers.LoginPage.login
+GET     /logout                     				securesocial.controllers.LoginPage.logout
+
+# User Registration and password handling (only needed if you are using UsernamePasswordProvider)
+GET     /signup                     				securesocial.controllers.Registration.startSignUp
+POST    /signup                     				securesocial.controllers.Registration.handleStartSignUp
+GET     /signup/:token              				securesocial.controllers.Registration.signUp(token)
+POST    /signup/:token              				securesocial.controllers.Registration.handleSignUp(token)
+GET     /reset                      				securesocial.controllers.Registration.startResetPassword
+POST    /reset                      				securesocial.controllers.Registration.handleStartResetPassword
+GET     /reset/:token               				securesocial.controllers.Registration.resetPassword(token)
+POST    /reset/:token               				securesocial.controllers.Registration.handleResetPassword(token)
+GET     /password                   				securesocial.controllers.PasswordChange.page
+POST    /password                   				securesocial.controllers.PasswordChange.handlePasswordChange
+
+# Providers entry points
+GET     /authenticate/:provider     				securesocial.controllers.ProviderController.authenticate(provider)
+POST    /authenticate/:provider     				securesocial.controllers.ProviderController.authenticateByPost(provider)
