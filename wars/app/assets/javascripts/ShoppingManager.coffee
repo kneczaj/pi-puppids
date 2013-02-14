@@ -20,7 +20,7 @@ class ArWars.ShoppingManager
 		
 		listHtml = "";
 		for item of shoppingList.content.positions
-			listHtml += "<tr><td>" + item + "</td><td>" + shoppingList.content.positions[item] + " eur</td></tr>"
+			listHtml += "<tr><td>" + item + ":</td><td>" + shoppingList.content.positions[item] + " &euro;</td></tr>"
 			
 		$("#shoppingList").html listHtml
 		that.content = shoppingList
