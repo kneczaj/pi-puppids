@@ -7,6 +7,10 @@ a:hover {
 	cursor: pointer;
 }
 
+strong {
+	color: #faa732;
+}
+
 .navbar-inverse .navbar-inner {
     background-color: #2C2C2C;
 	background-image: linear-gradient(to bottom, #333333, #111111);
@@ -27,6 +31,10 @@ a:hover {
 	height: 40px;
 	margin-top: -10px;
 	margin-bottom: -10px;
+}
+
+.game-info {
+	text-align: right;
 }
 
 #resourcesPlayer {

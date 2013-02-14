@@ -8,50 +8,66 @@
 
 
 @main(Messages("securesocial.login.title")) {
-    <h2>@Messages("securesocial.login.title")</h2>
-
-    @errorMsg.map { msg =>
-        <div class="alert alert-error">
-            @Messages(msg)
-        </div>
-    }
-
-    @request.flash.get("success").map { msg =>
-        <div class="alert alert-success">
-            @msg
-        </div>
-    }
-
-    @request.flash.get("error").map { msg =>
-        <div class="alert alert-error">
-            @msg
-        </div>
-    }
-
-
-@defining( ProviderRegistry.all.values.filter( _.providerId != UsernamePassword) ) { externalProviders =>
-
-        @if( externalProviders.size > 0 ) {
-            <div class="clearfix">
-                <p>@Messages("securesocial.login.instructions")</p>
-                <p>
-                    @for(p <- externalProviders) {
-                        @provider(p.providerId)
-                    }
-                </p>
-            </div>
-        }
-
-        @ProviderRegistry.get(UsernamePassword).map { up =>
-            <div class="clearfix">
-                @if( externalProviders.size > 0 ) {
-                    <p>@Messages("securesocial.login.useEmailAndPassword")</p>
-                } else {
-                    <p>@Messages("securesocial.login.useEmailAndPasswordOnly")</p>
-                }
-
-               @provider("userpass", Some(loginForm))
-            </div>
-        }
-    }
+	<div class="row-fluid">
+		<div class="span4 game-info">
+			<h2>Conquer your world</h2>
+			<p class="lead">
+				Choose a <strong>faction</strong>. <br>
+				Conquer <strong>places</strong>. <br>
+				Gain <strong>resources</strong>. <br>
+				Build <strong>units</strong>. <br>
+				Form <strong>teams</strong>. <br>
+				And rule your <strong>city</strong>.
+			</p>
+		</div><!--/span-->
+		<div class="span7 offset1">
+		    <h4>@Messages("securesocial.login.title")</h4>
+		
+		    @errorMsg.map { msg =>
+		        <div class="alert alert-error">
+		            @Messages(msg)
+		        </div>
+		    }
+		
+		    @request.flash.get("success").map { msg =>
+		        <div class="alert alert-success">
+		            @msg
+		        </div>
+		    }
+		
+		    @request.flash.get("error").map { msg =>
+		        <div class="alert alert-error">
+		            @msg
+		        </div>
+		    }
+		
+		
+		@defining( ProviderRegistry.all.values.filter( _.providerId != UsernamePassword) ) { externalProviders =>
+		
+		        @if( externalProviders.size > 0 ) {
+		            <div class="clearfix">
+		                <p>@Messages("securesocial.login.instructions")</p>
+		                <p>
+		                    @for(p <- externalProviders) {
+		                        @provider(p.providerId)
+		                    }
+		                </p>
+		            </div>
+		        }
+		
+		        @ProviderRegistry.get(UsernamePassword).map { up =>
+		            <div class="clearfix">
+		                @if( externalProviders.size > 0 ) {
+		                    <p>@Messages("securesocial.login.useEmailAndPassword")</p>
+		                } else {
+		                    <p>@Messages("securesocial.login.useEmailAndPasswordOnly")</p>
+		                }
+		
+		               @provider("userpass", Some(loginForm))
+		            </div>
+		        }
+		    }
+		    
+		</div><!--/span-->
+	</div><!--/row-->
 }
