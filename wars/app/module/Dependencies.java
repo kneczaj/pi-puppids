@@ -30,6 +30,7 @@ import services.impl.ScoreServiceImpl;
 import services.impl.TeamServiceImpl;
 import services.impl.UnitServiceImpl;
 import services.impl.VictoryByNumberOfUnitsStategy;
+import services.impl.VictoryByStrengthStrategy;
 import services.impl.WebSocketCommunicationServiceImpl;
 
 import com.google.code.morphia.Morphia;
@@ -68,7 +69,7 @@ public class Dependencies implements Module {
 		binder.bind(PlayerService.class).to(PlayerServiceImpl.class).in(Singleton.class);
 		binder.bind(GPlaceService.class).to(GPlaceServiceImpl.class).in(Singleton.class);
 		binder.bind(ConqueringService.class).to(ConqueringServiceImpl.class).in(Singleton.class);
-		binder.bind(VictoryStrategy.class).to(VictoryByNumberOfUnitsStategy.class).in(Singleton.class);
+		binder.bind(VictoryStrategy.class).to(VictoryByStrengthStrategy.class).in(Singleton.class);
 		binder.bind(WebSocketCommunicationService.class).to(WebSocketCommunicationServiceImpl.class).in(Singleton.class);
 		binder.bind(ResourceService.class).to(ResourceServiceImpl.class).in(Singleton.class);	
 		binder.bind(ScoreService.class).to(ScoreServiceImpl.class).in(Singleton.class);
