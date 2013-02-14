@@ -1,0 +1,181 @@
+@(player: Player)
+
+@scripts = {
+<script>
+	window.ArWars = { 
+	}
+</script>
+<script src="@routes.Assets.at("javascripts/ProfileEditor.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/FormValidator.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/ShoppingManager.js")" type="text/javascript"></script>
+}
+
+@confirmationModal(id: String, message: Html) = {
+
+<div id="@{id}_confirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
+  	<div class="modal-body">
+		@message <br><br><br>
+		<button name="ok" class="btn btn-warning">Purchase</button>
+		<button name="cancel" class="btn">Cancel</button>
+	</div>
+</div>
+
+}
+
+@noticeModal(id:String, message: Html) = {
+
+<div id="@{id}_noticeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
+	<div>
+		@message <br>
+		<button name="ok" class="btn btn-warning">Ok</button>
+	</div>
+</div>
+
+}
+
+@imageSelector(id: String, downloadUrl: String, uploadUrl: String) = {
+
+	<div style="text-align: center">
+		<span></span>
+		<img class="media-object img-rounded" id="@{id}_img" style="margin: 0 auto" src="@downloadUrl"><br>
+		<span></span>
+		<form class="form-inline">
+			<!-- 
+			kind of a hack to get a nice styling for the file input field
+			which is not supported by twitter bootstrap
+			 -->
+			<input type="file" accept="image/*" id="@{id}_hiddenFileInput" style="display:none">
+			<div class="input-append">
+				<input type="text" class="input-middle" id="@{id}_photoFileInput" onclick="$('#@{id}_hiddenFileInput').click()" placeholder="Click to select the avatar...">
+	   			<input type="button" class="btn" id="@{id}_photoUploadButton" value="Upload">
+	   		</div>
+	   		<div id="@{id}_errorMessage"></div>
+   		</form>
+	</div>
+	
+	<script type="text/javascript">
+		$("#@{id}_hiddenFileInput").change(function() {
+			$("#@{id}_photoFileInput").val($(this).val())
+		});
+		
+		uploadPhoto = function() {
+			var data = new FormData();
+			jQuery.each($('#@{id}_hiddenFileInput')[0].files, function(i, file) {
+			    data.append('file-'+i, file);
+			});
+			return $.ajax({
+		        url: "@uploadUrl",
+		        type: "POST",
+		        cache: false,
+		        contentType: false,
+		        processData: false,
+		        data: data,
+		        dataType: "html",
+		        success: function(response, textStatus, jqXHR) {
+		        	if (response == "error") {
+		        		$("#@{id}_errorMessage").html("Error - cannot upload this file");
+		        		return
+		        	}
+		        	$("#@{id}_img").attr("src", "@{downloadUrl}?rand=" + Math.random());
+		        	$("#@{id}_errorMessage").html("");
+        		},
+        		error: function(jqXHR, textStatus, errorThrown) {
+          			$("#@{id}_errorMessage").html("Error - cannot upload this file");
+        		}
+      		});
+    	};
+    	
+    	$("#@{id}_photoUploadButton").bind('click', uploadPhoto);
+	</script>
+}
+
+@main(title = "Profile - " + player.getUsername() + " - ARWars", scripts) { 
+
+<div class="row">
+	<h2>Edit profile</h2>
+	<div class="span6">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="inputUsername">Username</label>
+				<div class="controls">
+					<input type="text" validation="mandatoryWord" required id="inputUsername" value="@player.getUsername()">
+					<span class="help-inline hide">Type a word</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputFirstname">First name</label>
+				<div class="controls">
+					<input type="text" validation="mandatoryWord" required id="inputFirstname" value="@player.getFirstname()">
+					<span class="help-inline hide">Type a word</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputLastname">Last name</label>
+				<div class="controls">
+					<input type="text" validation="mandatoryWord" id="inputLastname" value="@player.getName()">
+					<span class="help-inline hide">Type a word</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputEmail">Email</label>
+				<div class="controls">
+					<input type="email" validation="email" id="inputEmail" value="@player.getEmail()">
+					<span class="help-inline hide">Please type a correct email</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputHometown">Hometown</label>
+				<div class="controls">
+					<input type="text" validation="optionalWord" id="inputHometown" value="@player.getHomeTown()">
+					<span class="help-inline hide">Type a word</span>
+				</div>
+			</div>
+		</form>
+		<form class="form-horizontal">
+			<div class="control-group">
+				<div class="controls">
+					<button type="button" class="btn btn-warning" id="saveButton">Save</button>
+					<button type="button" class="btn" onclick="location.href='/'">Cancel</button>
+				</div>
+			</div>
+		</form>
+	</div><!--/span-->
+	<div class="span6" style="text-align: center">
+		<p>Player avatar</p>
+		@imageSelector(id = "player", downloadUrl = "/profile/getAvatar", uploadUrl = "/profile/uploadPhoto")
+	</div>
+</div><!--/row-->
+
+
+
+<div class="row @if(!player.isTeamMaster()) {hide}">
+	<h2>Edit team</h2>
+	<div class="span6">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="inputTeamname">Name of the team</label>
+				<div class="controls">
+					<input type="text" validation="mandatoryAlfanum" id="inputTeamname" value="@player.getTeam().getName()">
+					<span class="help-inline hide">Cannot be empty</span>
+				</div>
+			</div>
+		</form>
+		<form class="form-horizontal">
+			<div class="control-group">
+				<div class="controls">
+					<button type="button" class="btn btn-warning" id="saveTeamButton">Save</button>
+					<button type="button" class="btn" onclick="location.href='/'">Cancel</button>
+				</div>
+			</div>
+		</form>
+	</div><!--/span-->
+	<div class="span6" style="text-align: center">
+		<p>Team avatar</p>
+		@imageSelector(id = "team", downloadUrl = "/team/getAvatar", uploadUrl = "/team/uploadPhoto")
+	</div>
+</div><!--/row-->
+
+@confirmationModal("shopping", Html("<span id=\"shoppingMessage\"></span>Click 'Purchase' if you want to purchase the following services:<br><br><span id=\"shoppingList\"></span>"))
+@noticeModal("shopping", Html("Your order was processed."))
+
+}

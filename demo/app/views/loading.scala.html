@@ -1,0 +1,15 @@
+@(message: String)
+
+@main("WebApp Lab Demo") {
+	<style>
+		#sortable { list-style-type: none; margin: auto; padding: 0; width: 900px; }
+		#sortable li { float: left; margin: 3px; width: 200px; height: 200px; }
+		#header {margin: auto; text-align: center;}
+		#gallery { margin: auto; text-align: center; font-size: 2em; }
+	</style>
+	
+	<h1 id="header">@(message)</h1>
+	<div id="gallery">
+		<a href="@routes.Application.index()">back to gallery</a>
+	</div>
+}
