@@ -62,7 +62,7 @@ public class ShoppingController extends Controller {
 				} catch (TeamServiceException e) {
 					return ok("error");
 				}
-				teamService.joinTeam(loggedPlayer, invitation.getTeam());
+				loggedPlayer = teamService.joinTeam(loggedPlayer, invitation.getTeam());
 				invitationDAO.delete(invitation);
 				teamService.sendInvitationAcceptanceNotifications(loggedPlayer, invitation);
 				break;
