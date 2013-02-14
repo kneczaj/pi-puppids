@@ -22,6 +22,7 @@ class ArWars.ConquerManager
 				@sidebar.reloadResourceSourcesOfPlayer()
 				@sidebar.loadResourcesOfTeam()
 				@sidebar.reloadUnitsOfPlayer()
+				@mapInfoManager.infowindow.close()
 				@mapInfoManager.loadConqueredPlaces()
 
 	joinConquer: (conqueringAttemptId) ->
