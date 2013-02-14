@@ -223,6 +223,10 @@ public class Player implements AvatarInterface {
 	public void setConquered(List<Place> conquered) {
 		this.conquered = conquered;
 	}
+	
+	public void addConqueredPlace(Place p) {
+		conquered.add(p);
+	}
 
 	public List<Unit> getUnits() {
 		return units;

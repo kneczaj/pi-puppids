@@ -247,7 +247,7 @@ public class ConqueringServiceImpl implements ConqueringService {
 
 		boolean playerNearby = false;
 		for (Player p : teamMembersNearby) {
-			if (p.getId().equals(player.getId()))
+			if (p.equals(player))
 				playerNearby = true;
 		}
 
@@ -360,13 +360,13 @@ public class ConqueringServiceImpl implements ConqueringService {
 					.get(type);
 			place.setResourceDemand(resourceDemands);
 
-			placeDAO.save(place);
 			place.setConqueredBy(participants);
+			placeDAO.save(place);
 			placeDAO.updateConquerors(place, participants);
 		}
 		//add the place to the participants
 		for (Player p : participants) {
-			p.getConquered().add(place);
+			p.addConqueredPlace(place);
 			playerDAO.save(p);
 		}
 		
