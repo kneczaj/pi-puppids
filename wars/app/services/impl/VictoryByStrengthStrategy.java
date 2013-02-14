@@ -69,7 +69,7 @@ public class VictoryByStrengthStrategy implements VictoryStrategy {
 			}
 		}
 
-		return (strength > strengthOfUnits(defendingUnits));
+		return (strength >= strengthOfUnits(defendingUnits));
 	}
 
 }
