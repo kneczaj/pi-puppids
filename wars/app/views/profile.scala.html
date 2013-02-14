@@ -14,9 +14,9 @@
 
 <div id="@{id}_confirmationModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
   	<div class="modal-body">
-		@message <br>
-		<button name="ok" class="btn">Yes</button>
-		<button name="cancel" class="btn">No</button>
+		@message <br><br><br>
+		<button name="ok" class="btn btn-warning">Purchase</button>
+		<button name="cancel" class="btn">Cancel</button>
 	</div>
 </div>
 
@@ -27,7 +27,7 @@
 <div id="@{id}_noticeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="false">
 	<div>
 		@message <br>
-		<button name="ok" class="btn">Ok</button>
+		<button name="ok" class="btn btn-warning">Ok</button>
 	</div>
 </div>
 
@@ -134,7 +134,7 @@
 		<form class="form-horizontal">
 			<div class="control-group">
 				<div class="controls">
-					<button type="button" class="btn" id="saveButton">Save</button>
+					<button type="button" class="btn btn-warning" id="saveButton">Save</button>
 					<button type="button" class="btn" onclick="location.href='/'">Cancel</button>
 				</div>
 			</div>
@@ -163,7 +163,7 @@
 		<form class="form-horizontal">
 			<div class="control-group">
 				<div class="controls">
-					<button type="button" class="btn" id="saveTeamButton">Save</button>
+					<button type="button" class="btn btn-warning" id="saveTeamButton">Save</button>
 					<button type="button" class="btn" onclick="location.href='/'">Cancel</button>
 				</div>
 			</div>
@@ -175,7 +175,7 @@
 	</div>
 </div><!--/row-->
 
-@confirmationModal("shopping", Html("<span id=\"shoppingMessage\"></span>Click ok to pay for the services below.<br><span id=\"shoppingList\"></span>"))
-@noticeModal("shopping", Html("Your order was processed"))
+@confirmationModal("shopping", Html("<span id=\"shoppingMessage\"></span>Click 'Purchase' if you want to purchase the following services:<br><br><span id=\"shoppingList\"></span>"))
+@noticeModal("shopping", Html("Your order was processed."))
 
 }
